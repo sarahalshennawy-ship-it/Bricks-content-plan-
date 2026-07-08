@@ -3,7 +3,19 @@
 // so the customer finds out immediately if a code is invalid or already
 // used, instead of after filling out the whole quiz.
 
-import { kv } from '@vercel/kv';
+import { createClient } from 'redis';
+
+let client;
+async function getRedis() {
+  if (!client) {
+    client = createClient({ url: process.env.REDIS_URL });
+    client.on('error', (err) => console.error('Redis client error', err));
+  }
+  if (!client.isOpen) {
+    await client.connect();
+  }
+  return client;
+}
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -15,7 +27,10 @@ export default async function handler(req, res) {
     return res.status(400).json({ valid: false, error: 'missing_code' });
   }
 
-  const record = await kv.get(`code:${code}`);
+  const redis = await getRedis();
+  const raw = await redis.get(`code:${code}`);
+  const record = raw ? JSON.parse(raw) : null;
+
   if (!record) {
     return res.status(200).json({ valid: false, error: 'invalid_code', message: 'This access code was not recognized.' });
   }
