@@ -9,7 +9,19 @@
 //     -H "Content-Type: application/json" \
 //     -d '{"code":"SARA-TEST-01"}'
 
-import { kv } from '@vercel/kv';
+import { createClient } from 'redis';
+
+let client;
+async function getRedis() {
+  if (!client) {
+    client = createClient({ url: process.env.REDIS_URL });
+    client.on('error', (err) => console.error('Redis client error', err));
+  }
+  if (!client.isOpen) {
+    await client.connect();
+  }
+  return client;
+}
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -26,8 +38,9 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'missing_code' });
   }
 
+  const redis = await getRedis();
   const key = `code:${code}`;
-  const existing = await kv.get(key);
+  const existing = await redis.get(key);
   if (existing) {
     return res.status(409).json({ error: 'code_exists', message: 'This code was already issued.' });
   }
@@ -37,6 +50,6 @@ export default async function handler(req, res) {
     callsUsed: 0,
     issuedAt: new Date().toISOString()
   };
-  await kv.set(key, record);
+  await redis.set(key, JSON.stringify(record));
   return res.status(200).json({ ok: true, code, record });
 }
