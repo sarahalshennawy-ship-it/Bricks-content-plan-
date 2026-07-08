@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bricks &co — Content Plan Generator</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif}
+body{background:#FDF8F4;min-height:100vh}
+#app{max-width:600px;margin:0 auto;padding:0 0 40px}
+.hdr{background:#2C1F17;padding:14px 18px;display:flex;justify-content:space-between;align-items:center}
+.hb{font-size:16px;font-weight:600;color:#fff}
+.hs{font-size:10px;color:#C4614B;letter-spacing:1px;margin-top:1px}
+.hbtn{background:transparent;border:0.5px solid rgba(255,255,255,0.2);color:#aaa;border-radius:6px;padding:5px 10px;cursor:pointer;font-size:11px}
+.hbrand{display:flex;align-items:center;gap:9px}
+.hlogo{width:32px;height:32px;border-radius:7px;object-fit:cover;flex-shrink:0;background:#fff}
+.hdev{font-size:9px;color:#8a7a6d;letter-spacing:0.3px;margin-top:2px}
+.setupwrap{padding:26px 18px;max-width:600px;margin:0 auto}
+.setupt{font-size:19px;font-weight:600;color:#2C1F17;margin-bottom:5px}
+.setups{font-size:13px;color:#888;margin-bottom:22px;line-height:1.5}
+.flabel{font-size:12px;font-weight:600;color:#2C1F17;margin-bottom:6px}
+.finput{width:100%;padding:11px 12px;border-radius:8px;border:1.5px solid #e0d8d3;font-size:14px;color:#2C1F17;background:#fff;outline:none;margin-bottom:18px}
+.finput:focus{border-color:#C4614B}
+.logorow{display:flex;align-items:center;gap:14px;margin-bottom:22px}
+.logoprev{width:56px;height:56px;border-radius:10px;border:1.5px dashed #e0d8d3;background:#fff;display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0}
+.logoprev img{width:100%;height:100%;object-fit:cover}
+.logopick{padding:8px 14px;border-radius:8px;border:1.5px solid #e0d8d3;background:#fff;color:#2C1F17;font-size:12px;cursor:pointer}
+.setupnav{display:flex;justify-content:space-between;align-items:center;margin-top:6px}
+.body{padding:22px 16px}
+.pr{display:flex;justify-content:space-between;margin-bottom:5px}
+.pl{font-size:12px;font-weight:600;color:#C4614B}
+.pp{font-size:12px;color:#888}
+.pbar{height:3px;background:#e0d8d3;border-radius:3px;overflow:hidden;margin-bottom:20px}
+.pfill{height:100%;background:#C4614B;border-radius:3px;transition:width 0.3s}
+.qt{font-size:18px;font-weight:600;color:#2C1F17;margin-bottom:4px;line-height:1.3}
+.qh{font-size:12px;color:#888;margin-bottom:16px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:4px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-bottom:4px}
+.gcol{display:flex;flex-direction:column;gap:7px;margin-bottom:4px}
+.ob{padding:11px 12px;border-radius:8px;border:1.5px solid #e0d8d3;background:#fff;color:#2C1F17;font-size:13px;cursor:pointer;text-align:left;line-height:1.3;transition:all 0.12s;width:100%}
+.ob.sel{border-color:#C4614B;background:#FFF5F3;color:#C4614B;font-weight:600}
+.ob.dis{opacity:0.4;cursor:not-allowed}
+.ob:active{transform:scale(0.98)}
+.lo{padding:13px 15px;border-radius:8px;border:1.5px solid #e0d8d3;background:#fff;cursor:pointer;text-align:left;transition:all 0.12s;width:100%;margin-bottom:7px;display:block}
+.lo.sel{border-color:#C4614B;background:#FFF5F3}
+.lo-t{font-size:14px;font-weight:600;color:#2C1F17}
+.lo.sel .lo-t,.lo.sel .lo-s{color:#C4614B}
+.lo-s{font-size:11px;color:#888;margin-top:2px}
+.dta{width:100%;min-height:90px;padding:11px;border-radius:8px;border:1.5px solid #e0d8d3;font-size:13px;line-height:1.6;color:#2C1F17;background:#fff;resize:vertical;outline:none}
+.dta:focus{border-color:#C4614B}
+.cc{font-size:11px;color:#888;margin-top:4px}
+.nav{display:flex;justify-content:space-between;margin-top:20px;align-items:center}
+.btnb{padding:9px 16px;border-radius:8px;border:1.5px solid #e0d8d3;background:#fff;color:#2C1F17;font-size:13px;cursor:pointer}
+.btnn{padding:9px 18px;border-radius:8px;border:none;background:#C4614B;color:#fff;font-size:13px;font-weight:600;cursor:pointer}
+.btnn:disabled,.btng:disabled{opacity:0.35;cursor:not-allowed}
+.btng{padding:10px 18px;border-radius:8px;border:none;background:#C4614B;color:#fff;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:7px}
+.spin{width:12px;height:12px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:sp 0.7s linear infinite;flex-shrink:0}
+@keyframes sp{to{transform:rotate(360deg)}}
+.selc{font-size:11px;color:#7A7D45;margin-top:6px}
+.errbox{margin-top:10px;padding:10px 12px;background:#FFF0EE;border:1px solid #C4614B;border-radius:8px;color:#C4614B;font-size:12px}
+.gprog{background:#f0ebe6;border-radius:8px;padding:12px 14px;margin-top:12px}
+.gptext{font-size:12px;color:#666;margin-bottom:7px;text-align:center}
+.gpbar{height:5px;background:#ddd;border-radius:5px;overflow:hidden}
+.gpfill{height:100%;background:#C4614B;border-radius:5px;transition:width 0.4s}
+.lp{min-height:60vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px;text-align:center}
+.lpc{display:flex;gap:12px;justify-content:center;margin-top:24px}
+.lpcbtn{flex:1;max-width:160px;padding:18px 12px;border-radius:12px;border:1.5px solid #e0d8d3;background:#fff;cursor:pointer;text-align:center;transition:all 0.15s}
+.lpcbtn:hover{border-color:#C4614B;background:#FFF5F3}
+.lpcbtn-m{font-size:19px;font-weight:600;color:#2C1F17;margin-bottom:3px}
+.lpcbtn-s{font-size:11px;color:#888}
+.phdr{background:#2C1F17;padding:14px 18px;display:flex;justify-content:space-between;align-items:center}
+.pbody{padding:14px}
+.advcard{background:#7A7D45;border-radius:10px;padding:16px;margin-bottom:12px}
+.advt{font-size:15px;font-weight:600;color:#fff;margin-bottom:4px;display:flex;align-items:center;gap:6px}
+.advsub{font-size:11px;color:#dfe3cf;margin-bottom:10px}
+.advitem{font-size:12.5px;color:#f2f4ea;line-height:1.55;margin-bottom:7px;padding-left:16px;position:relative}
+.advitem:before{content:"→";position:absolute;left:0;color:#D4964A;font-weight:700}
+.advitem.rtl{padding-left:0;padding-right:16px}
+.advitem.rtl:before{left:auto;right:0}
+.sumcard{background:#2C1F17;border-radius:10px;padding:16px;margin-bottom:12px}
+.sumt{font-size:16px;font-weight:600;color:#fff;margin-bottom:6px}
+.sums{font-size:13px;color:#ccc;line-height:1.6;margin-bottom:10px}
+.pills{display:flex;gap:5px;flex-wrap:wrap}
+.pill{display:inline-block;padding:2px 9px;border-radius:12px;font-size:11px;font-weight:600}
+.wklbl{padding:6px 12px;background:#2C1F17;border-radius:8px 8px 0 0;font-size:11px;font-weight:600;color:#D4964A;letter-spacing:0.5px}
+.wkblk{background:#f0ebe6;border-radius:0 0 8px 8px;padding:7px 7px 2px;margin-bottom:10px}
+.dcard{background:#fff;border:1px solid #e8ddd5;border-radius:8px;padding:12px 14px;margin-bottom:6px}
+.dtop{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px}
+.dmeta{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.dnum{font-size:12px;font-weight:600;min-width:42px}
+.dpill{display:inline-block;padding:2px 7px;border-radius:10px;font-size:10px;font-weight:600}
+.cpbtn{padding:3px 9px;border-radius:6px;border:1px solid #C4614B;background:transparent;color:#C4614B;font-size:10px;cursor:pointer;white-space:nowrap}
+.cpbtn.ok{background:#7A7D45;border-color:#7A7D45;color:#fff}
+.flbl{font-size:10px;font-weight:600;letter-spacing:0.4px;margin-bottom:2px}
+.fval{font-size:13px;color:#2C1F17;line-height:1.5}
+.fhook{font-size:13px;font-weight:600;color:#2C1F17;line-height:1.5}
+.fdiv{border:none;border-top:1px solid #f0e8e3;margin:6px 0}
+.fhash{font-size:11.5px;color:#7A7D45;line-height:1.5}
+.foccasion{font-size:10.5px;color:#D4964A;font-weight:600;margin-bottom:6px}
+.ctabox{background:#C4614B;border-radius:10px;padding:16px;margin-top:4px}
+.ctat{font-size:14px;font-weight:600;color:#fff;margin-bottom:4px}
+.ctas{font-size:12px;color:rgba(255,255,255,0.85);line-height:1.6}
+.dlrow{display:flex;justify-content:center;margin:6px 0 12px}
+.dlbtn{padding:9px 16px;border-radius:8px;border:1.5px solid #d8ccc2;background:#fff;color:#2C1F17;font-size:12px;cursor:pointer}
+.tagwrap{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+.tag{background:#FFF5F3;color:#C4614B;border:1px solid #C4614B;border-radius:14px;padding:4px 10px;font-size:12px;display:inline-flex;align-items:center;gap:6px}
+.tagx{cursor:pointer;font-weight:700;line-height:1}
+.taginput{width:100%;padding:9px 11px;border-radius:8px;border:1.5px solid #e0d8d3;font-size:13px;outline:none}
+.taginput:focus{border-color:#C4614B}
+.fieldlbl{font-size:12px;font-weight:600;color:#2C1F17;margin:16px 0 6px}
+.fieldlbl:first-child{margin-top:0}
+.fieldhint{font-size:11px;color:#999;margin-top:-3px;margin-bottom:8px}
+.gatewrap{padding:40px 22px;max-width:460px;margin:0 auto;text-align:center}
+.gatet{font-size:19px;font-weight:600;color:#2C1F17;margin-bottom:6px}
+.gates{font-size:13px;color:#888;margin-bottom:22px;line-height:1.5}
+.gateinput{width:100%;padding:12px 14px;border-radius:8px;border:1.5px solid #e0d8d3;font-size:15px;text-align:center;letter-spacing:1px;color:#2C1F17;outline:none;margin-bottom:14px}
+.gateinput:focus{border-color:#C4614B}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+var DATA={
+bizTypes:{en:["Content Creator / Influencer","Medical Aesthetic / Clinic","Salon / Spa / Beauty Center","Gym / Fitness Studio","Restaurant / Café","E-commerce / Products","Abaya / Fashion Brand","Perfume / Luxury Products","Agency / Consulting","Retail Shop","Coach / Trainer / Educator","Other Service Business"],
+ar:["كرييتور / مؤثر","عيادة تجميل طبية","صالون / سبا / مركز تجميل","صالة رياضية / استوديو لياقة","مطعم / كافيه","تجارة إلكترونية / منتجات","براند عبايات / أزياء","عطور / منتجات فاخرة","وكالة / استشارات","متجر بيع بالتجزئة","مدرب / معلم / مستشار","خدمة أخرى"]},
+goals:{en:["Get more clients / customers","Increase brand awareness","Build authority and trust","Launch a new product or service","Reactivate old customers","Grow social media following"],
+ar:["جذب عملاء جدد","زيادة الوعي بالبراند","بناء السلطة والمصداقية","إطلاق منتج أو خدمة جديدة","إعادة تنشيط العملاء القدامى","تنمية المتابعين على السوشيال ميديا"]},
+platforms:{en:["Instagram","TikTok","Snapchat","LinkedIn","X (Twitter)","YouTube Shorts"],
+ar:["إنستغرام","تيك توك","سناب شات","لينكدإن","تويتر X","يوتيوب شورتس"]},
+audience:{en:["Women 18–24","Women 25–34","Women 35–44","Women 45–55","Men 18–24","Men 25–34","Men 35–44","Men 45–55","Entrepreneurs","Students / Graduates","Families","High-income professionals","Health-conscious","Fashion & beauty fans","Gulf Arabic audience","Expats in Gulf"],
+ar:["نساء 18–24","نساء 25–34","نساء 35–44","نساء 45–55","رجال 18–24","رجال 25–34","رجال 35–44","رجال 45–55","رواد أعمال","طلاب وخريجون","أسر ومتزوجون","محترفون ذوو دخل مرتفع","مهتمون بالصحة","عشاق الموضة والجمال","جمهور خليجي عربي","مقيمون في الخليج"]},
+countries:{en:["UAE","KSA"],ar:["الإمارات","السعودية"]},
+tones:{en:["Professional & Credible","Fun & Bold","Luxury & Premium","Friendly & Casual"],
+ar:["احترافي وموثوق","ممتع وجريء","فخم وراقي","ودود وبسيط"]},
+contentLangs:{en:[{v:"Gulf Arabic",l:"Gulf Arabic",s:"Natural Khaleeji — خليجي طبيعي"},{v:"Neutral Arabic",l:"Arabic — Neutral",s:"Clear Arabic for all Arab countries"},{v:"English",l:"English",s:"International / Gulf English"},{v:"Arabic+English",l:"Arabic + English",s:"Arabic captions with English terms"}],
+ar:[{v:"Gulf Arabic",l:"عربي خليجي",s:"نبرة خليجية طبيعية"},{v:"Neutral Arabic",l:"عربي بدون لهجة",s:"عربي واضح لجميع الجنسيات"},{v:"English",l:"إنجليزي",s:"مناسب للجمهور الدولي"},{v:"Arabic+English",l:"عربي + إنجليزي",s:"كابشنات عربية مع مصطلحات إنجليزية"}]},
+questions:{en:[
+{q:"What best describes you?",h:"Business or content creator — pick the closest match"},
+{q:"What are your main goals right now?",h:"Pick up to 2 — the most important ones"},
+{q:"Where do you post your content?",h:"Select all that apply"},
+{q:"Who is your target audience?",h:"Select all that apply"},
+{q:"Which market are you focused on?",h:"Shapes timing, tone, and local events in your plan"},
+{q:"What language should your content be in?",h:"Hooks and captions will be written in this language"},
+{q:"A few final details",h:"Tone, topics, and any offer — this is what makes your plan specific instead of generic"}],
+ar:[
+{q:"إيه أقرب وصف ليك؟",h:"بزنس ولا كرييتور - اختار الأقرب"},
+{q:"إيه أهدافك الأساسية دلوقتي؟",h:"اختار حتى هدفين - الأهم"},
+{q:"بتنشر المحتوى بتاعك فين؟",h:"اختار كل اللي ينطبق"},
+{q:"مين هو جمهورك المستهدف؟",h:"اختار كل اللي ينطبق"},
+{q:"إيه السوق اللي بتركز عليه؟",h:"ده هيأثر على التوقيت والنبرة والمناسبات المحلية في الخطة"},
+{q:"عايز المحتوى يبقى بأنهي لغة؟",h:"الهوكات والكابشنات هتتكتب بيها"},
+{q:"كام تفصيل أخير",h:"النبرة، المواضيع، وأي عرض حالي - ده اللي هيخلي الخطة مخصصة مش عامة"}]},
+pillars:{en:["Authority","Social Proof","Behind Scenes","Offer","Entertainment"],ar:["سلطة","دليل اجتماعي","كواليس","عرض","ترفيه"]}
+};
+var PC=["#C4614B","#7A7D45","#D4964A","#2C1F17","#9A8A75"];
+var FMTS=["Reel","Carousel","Story","Reel","Post"];
+// Approximate 2026 occasion windows for UAE/KSA. Movable Islamic dates are estimates and should be reviewed yearly.
+var OCCASIONS=[
+{s:"2026-01-01",e:"2026-01-01",en:"New Year's Day",ar:"رأس السنة الميلادية",c:"both"},
+{s:"2026-02-18",e:"2026-03-19",en:"Ramadan",ar:"شهر رمضان",c:"both"},
+{s:"2026-02-22",e:"2026-02-22",en:"KSA Founding Day",ar:"يوم التأسيس السعودي",c:"KSA"},
+{s:"2026-03-20",e:"2026-03-22",en:"Eid al-Fitr",ar:"عيد الفطر",c:"both"},
+{s:"2026-05-27",e:"2026-05-30",en:"Eid al-Adha",ar:"عيد الأضحى",c:"both"},
+{s:"2026-08-25",e:"2026-09-05",en:"Back to School",ar:"العودة للمدارس",c:"both"},
+{s:"2026-09-23",e:"2026-09-23",en:"KSA National Day",ar:"اليوم الوطني السعودي",c:"KSA"},
+{s:"2026-11-26",e:"2026-11-30",en:"White/Black Friday",ar:"الجمعة البيضاء",c:"both"},
+{s:"2026-12-02",e:"2026-12-03",en:"UAE National Day",ar:"اليوم الوطني الإماراتي",c:"UAE"}
+];
+function findOccasion(dateStr,country){for(var i=0;i<OCCASIONS.length;i++){var o=OCCASIONS[i];if(o.c!=="both"&&o.c!==country)continue;if(dateStr>=o.s&&dateStr<=o.e)return o;}return null;}
+function dateForDay(dayNum){var d=new Date();d.setDate(d.getDate()+(dayNum-1));return d.toISOString().slice(0,10);}
+var S={lang:null,setupDone:false,companyName:"",companyLogo:"",accessCode:"",codeVerified:false,gateError:"",step:0,biz:"",goals:[],platforms:[],audience:[],country:"",cl:"",tone:"",topics:[],topicDraft:"",offer:"",desc:"",plan:null,loading:false,genPct:0,genMsg:"",error:""};
+function esc(s){return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
+function $id(id){return document.getElementById(id);}
+function isAR(){return S.lang==="ar";}
+function isValid(){
+if(S.step===0)return S.biz!=="";
+if(S.step===1)return S.goals.length>0;
+if(S.step===2)return S.platforms.length>0;
+if(S.step===3)return S.audience.length>0;
+if(S.step===4)return S.country!=="";
+if(S.step===5)return S.cl!=="";
+if(S.step===6)return S.tone!=="";
+return false;}
+function render(){var app=$id("app");app.setAttribute("dir",isAR()?"rtl":"ltr");if(!S.lang){renderLP(app);return;}if(!S.setupDone){renderSetup(app);return;}if(!S.codeVerified){renderGate(app);return;}if(S.plan){renderPlan(app);return;}renderQuiz(app);}
+function renderGate(app){var ar=isAR();app.innerHTML='<div class="gatewrap"><div class="gatet">'+(ar?"أدخل كود الدخول":"Enter your access code")+'</div><div class="gates">'+(ar?"الكود بتاعك وصلك مع عملية الشراء. كل كود بيولّد خطة واحدة.":"You received this code with your purchase. Each code generates one plan.")+'</div><input class="gateinput" id="gateInput" placeholder="'+(ar?"مثال: SARA-XXXX":"e.g. SARA-XXXX")+'" value="'+esc(S.accessCode)+'"><button class="btnn" id="gateBtn" style="width:100%;padding:11px" '+(S.gateChecking?"disabled":"")+'>'+(S.gateChecking?(ar?"جاري التحقق...":"Checking..."):(ar?"متابعة ←":"Continue →"))+'</button>'+(S.gateError?'<div class="errbox">'+esc(S.gateError)+'</div>':'')+'<div style="font-size:11px;color:#aaa;margin-top:16px">'+(ar?"محتاج كود؟ تواصل معانا بعد شراء الـ Toolkit.":"Need a code? Contact us after your Toolkit purchase.")+'</div></div>';
+var inp=$id("gateInput");inp.addEventListener("input",function(){S.accessCode=this.value.trim();});
+inp.addEventListener("keydown",function(e){if(e.key==="Enter")doGateSubmit();});
+$id("gateBtn").addEventListener("click",doGateSubmit);}
+async function doGateSubmit(){var ar=isAR();if(!S.accessCode){S.gateError=ar?"من فضلك اكتب الكود.":"Please enter a code.";render();return;}
+S.gateError="";S.gateChecking=true;render();
+try{var res=await fetch("/api/verify-code",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({code:S.accessCode})});var d=await res.json();S.gateChecking=false;
+if(d.valid){S.codeVerified=true;render();}
+else{S.gateError=d.error==="code_exhausted"?(ar?"الكود ده اتستخدم قبل كده.":"This code has already been used."):(ar?"الكود مش صحيح. تأكد منه وحاول تاني.":"That code isn't recognized. Please check it and try again.");render();}
+}catch(err){S.gateChecking=false;S.gateError=ar?"مشكلة في الاتصال. حاول تاني.":"Connection issue. Please try again.";render();}}
+function headerBrand(){var ar=isAR();var name=S.companyName?esc(S.companyName):(ar?"مولّد خطة المحتوى":"Content Plan Generator");var logo=S.companyLogo?'<img class="hlogo" src="'+S.companyLogo+'">':"";return'<div class="hbrand">'+logo+'<div><div class="hb">'+name+'</div><div class="hdev">'+(ar?"بواسطة Bricks &amp;co":"Developed by Bricks &amp;co")+'</div></div></div>';}
+function renderSetup(app){var ar=isAR();var logoImg=S.companyLogo?'<img src="'+S.companyLogo+'">':'<span style="font-size:20px;color:#ccc">+</span>';app.innerHTML='<div class="setupwrap"><div class="setupt">'+(ar?"جهّز أداتك":"Set up your tool")+'</div><div class="setups">'+(ar?"ضيف اسمك أو اسم البراند وشعارك عشان الخطة تطلع باسمك. اختياري - تقدر تتخطاه.":"Add your name/brand and logo so the plan is branded for you. Optional — you can skip this.")+'</div><div class="flabel">'+(ar?"اسم البراند أو اسمك":"Brand or your name")+'</div><input class="finput" id="cnInput" type="text" placeholder="'+(ar?"مثال: عيادة النور / سارة أحمد":"e.g. Clinic Name / Sara Ahmed")+'" value="'+esc(S.companyName)+'"><div class="flabel">'+(ar?"الشعار أو صورتك":"Logo or your photo")+'</div><div class="logorow"><div class="logoprev" id="logoPrev">'+logoImg+'</div><button class="logopick" id="logoPickBtn">'+(ar?"ارفع صورة":"Upload image")+'</button><input type="file" id="logoFile" accept="image/*" style="display:none"></div><div class="setupnav"><button class="btnb" id="skipSetup">'+(ar?"تخطي":"Skip")+'</button><button class="btnn" id="contSetup">'+(ar?"متابعة ←":"Continue →")+'</button></div></div>';
+var cn=$id("cnInput");cn.addEventListener("input",function(){S.companyName=this.value;});
+var pickBtn=$id("logoPickBtn");var fileInp=$id("logoFile");pickBtn.addEventListener("click",function(){fileInp.click();});
+fileInp.addEventListener("change",function(){var f=this.files[0];if(!f)return;var reader=new FileReader();reader.onload=function(e){S.companyLogo=e.target.result;var prev=$id("logoPrev");prev.innerHTML='<img src="'+S.companyLogo+'">';};reader.readAsDataURL(f);});
+$id("skipSetup").addEventListener("click",function(){S.setupDone=true;render();});
+$id("contSetup").addEventListener("click",function(){S.setupDone=true;render();});}
+function renderLP(app){app.innerHTML='<div class="lp"><div style="font-size:11px;color:#C4614B;font-weight:600;letter-spacing:1px;margin-bottom:5px">Bricks &amp;co</div><div style="font-size:20px;font-weight:600;color:#2C1F17;margin-bottom:5px">Content Plan Generator</div><div style="font-size:13px;color:#888;margin-bottom:4px">For businesses and content creators — get a full 30-day content plan</div><div style="font-size:13px;color:#888">Choose your language / اختار لغتك</div><div class="lpc"><button class="lpcbtn" id="btnEN"><div class="lpcbtn-m">English</div><div class="lpcbtn-s">Left to right</div></button><button class="lpcbtn" id="btnAR"><div class="lpcbtn-m">العربية</div><div class="lpcbtn-s">من اليمين لليسار</div></button></div></div>';$id("btnEN").addEventListener("click",function(){S.lang="en";render();});$id("btnAR").addEventListener("click",function(){S.lang="ar";render();});}
+function renderQuiz(app){var ar=isAR();var q=DATA.questions[S.lang][S.step];var totalSteps=7;var pct=Math.round((S.step/totalSteps)*100);var ok=isValid();var isLast=S.step===6;var genTxt=ar?"ولّد خطة المحتوى":"Generate 30-Day Plan";app.innerHTML='<div class="hdr">'+headerBrand()+'<button class="hbtn" id="chgBtn">'+(ar?"غيّر اللغة":"Change language")+'</button></div><div class="body"><div class="pr"><span class="pl">'+(ar?("الخطوة "+(S.step+1)+" من "+totalSteps):("Step "+(S.step+1)+" of "+totalSteps))+'</span><span class="pp">'+pct+'%</span></div><div class="pbar"><div class="pfill" style="width:'+pct+'%"></div></div><div class="qt">'+esc(q.q)+'</div><div class="qh">'+esc(q.h)+'</div><div id="sc"></div><div class="nav">'+(S.step>0?'<button class="btnb" id="backBtn">'+(ar?"السابق":"Back")+'</button>':'<span></span>')+(!isLast?'<button class="btnn" id="nextBtn" '+(ok?'':'disabled')+'>'+(ar?"التالي ←":"Next →")+'</button>':'<button class="btng" id="genBtn" '+((ok&&!S.loading)?'':'disabled')+'>'+(S.loading?'<span class="spin"></span><span>'+esc(S.genMsg)+'</span>':'<span>'+genTxt+'</span>')+'</button>')+'</div>'+(S.loading?'<div class="gprog"><div class="gptext">'+esc(S.genMsg)+'</div><div class="gpbar"><div class="gpfill" style="width:'+S.genPct+'%"></div></div></div>':'')+(S.error?'<div class="errbox">'+esc(S.error)+'</div>':'')+'</div>';
+var chg=$id("chgBtn");if(chg)chg.addEventListener("click",function(){S.lang=null;render();});
+var back=$id("backBtn");if(back)back.addEventListener("click",function(){S.step--;render();});
+var next=$id("nextBtn");if(next)next.addEventListener("click",function(){if(isValid()){S.step++;render();}});
+var gen=$id("genBtn");if(gen)gen.addEventListener("click",function(){doGenerate();});
+buildStep();}
+function renderTags(){var ar=isAR();var html='<div class="tagwrap" id="tagwrap">';S.topics.forEach(function(t,i){html+='<span class="tag">'+esc(t)+'<span class="tagx" data-i="'+i+'">×</span></span>';});html+='</div><input class="taginput" id="topicInput" placeholder="'+(ar?"اكتب موضوع أو خدمة واضغط Enter (لحد 5)":"Type a topic or service and press Enter (up to 5)")+'" value="'+esc(S.topicDraft)+'">';return html;}
+function buildStep(){var sc=$id("sc");if(!sc)return;var ar=isAR();var s=S.step;var html="";
+if(s===0){html='<div class="g2">';DATA.bizTypes[S.lang].forEach(function(b,i){html+='<button class="ob'+(S.biz===b?" sel":"")+'" data-idx="'+i+'" data-type="biz">'+esc(b)+'</button>';});html+='</div>';}
+else if(s===1){html='<div class="gcol">';DATA.goals[S.lang].forEach(function(g,i){var sel=S.goals.indexOf(g)>=0;var atCap=S.goals.length>=2&&!sel;html+='<button class="ob'+(sel?" sel":"")+(atCap?" dis":"")+'" data-idx="'+i+'" data-type="goal">'+(sel?"✓ ":"")+esc(g)+'</button>';});html+='</div>';html+='<div class="selc">'+S.goals.length+'/2 '+(ar?"مختارة":"selected")+'</div>';}
+else if(s===2){html='<div class="g3">';DATA.platforms[S.lang].forEach(function(p,i){html+='<button class="ob'+(S.platforms.indexOf(p)>=0?" sel":"")+'" data-idx="'+i+'" data-type="plt">'+esc(p)+'</button>';});html+='</div>';if(S.platforms.length>0)html+='<div class="selc">'+S.platforms.length+' '+(ar?"محددة":"selected")+'</div>';}
+else if(s===3){html='<div class="g2">';DATA.audience[S.lang].forEach(function(a,i){var sel=S.audience.indexOf(a)>=0;html+='<button class="ob'+(sel?" sel":"")+'" data-idx="'+i+'" data-type="aud">'+(sel?"✓ ":"")+esc(a)+'</button>';});html+='</div>';if(S.audience.length>0)html+='<div class="selc">'+S.audience.length+' '+(ar?"فئة":"selected")+'</div>';}
+else if(s===4){html='<div class="g2">';DATA.countries[S.lang].forEach(function(c,i){html+='<button class="ob'+(S.country===c?" sel":"")+'" data-idx="'+i+'" data-type="country">'+esc(c)+'</button>';});html+='</div>';}
+else if(s===5){DATA.contentLangs[S.lang].forEach(function(c,i){html+='<button class="lo'+(S.cl===c.v?" sel":"")+'" data-idx="'+i+'" data-type="cl"><div class="lo-t">'+esc(c.l)+'</div><div class="lo-s">'+esc(c.s)+'</div></button>';});}
+else if(s===6){
+html+='<div class="fieldlbl">'+(ar?"إيه نبرة المحتوى؟":"What tone should the content have?")+'</div><div class="g2">';DATA.tones[S.lang].forEach(function(t,i){html+='<button class="ob'+(S.tone===t?" sel":"")+'" data-idx="'+i+'" data-type="tone">'+esc(t)+'</button>';});html+='</div>';
+html+='<div class="fieldlbl">'+(ar?"مواضيع أو خدمات تحب تركز عليها":"Topics or services to focus on")+'</div><div class="fieldhint">'+(ar?"اختياري - كل ما كتبت أكتر، الخطة تبقى أدق":"Optional — the more specific, the sharper the plan")+'</div>'+renderTags();
+html+='<div class="fieldlbl">'+(ar?"في عرض أو خصم حالي؟":"Any current offer or promotion?")+'</div><div class="fieldhint">'+(ar?"اختياري - هنربطه بأيام العروض في الخطة":"Optional — we\'ll weave it into the offer days")+'</div><input class="finput" id="offerInput" style="margin-bottom:12px" placeholder="'+(ar?"مثال: خصم 20% لأول 10 عملاء":"e.g. 20% off for first 10 customers")+'" value="'+esc(S.offer)+'">';
+var ph=ar?"مثال: عيادة تجميل في دبي. بنستهدف نساء 25-45.":"Example: Aesthetic clinic in Dubai targeting women 25–45.";
+html+='<div class="fieldlbl">'+(ar?"اوصف بزنسك أو نفسك باختصار":"Describe your business or yourself briefly")+'</div><textarea class="dta" id="dta" placeholder="'+esc(ph)+'">'+esc(S.desc)+'</textarea><div class="cc" id="cc">'+S.desc.length+' '+(ar?"حرف":"chars")+'</div>';
+}
+sc.innerHTML=html;
+sc.addEventListener("click",function(e){
+var btn=e.target.closest("button");
+var tx=e.target.closest(".tagx");
+if(tx){var i=parseInt(tx.getAttribute("data-i"));S.topics.splice(i,1);render();return;}
+if(!btn)return;var type=btn.getAttribute("data-type");var idx=parseInt(btn.getAttribute("data-idx"));if(isNaN(idx))return;
+if(type==="biz"){S.biz=DATA.bizTypes[S.lang][idx];render();}
+else if(type==="goal"){var g=DATA.goals[S.lang][idx];var gi=S.goals.indexOf(g);if(gi>=0){S.goals.splice(gi,1);render();}else if(S.goals.length<2){S.goals.push(g);render();}}
+else if(type==="plt"){var p=DATA.platforms[S.lang][idx];var pi=S.platforms.indexOf(p);if(pi>=0)S.platforms.splice(pi,1);else S.platforms.push(p);render();}
+else if(type==="aud"){var a=DATA.audience[S.lang][idx];var ai=S.audience.indexOf(a);if(ai>=0)S.audience.splice(ai,1);else S.audience.push(a);render();}
+else if(type==="country"){S.country=DATA.countries[S.lang][idx];render();}
+else if(type==="cl"){S.cl=DATA.contentLangs[S.lang][idx].v;render();}
+else if(type==="tone"){S.tone=DATA.tones[S.lang][idx];render();}
+});
+var ta=$id("dta");if(ta){ta.style.direction=ar?"rtl":"ltr";ta.style.textAlign=ar?"right":"left";ta.addEventListener("input",function(){S.desc=this.value;var cc=$id("cc");if(cc)cc.textContent=this.value.length+(ar?" حرف":" chars");});}
+var offerInp=$id("offerInput");if(offerInp){offerInp.style.direction=ar?"rtl":"ltr";offerInp.addEventListener("input",function(){S.offer=this.value;});}
+var topicInp=$id("topicInput");if(topicInp){topicInp.style.direction=ar?"rtl":"ltr";topicInp.addEventListener("input",function(){S.topicDraft=this.value;});topicInp.addEventListener("keydown",function(e){if(e.key==="Enter"||e.key===","){e.preventDefault();var v=this.value.trim().replace(/,$/,"");if(v&&S.topics.length<5&&S.topics.indexOf(v)<0){S.topics.push(v);S.topicDraft="";render();}}});}
+}
+function getLangInstr(){if(S.cl==="Gulf Arabic")return"Gulf Arabic خليجي — casual, warm, exactly how Gulf people talk.";if(S.cl==="Neutral Arabic")return"Neutral Arabic — clear modern Arabic any Arab understands, no dialect.";if(S.cl==="Arabic+English")return"Neutral Arabic with natural English keywords.";return"Natural English for the Gulf/MENA market.";}
+function parsePlainText(text,startDay,count){var days=[];var blocks=text.split(/---+/);for(var bi=0;bi<blocks.length;bi++){var block=blocks[bi].trim();if(!block)continue;var lines=block.split(/\n/);var obj={day:startDay+days.length,format:"Reel",hook:"",caption:"",visual:"",time:"",hashtags:"",cta:""};for(var li=0;li<lines.length;li++){var line=lines[li].trim();var sep=line.indexOf(":");if(sep<0)continue;var key=line.slice(0,sep).trim().toUpperCase();var val=line.slice(sep+1).trim();if(key==="DAY"){var n=parseInt(val);if(!isNaN(n))obj.day=n;}else if(key==="FORMAT")obj.format=val;else if(key==="HOOK")obj.hook=val;else if(key==="CAPTION")obj.caption=val;else if(key==="VISUAL")obj.visual=val;else if(key==="TIME")obj.time=val;else if(key==="HASHTAGS")obj.hashtags=val;else if(key==="CTA")obj.cta=val;}if(obj.hook||obj.caption)days.push(obj);}if(days.length===0){for(var i=0;i<count;i++){var d=startDay+i;days.push({day:d,format:FMTS[(d-1)%5],hook:"Content for day "+d,caption:"Post for your "+S.biz,visual:"",time:"",hashtags:"",cta:"Follow for more"});}}return days;}
+function makePrompt(startDay,count){var pm=["Authority/Education","Social Proof","Behind the Scenes","Offer/CTA","Entertainment"];var dl=[];for(var i=0;i<count;i++){var d=startDay+i;var occ=findOccasion(dateForDay(d),S.country);var occNote=occ?(" [Near "+occ.en+" — reference it naturally if it fits]"):"";dl.push("Day "+d+" = "+pm[(d-1)%5]+", Format = "+FMTS[(d-1)%5]+occNote);}
+var topicsLine=S.topics.length?("Focus topics/services: "+S.topics.join(", ")+"\n"):"";
+var offerLine=S.offer?("Current offer to weave into Offer-pillar days: "+S.offer+"\n"):"";
+return"Social media strategist for the "+S.country+" market (Gulf/MENA).\nLanguage: "+getLangInstr()+"\nTone: "+S.tone+"\nProfile type: "+S.biz+" | Goals: "+S.goals.join(", ")+" | Audience: "+S.audience.slice(0,3).join(", ")+"\n"+topicsLine+offerLine+"Info: "+S.desc.slice(0,150)+"\n\nWrite content for:\n"+dl.join("\n")+"\n\nUse EXACTLY this format per day:\nDAY:[number]\nFORMAT:[Reel or Carousel or Story or Post]\nHOOK:[punchy, max 12 words, specific to this profile]\nCAPTION:[full ready-to-post caption, 2-4 sentences, matches the tone]\nVISUAL:[one line shot/visual direction]\nTIME:[best posting time, e.g. 7:00 PM Gulf time]\nHASHTAGS:[4-5 hashtags, mix of broad and niche, no # spam]\nCTA:[action, max 8 words]\n---\n\nAll "+count+" days. No JSON. No markdown. Nothing else.";}
+async function callAPI(prompt,tok){var res=await fetch("/api/generate",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({code:S.accessCode,prompt:prompt,max_tokens:tok||900})});var d=await res.json().catch(function(){return{};});if(!res.ok){var e=new Error(d.message||("HTTP "+res.status));e.code=d.error;throw e;}return d.text||"";}
+async function doGenerate(){if(S.loading)return;S.loading=true;S.error="";S.genPct=0;var ar=isAR();var allDays=[];
+// Batched into 3 calls of 10 days instead of 6 calls of 5 — fewer total API calls per generation to reduce cost exposure.
+var starts=[1,11,21];var batchSize=10;
+try{
+for(var ci=0;ci<starts.length;ci++){var start=starts[ci];S.genMsg=ar?("جاري توليد الأيام "+start+"–"+(start+batchSize-1)+"..."):("Generating days "+start+"–"+(start+batchSize-1)+" of 30...");S.genPct=Math.round((ci/4)*80);render();var raw=await callAPI(makePrompt(start,batchSize),2000);allDays=allDays.concat(parsePlainText(raw,start,batchSize));}
+S.genMsg=ar?"جاري إعداد نصايح النمو...":"Preparing your growth advice...";S.genPct=90;render();
+var advPrompt="You are a senior social media growth advisor for the "+S.country+" market.\nProfile: "+S.biz+" | Goals: "+S.goals.join(", ")+" | Platforms: "+S.platforms.join(", ")+" | Tone: "+S.tone+"\nInfo: "+S.desc.slice(0,150)+"\n\nWrite in "+S.cl+" language.\nGive:\nSUMMARY:[2-sentence content strategy summary]\nTHEME1:[short theme]\nTHEME2:[short theme]\nTHEME3:[short theme]\nADVISOR1:[one concrete recommendation about posting consistency/frequency]\nADVISOR2:[one concrete recommendation about engaging with comments/DMs to drive real growth]\nADVISOR3:[one concrete recommendation specific to their goal and platform]\nADVISOR4:[one concrete recommendation about tracking results after 30 days]\n\nEach ADVISOR line max 20 words, direct and actionable, no fluff.";
+var sr=await callAPI(advPrompt,500);
+var summary=ar?"خطتك جاهزة.":"Your 30-day plan is ready.";var themes=ar?["سلطة","تفاعل","تحويل"]:["Authority","Engagement","Conversion"];
+var advisor=ar?["انشر بانتظام حسب الجدول - الثبات أهم من الكمال.","رد على كل تعليق ورسالة في أول ساعة - ده اللي بيبني علاقة حقيقية.","ركز على المحتوى اللي بيحقق هدفك الأساسي أكتر من غيره.","راجع الأداء بعد 30 يوم وشوف إيه اللي شغال فعلاً."]:["Post on schedule consistently — consistency beats perfection.","Reply to every comment and DM within the first hour to build real connection.","Double down on the content type that serves your primary goal.","Review performance after 30 days and double down on what actually worked."];
+sr.split("\n").forEach(function(line){var sep=line.indexOf(":");if(sep<0)return;var k=line.slice(0,sep).trim().toUpperCase();var v=line.slice(sep+1).trim();if(k==="SUMMARY")summary=v;else if(k==="THEME1")themes[0]=v;else if(k==="THEME2")themes[1]=v;else if(k==="THEME3")themes[2]=v;else if(k==="ADVISOR1")advisor[0]=v;else if(k==="ADVISOR2")advisor[1]=v;else if(k==="ADVISOR3")advisor[2]=v;else if(k==="ADVISOR4")advisor[3]=v;});
+S.genPct=100;render();await new Promise(function(res){setTimeout(res,200);});
+allDays.sort(function(a,b){return a.day-b.day;});
+S.plan={summary:summary,keyThemes:themes,advisor:advisor,days:allDays};S.loading=false;render();
+}catch(err){S.loading=false;if(err.code==="code_exhausted"||err.code==="invalid_code"){S.codeVerified=false;S.gateError=err.message;}else{S.error=ar?("خطأ: "+err.message+". حاول تاني."):("Error: "+err.message+". Please try again.");}render();}}
+function planAsText(p){var ar=isAR();var lines=[];lines.push((S.companyName||"Bricks &co")+" — "+(ar?"خطة المحتوى لـ 30 يوم":"30-Day Content Plan"));lines.push("");lines.push(p.summary);lines.push("");
+lines.push((ar?"نصايح النمو":"Growth Advisor")+":");(p.advisor||[]).forEach(function(a){lines.push("- "+a);});lines.push("");
+(p.days||[]).forEach(function(d){lines.push((ar?"اليوم ":"Day ")+d.day+" ("+d.format+")");lines.push((ar?"الهوك: ":"Hook: ")+d.hook);lines.push((ar?"الكابشن: ":"Caption: ")+d.caption);if(d.visual)lines.push((ar?"الفيجوال: ":"Visual: ")+d.visual);if(d.time)lines.push((ar?"وقت النشر: ":"Best time: ")+d.time);if(d.hashtags)lines.push((ar?"الهاشتاجات: ":"Hashtags: ")+d.hashtags);lines.push((ar?"الـ CTA: ":"CTA: ")+d.cta);lines.push("");});
+return lines.join("\n");}
+function downloadPlan(){var txt=planAsText(S.plan);var blob=new Blob([txt],{type:"text/plain;charset=utf-8"});var url=URL.createObjectURL(blob);var a=document.createElement("a");a.href=url;a.download=(S.companyName||"bricks")+"-content-plan.txt";document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);}
+function renderPlan(app){var ar=isAR();var p=S.plan;var isRTL=ar;var dL=ar?"اليوم":"Day";var hL=ar?"الهوك":"HOOK";var iL=ar?"الكابشن":"CAPTION";var vL=ar?"الفيجوال":"VISUAL";var tmL=ar?"وقت النشر":"BEST TIME";var hsL=ar?"الهاشتاجات":"HASHTAGS";var cL=ar?"الـ CTA":"CTA";var cpL=ar?"نسخ":"Copy";var wL=ar?"الأسبوع":"WEEK";
+var advHTML='<div class="advcard"><div class="advt">🧭 '+(ar?"نصايح لتحقيق أفضل نتيجة":"Advisor — How to Get Real Growth From This Plan")+'</div><div class="advsub">'+(ar?"اتبع النصايح دي جنب الخطة عشان تحقق نتيجة حقيقية":"Follow these alongside the plan for it to actually move the needle")+'</div>'+(p.advisor||[]).map(function(a){return'<div class="advitem'+(isRTL?" rtl":"")+'">'+esc(a)+'</div>';}).join("")+'</div>';
+var wHTML="";for(var w=1;w<=4;w++){var wd=(p.days||[]).filter(function(d){return d.day>=(w-1)*7+1&&d.day<=w*7;});var dh=wd.map(function(d){var pi=(d.day-1)%5;var pc=PC[pi];var lb=isRTL?("border-right:3px solid "+pc+";border-left:none"):("border-left:3px solid "+pc+";border-right:none");var occ=findOccasion(dateForDay(d.day),S.country);var occHtml=occ?('<div class="foccasion">'+(ar?"قريب من: ":"Near: ")+esc(ar?occ.ar:occ.en)+'</div>'):"";
+return'<div class="dcard" style="'+lb+'"><div class="dtop"><div class="dmeta"><span class="dnum" style="color:'+pc+'">'+dL+' '+d.day+'</span><span class="dpill" style="background:'+pc+'22;color:'+pc+'">'+DATA.pillars[S.lang][pi]+'</span>'+(d.format?'<span class="dpill" style="background:#D4964A22;color:#D4964A">'+esc(d.format)+'</span>':'')+'</div><button class="cpbtn" data-day="'+d.day+'">'+cpL+'</button></div>'+occHtml+'<div class="flbl" style="color:'+pc+'">'+hL+'</div><div class="fhook" style="text-align:'+(isRTL?"right":"left")+'">'+esc(d.hook)+'</div><div class="fdiv"></div><div class="flbl" style="color:#7A7D45">'+iL+'</div><div class="fval" style="text-align:'+(isRTL?"right":"left")+'">'+esc(d.caption)+'</div>'+(d.visual?'<div class="fdiv"></div><div class="flbl" style="color:#9A8A75">'+vL+'</div><div class="fval" style="text-align:'+(isRTL?"right":"left")+'">'+esc(d.visual)+'</div>':'')+(d.time?'<div class="fdiv"></div><div class="flbl" style="color:#9A8A75">'+tmL+'</div><div class="fval" style="text-align:'+(isRTL?"right":"left")+'">'+esc(d.time)+'</div>':'')+'<div class="fdiv"></div><div class="flbl" style="color:#D4964A">'+cL+'</div><div class="fval" style="text-align:'+(isRTL?"right":"left")+'">'+esc(d.cta)+'</div>'+(d.hashtags?'<div class="fdiv"></div><div class="flbl" style="color:#9A8A75">'+hsL+'</div><div class="fhash" style="text-align:'+(isRTL?"right":"left")+'">'+esc(d.hashtags)+'</div>':'')+'</div>';}).join("");wHTML+='<div class="wklbl">'+wL+' '+w+' — '+(ar?("اليوم "+((w-1)*7+1)+"–"+(w*7)):("Days "+((w-1)*7+1)+"–"+(w*7)))+'</div><div class="wkblk">'+dh+'</div>';}
+var tc=["#C4614B","#D4964A","#7A7D45"];var tpills=(p.keyThemes||[]).map(function(t,i){return'<span class="pill" style="background:'+tc[i%3]+'33;color:'+tc[i%3]+'">'+esc(t)+'</span>';}).join("");
+app.innerHTML='<div><div class="phdr">'+headerBrand()+'<button class="hbtn" id="npBtn">'+(ar?"خطة جديدة":"New plan")+'</button></div><div class="pbody">'+advHTML+'<div class="sumcard"><div class="sumt">'+(ar?"خطة المحتوى لـ 30 يوم":"Your 30-Day Content Plan")+'</div><div class="sums" style="text-align:'+(isRTL?"right":"left")+'">'+esc(p.summary)+'</div><div class="pills">'+tpills+'</div></div><div class="dlrow"><button class="dlbtn" id="dlBtn">'+(ar?"⬇ نزّل الخطة كاملة":"⬇ Download full plan")+'</button></div>'+wHTML+'<div class="ctabox"><div class="ctat">🚀 '+(ar?"رقّي لباقة استشارة (جلستين) — 99$":"Upgrade to a Consultation package (2 sessions) — $99 (standard $199)")+'</div><div class="ctas">'+(ar?"شراء الـ Toolkit بـ 59$ يخليك مؤهل للترقية. جلستين، 45-60 دقيقة، مراجعة مباشرة لاستراتيجيتك وتقييم تقدمك.":"Your $59 toolkit purchase makes you eligible. 2 sessions, 45–60 min each — live strategy audit plus a progress check.")+'</div></div></div></div>';
+var np=$id("npBtn");if(np)np.addEventListener("click",function(){S={lang:S.lang,setupDone:S.setupDone,companyName:S.companyName,companyLogo:S.companyLogo,step:0,biz:"",goals:[],platforms:[],audience:[],country:"",cl:"",tone:"",topics:[],topicDraft:"",offer:"",desc:"",plan:null,loading:false,genPct:0,genMsg:"",error:""};render();});
+var dl=$id("dlBtn");if(dl)dl.addEventListener("click",downloadPlan);
+app.addEventListener("click",function(e){var btn=e.target.closest(".cpbtn");if(!btn)return;var day=parseInt(btn.getAttribute("data-day"));var d=(p.days||[]).find(function(x){return x.day===day;});if(!d)return;var txt=(d.hook||"")+"\n\n"+(d.caption||"")+"\n\n"+(d.hashtags||"")+"\n\n"+(d.cta||"");navigator.clipboard.writeText(txt).then(function(){btn.textContent="✓";btn.classList.add("ok");setTimeout(function(){btn.textContent=ar?"نسخ":"Copy";btn.classList.remove("ok");},2000);}).catch(function(){});});}
+render();
+</script>
+</body>
+</html>
