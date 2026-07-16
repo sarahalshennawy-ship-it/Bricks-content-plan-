@@ -1,0 +1,1062 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bricks Growth Blueprint</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --primary: #1a1a1a;
+            --accent: #ff6b35;
+            --accent-dark: #d84315;
+            --success: #00b894;
+            --warning: #ffa502;
+            --danger: #ff4757;
+            --sage: #7a8f8f;
+            --bg: #f0f4f8;
+            --white: #ffffff;
+            --card-bg: #fafbfc;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: var(--primary);
+            line-height: 1.6;
+        }
+        
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            padding: 20px 0;
+        }
+        
+        .logo { font-size: 28px; font-weight: 800; letter-spacing: 3px; color: var(--white); }
+        
+        .screen { display: none; }
+        .screen.active { display: block; }
+        
+        /* Landing */
+        .landing { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; min-height: 85vh; }
+        .landing-content { color: var(--white); }
+        .landing-content h1 { font-size: 56px; font-weight: 800; margin-bottom: 30px; line-height: 1.2; }
+        .landing-content .accent { color: #ffd700; }
+        .landing-content p { font-size: 18px; color: rgba(255,255,255,0.9); margin-bottom: 20px; }
+        
+        .form-container { background: var(--white); padding: 45px; border-radius: 16px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+        .form-container h2 { font-size: 28px; margin-bottom: 30px; color: var(--primary); }
+        .form-group { margin-bottom: 22px; }
+        .form-group label { display: block; margin-bottom: 10px; font-weight: 600; font-size: 14px; color: var(--primary); }
+        .form-group input { width: 100%; padding: 14px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 14px; transition: all 0.3s; }
+        .form-group input:focus { border-color: var(--accent); outline: none; box-shadow: 0 0 0 3px rgba(255,107,53,0.1); }
+        
+        .phone-group { display: grid; grid-template-columns: 150px 1fr; gap: 12px; }
+        
+        .country-select-wrapper {
+            position: relative;
+            width: 150px;
+        }
+        
+        .country-search-input {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .country-search-input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(255,107,53,0.1);
+        }
+        
+        .country-dropdown {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: var(--white);
+            border: 2px solid var(--accent);
+            border-radius: 8px;
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 1000;
+            margin-top: 6px;
+            box-shadow: 0 10px 30px rgba(255,107,53,0.15);
+        }
+        
+        .country-dropdown.active { display: block; }
+        
+        .country-option {
+            padding: 12px 16px;
+            cursor: pointer;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        
+        .country-option:hover {
+            background-color: rgba(255,107,53,0.05);
+            color: var(--accent);
+            padding-left: 20px;
+        }
+        
+        .btn {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
+            color: var(--white);
+            width: 100%;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(255,107,53,0.3); }
+        .btn:disabled { background: #ccc; cursor: not-allowed; }
+        
+        /* Intro Questions */
+        .intro-container { max-width: 900px; margin: 0 auto; background: var(--white); padding: 50px; border-radius: 16px; }
+        .intro-container h2 { font-size: 32px; margin-bottom: 15px; color: var(--primary); }
+        .intro-container > p { color: var(--sage); margin-bottom: 50px; font-size: 16px; }
+        .intro-group { margin-bottom: 45px; }
+        .intro-group label { display: block; margin-bottom: 20px; font-weight: 700; font-size: 16px; color: var(--primary); }
+        .intro-options { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .intro-option { 
+            padding: 20px; 
+            border: 2px solid #e0e0e0; 
+            border-radius: 10px; 
+            cursor: pointer; 
+            text-align: center;
+            transition: all 0.3s;
+            background: var(--white);
+        }
+        .intro-option:hover { border-color: var(--accent); transform: translateY(-3px); }
+        .intro-option.selected { border-color: var(--accent); background: rgba(255,107,53,0.08); color: var(--accent); }
+        .intro-option input { display: none; }
+        
+        /* Assessment */
+        .assessment { max-width: 900px; margin: 0 auto; background: var(--white); padding: 50px; border-radius: 16px; }
+        .assessment h2 { font-size: 32px; margin-bottom: 15px; color: var(--primary); }
+        .question-block { margin-bottom: 40px; }
+        .question-block h3 { font-size: 18px; font-weight: 700; margin-bottom: 25px; color: var(--primary); }
+        .options { display: flex; flex-direction: column; gap: 12px; }
+        .option { 
+            display: flex; 
+            align-items: flex-start; 
+            padding: 16px; 
+            background: var(--card-bg); 
+            border-radius: 8px; 
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .option:hover { border-color: var(--accent); background: rgba(255,107,53,0.05); transform: translateX(4px); }
+        .option.selected { border-color: var(--accent); background: rgba(255,107,53,0.1); }
+        .option input { margin-right: 14px; margin-top: 3px; cursor: pointer; accent-color: var(--accent); }
+        .option label { cursor: pointer; flex: 1; font-weight: 500; }
+        
+        .nav-buttons { display: flex; gap: 15px; margin-top: 50px; }
+        .nav-buttons button { flex: 1; padding: 14px; }
+        
+        .btn-secondary { background: transparent; color: var(--accent); border: 2px solid var(--accent); }
+        .btn-secondary:hover { background: rgba(255,107,53,0.1); }
+        
+        /* Dashboard */
+        .dashboard { max-width: 1200px; margin: 0 auto; }
+        .dashboard h1 { font-size: 42px; font-weight: 800; color: var(--white); margin-bottom: 10px; }
+        .dashboard-subtitle { color: rgba(255,255,255,0.9); font-size: 18px; margin-bottom: 50px; }
+        
+        .score-card {
+            background: var(--white);
+            padding: 40px;
+            border-radius: 16px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            border-left: 6px solid var(--accent);
+        }
+        
+        .score-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 30px;
+        }
+        
+        .score-title h2 { font-size: 28px; font-weight: 800; color: var(--primary); margin-bottom: 8px; }
+        .score-title p { color: var(--sage); font-size: 14px; }
+        
+        .big-score {
+            font-size: 72px;
+            font-weight: 900;
+            color: var(--accent);
+            line-height: 1;
+        }
+        
+        .score-label { font-size: 12px; color: var(--sage); font-weight: 600; margin-top: 5px; }
+        
+        .progress-bar {
+            width: 100%;
+            height: 12px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 25px;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent) 0%, #ff8a50 100%);
+            transition: width 0.3s ease;
+        }
+        
+        .problem-box {
+            background: linear-gradient(135deg, #ffe5e5 0%, #ffe0e0 100%);
+            border-left: 4px solid var(--danger);
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .problem-box h4 { color: var(--danger); font-size: 16px; font-weight: 700; margin-bottom: 10px; }
+        .problem-box p { color: #333; font-size: 14px; line-height: 1.6; }
+        
+        .solution-box {
+            background: linear-gradient(135deg, #e5f5ff 0%, #e0f2ff 100%);
+            border-left: 4px solid var(--success);
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .solution-box h4 { color: var(--success); font-size: 16px; font-weight: 700; margin-bottom: 10px; }
+        .solution-box ul { margin-left: 20px; }
+        .solution-box li { color: #333; font-size: 14px; margin-bottom: 8px; line-height: 1.6; }
+        
+        .upsell {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 50px;
+        }
+        
+        .package {
+            background: var(--white);
+            padding: 40px;
+            border-radius: 16px;
+            border: 2px solid #e0e0e0;
+            transition: all 0.3s;
+            position: relative;
+        }
+        
+        .package:hover {
+            border-color: var(--accent);
+            transform: translateY(-10px);
+            box-shadow: 0 20px 50px rgba(255,107,53,0.2);
+        }
+        
+        .package.premium {
+            border-color: var(--accent);
+            background: linear-gradient(135deg, rgba(255,107,53,0.05) 0%, rgba(255,107,53,0.02) 100%);
+        }
+        
+        .premium-badge {
+            position: absolute;
+            top: -15px;
+            right: 20px;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
+            color: var(--white);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .package h4 { font-size: 24px; font-weight: 800; margin-bottom: 15px; color: var(--primary); }
+        .package-price { 
+            font-size: 48px; 
+            font-weight: 900; 
+            color: var(--accent); 
+            margin-bottom: 10px;
+        }
+        
+        .package-period { color: var(--sage); font-size: 14px; margin-bottom: 30px; }
+        .package ul { margin-left: 0; }
+        .package li { 
+            color: var(--primary); 
+            font-size: 14px; 
+            margin-bottom: 12px; 
+            line-height: 1.8;
+            padding-left: 24px;
+            position: relative;
+        }
+        
+        .package li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--success);
+            font-weight: 800;
+        }
+        
+        .package .btn { margin-top: 30px; }
+        
+        @media (max-width: 768px) {
+            .landing { grid-template-columns: 1fr; gap: 40px; }
+            .upsell { grid-template-columns: 1fr; }
+            .intro-options { grid-template-columns: 1fr; }
+            .score-header { flex-direction: column; }
+            .big-score { font-size: 48px; }
+        }
+        [dir="rtl"] .solution-box ul,[dir="rtl"] .problem-box ul{margin-left:0;margin-right:20px}
+        [dir="rtl"] .package ul{margin-left:0;margin-right:0;padding-right:24px;padding-left:0}
+        [dir="rtl"] .option input{margin-right:0;margin-left:14px}
+        [dir="rtl"] body{font-family:'Segoe UI',Tahoma,Arial,sans-serif}
+        .lang-screen{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;color:#fff;padding:20px}
+        .lang-title{font-size:26px;font-weight:800;margin-bottom:30px}
+        .lang-opts{display:flex;gap:16px}
+        .lang-btn{padding:22px 34px;border-radius:14px;border:2px solid rgba(255,255,255,0.35);background:rgba(255,255,255,0.08);color:#fff;font-size:18px;font-weight:700;cursor:pointer;transition:all 0.15s}
+        .lang-btn:hover{background:rgba(255,255,255,0.2);border-color:#fff}
+        .langtoggle{position:absolute;top:20px;inset-inline-end:20px;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);color:#fff;border-radius:8px;padding:6px 12px;font-size:12px;cursor:pointer}
+    </style>
+</head>
+<body>
+    <div class="container" style="position:relative">
+        <button class="langtoggle" id="langToggleBtn" style="display:none" onclick="switchLang()"></button>
+        <header>
+            <img src="BRICKS_LOGO.png" alt="Bricks & Co" style="height: 80px; object-fit: contain;">
+        </header>
+
+        <!-- Language Selection -->
+        <div id="lang-screen" class="screen active">
+            <div class="lang-screen">
+                <div class="lang-title">Choose your language / اختار لغتك</div>
+                <div class="lang-opts">
+                    <button class="lang-btn" onclick="selectLang('en')">English</button>
+                    <button class="lang-btn" onclick="selectLang('ar')">العربية</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sign Up Page -->
+        <div id="signup-screen" class="screen">
+            <div class="landing">
+                <div class="landing-content">
+                    <h1 id="txtHeadline">Stop Losing Money To <span class="accent" id="txtHeadlineAccent">Broken Systems</span></h1>
+                    <p id="txtSubtitle">Most entrepreneurs are hemorrhaging cash because they don't have proper systems. In 10 minutes, we'll show you exactly where you're bleeding and how to stop it.</p>
+                    <p id="txtTrust" style="margin-top: 40px; font-size: 16px; color: rgba(255,255,255,0.8);"><strong>✓ Free diagnostic</strong> • <strong>No credit card</strong> • <strong>Instant results</strong></p>
+                </div>
+
+                <div class="form-container">
+                    <h2 id="txtFormTitle">Your Free Diagnostic</h2>
+                    <div class="form-group">
+                        <label id="lblName">Full Name *</label>
+                        <input type="text" id="inputName" placeholder="Your name" required>
+                    </div>
+                    <div class="form-group">
+                        <label id="lblEmail">Email *</label>
+                        <input type="email" id="inputEmail" placeholder="Your email" required>
+                    </div>
+                    <div class="form-group">
+                        <label id="lblBusiness">Business Name *</label>
+                        <input type="text" id="inputBusiness" placeholder="Your business" required>
+                    </div>
+                    <div class="form-group">
+                        <label id="lblPhone">Mobile Number *</label>
+                        <div class="phone-group">
+                            <div class="country-select-wrapper">
+                                <input type="text" class="country-search-input" id="countrySearch" placeholder="Search country..." autocomplete="off">
+                                <div class="country-dropdown" id="countryDropdown"></div>
+                            </div>
+                            <input type="tel" id="inputPhone" placeholder="Phone number" required>
+                        </div>
+                    </div>
+                    <button class="btn" id="btnDiagnostic" onclick="goToIntro()">Get My Free Diagnostic →</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Intro Questions -->
+        <div id="intro-screen" class="screen">
+            <div class="intro-container">
+                <h2 id="txtQuickContext">Quick Context</h2>
+                <p id="txtQuickContextSub">Just 4 questions so we can tailor your report perfectly</p>
+                
+                <div class="intro-group">
+                    <label id="lblBizType">Business Type? *</label>
+                    <div class="intro-options">
+                        <div class="intro-option" onclick="selectIntro('businessType', 'B2B', this)"><input type="radio" name="businessType"><div><strong id="optBizType0">B2B</strong></div></div>
+                        <div class="intro-option" onclick="selectIntro('businessType', 'B2C Services', this)"><input type="radio" name="businessType"><div><strong id="optBizType1">B2C Services</strong></div></div>
+                        <div class="intro-option" onclick="selectIntro('businessType', 'E-Commerce', this)"><input type="radio" name="businessType"><div><strong id="optBizType2">E-Commerce</strong></div></div>
+                        <div class="intro-option" onclick="selectIntro('businessType', 'Personal Brand', this)"><input type="radio" name="businessType"><div><strong id="optBizType3">Personal Brand</strong></div></div>
+                    </div>
+                </div>
+
+                <div class="intro-group">
+                    <label id="lblIndustry">Industry? *</label>
+                    <div class="intro-options">
+                        <div class="intro-option" onclick="selectIntro('industry', 'Medical/Healthcare', this)"><input type="radio" name="industry"><div><strong id="optInd0">Medical</strong></div></div>
+                        <div class="intro-option" onclick="selectIntro('industry', 'Aesthetic/Beauty', this)"><input type="radio" name="industry"><div><strong id="optInd1">Beauty</strong></div></div>
+                        <div class="intro-option" onclick="selectIntro('industry', 'Food & Beverage', this)"><input type="radio" name="industry"><div><strong id="optInd2">F&B</strong></div></div>
+                        <div class="intro-option" onclick="selectIntro('industry', 'Education', this)"><input type="radio" name="industry"><div><strong id="optInd3">Education</strong></div></div>
+                        <div class="intro-option" onclick="selectIntro('industry', 'Real Estate', this)"><input type="radio" name="industry"><div><strong id="optInd4">Real Estate</strong></div></div>
+                        <div class="intro-option" onclick="selectIntro('industry', 'Tech/Software', this)"><input type="radio" name="industry"><div><strong id="optInd5">Tech</strong></div></div>
+                        <div class="intro-option" onclick="selectIntro('industry', 'Consulting', this)"><input type="radio" name="industry"><div><strong id="optInd6">Consulting</strong></div></div>
+                        <div class="intro-option" onclick="selectIntro('industry', 'Other', this)"><input type="radio" name="industry"><div><strong id="optInd7">Other</strong></div></div>
+                    </div>
+                </div>
+
+                <div class="intro-group">
+                    <label id="lblAge">How long active? *</label>
+                    <div class="intro-options" style="grid-template-columns: 1fr 1fr 1fr;">
+                        <div class="intro-option" onclick="selectIntro('businessAge', 'Less than 1 year', this)"><input type="radio" name="businessAge"><div><strong id="optAge0">&lt;1 year</strong></div></div>
+                        <div class="intro-option" onclick="selectIntro('businessAge', '1-3 years', this)"><input type="radio" name="businessAge"><div><strong id="optAge1">1-3 years</strong></div></div>
+                        <div class="intro-option" onclick="selectIntro('businessAge', '3+ years', this)"><input type="radio" name="businessAge"><div><strong id="optAge2">3+ years</strong></div></div>
+                    </div>
+                </div>
+
+                <div class="intro-group">
+                    <label id="lblRevenue">Annual Revenue? *</label>
+                    <div class="intro-options" style="grid-template-columns: 1fr 1fr;">
+                        <div class="intro-option" onclick="selectIntro('revenue', 'Less than $50k', this)"><input type="radio" name="revenue"><div><strong id="optRev0">&lt;$50k</strong></div></div>
+                        <div class="intro-option" onclick="selectIntro('revenue', '$50k-$100k', this)"><input type="radio" name="revenue"><div><strong id="optRev1">$50-100k</strong></div></div>
+                        <div class="intro-option" onclick="selectIntro('revenue', '$100k-$500k', this)"><input type="radio" name="revenue"><div><strong id="optRev2">$100-500k</strong></div></div>
+                        <div class="intro-option" onclick="selectIntro('revenue', '$500k+', this)"><input type="radio" name="revenue"><div><strong id="optRev3">$500k+</strong></div></div>
+                    </div>
+                </div>
+
+                <button class="btn" onclick="goToAssessment()" id="introBtn" disabled style="margin-top: 30px;">Start Assessment →</button>
+            </div>
+        </div>
+
+        <!-- Assessment -->
+        <div id="assessment-screen" class="screen">
+            <div class="assessment">
+                <h2 id="sectionTitle">Sales Pipeline</h2>
+                <p id="sectionDesc" style="color: var(--sage); margin-bottom: 30px;">Section 1 of 5</p>
+                <div id="questionsContainer"></div>
+                <div class="nav-buttons">
+                    <button class="btn btn-secondary" onclick="prevSection()" id="prevBtn" style="display:none;">← Previous</button>
+                    <button class="btn" onclick="nextSection()" id="nextBtn">Next →</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard -->
+        <div id="dashboard-screen" class="screen">
+            <h1 id="txtReportTitle">Your Growth Diagnostic Report</h1>
+            <p class="dashboard-subtitle" id="txtPreparedFor">Prepared for <strong id="reportName"></strong> • <span id="reportBusiness"></span></p>
+            
+            <div id="reportContainer"></div>
+        </div>
+    </div>
+
+    <script>
+        const countryData = [
+            {code: '+1', name: 'USA', flag: '🇺🇸'},
+            {code: '+1', name: 'Canada', flag: '🇨🇦'},
+            {code: '+7', name: 'Russia', flag: '🇷🇺'},
+            {code: '+20', name: 'Egypt', flag: '🇪🇬'},
+            {code: '+27', name: 'South Africa', flag: '🇿🇦'},
+            {code: '+30', name: 'Greece', flag: '🇬🇷'},
+            {code: '+31', name: 'Netherlands', flag: '🇳🇱'},
+            {code: '+32', name: 'Belgium', flag: '🇧🇪'},
+            {code: '+33', name: 'France', flag: '🇫🇷'},
+            {code: '+34', name: 'Spain', flag: '🇪🇸'},
+            {code: '+39', name: 'Italy', flag: '🇮🇹'},
+            {code: '+41', name: 'Switzerland', flag: '🇨🇭'},
+            {code: '+44', name: 'United Kingdom', flag: '🇬🇧'},
+            {code: '+49', name: 'Germany', flag: '🇩🇪'},
+            {code: '+51', name: 'Peru', flag: '🇵🇪'},
+            {code: '+52', name: 'Mexico', flag: '🇲🇽'},
+            {code: '+54', name: 'Argentina', flag: '🇦🇷'},
+            {code: '+55', name: 'Brazil', flag: '🇧🇷'},
+            {code: '+56', name: 'Chile', flag: '🇨🇱'},
+            {code: '+60', name: 'Malaysia', flag: '🇲🇾'},
+            {code: '+61', name: 'Australia', flag: '🇦🇺'},
+            {code: '+62', name: 'Indonesia', flag: '🇮🇩'},
+            {code: '+63', name: 'Philippines', flag: '🇵🇭'},
+            {code: '+65', name: 'Singapore', flag: '🇸🇬'},
+            {code: '+81', name: 'Japan', flag: '🇯🇵'},
+            {code: '+82', name: 'South Korea', flag: '🇰🇷'},
+            {code: '+86', name: 'China', flag: '🇨🇳'},
+            {code: '+90', name: 'Turkey', flag: '🇹🇷'},
+            {code: '+91', name: 'India', flag: '🇮🇳'},
+            {code: '+212', name: 'Morocco', flag: '🇲🇦'},
+            {code: '+966', name: 'Saudi Arabia', flag: '🇸🇦'},
+            {code: '+971', name: 'United Arab Emirates', flag: '🇦🇪'},
+            {code: '+972', name: 'Israel', flag: '🇮🇱'},
+            {code: '+974', name: 'Qatar', flag: '🇶🇦'},
+            {code: '+977', name: 'Nepal', flag: '🇳🇵'},
+            {code: '+998', name: 'Uzbekistan', flag: '🇺🇿'},
+        ];
+
+        let selectedCountry = null;
+        const questions = [
+            // Sales Pipeline
+            { section: 0, title: {en:"A lead messages you. What happens next?",ar:"عندما يراسلك عميل محتمل، ماذا يحدث بعد ذلك؟"}, options: {
+                en: ["No system, lost","Manual notes","Basic tracking","Full CRM"],
+                ar: ["لا يوجد نظام، يُفقد","ملاحظات يدوية","متابعة بسيطة","نظام إدارة علاقات عملاء متكامل"]
+            }},
+            { section: 0, title: {en:"How fast do you reply to new inquiries?",ar:"ما مدى سرعة ردك على الاستفسارات الجديدة؟"}, options: {
+                en: ["Hours+","Under an hour","Under 15 min","Instant"],
+                ar: ["ساعات أو أكثر","أقل من ساعة","أقل من 15 دقيقة","فوري"]
+            }},
+            { section: 0, title: {en:"Do you know your close rate?",ar:"هل تعرف نسبة إغلاق الصفقات لديك؟"}, options: {
+                en: ["No idea","Rough guess","Tracked loosely","Tracked monthly"],
+                ar: ["لا أعرف","تخمين تقريبي","متابعة غير منتظمة","متابعة شهرية دقيقة"]
+            }},
+            { section: 0, title: {en:"How much of your day goes to chasing leads?",ar:"كم من وقت يومك يُستهلك في متابعة العملاء المحتملين؟"}, options: {
+                en: ["Most of it","A lot","A little","Barely any"],
+                ar: ["معظم اليوم","وقت كبير","وقت قليل","لا يُذكر"]
+            }},
+
+            // Marketing & Content
+            { section: 1, title: {en:"How often do you post content?",ar:"ما مدى تكرار نشرك للمحتوى؟"}, options: {
+                en: ["Rarely","Weekly","Few times a week","Daily"],
+                ar: ["نادراً","أسبوعياً","عدة مرات أسبوعياً","يومياً"]
+            }},
+            { section: 1, title: {en:"Does your content actually get engagement?",ar:"هل يحقق محتواك تفاعلاً حقيقياً؟"}, options: {
+                en: ["Almost none","A little","Decent","Strong"],
+                ar: ["يكاد لا يُذكر","تفاعل بسيط","تفاعل جيد","تفاعل قوي"]
+            }},
+            { section: 1, title: {en:"Is your content solving a real customer problem, or just filling space?",ar:"هل يعالج محتواك مشكلة حقيقية للعميل، أم مجرد حشو؟"}, options: {
+                en: ["Just filling space","Somewhat","Mostly","Yes, always"],
+                ar: ["مجرد حشو","إلى حد ما","غالباً","نعم دائماً"]
+            }},
+            { section: 1, title: {en:"Do you know what your marketing actually costs you?",ar:"هل تعرف التكلفة الحقيقية لتسويقك؟"}, options: {
+                en: ["No idea","Rough guess","Tracked","Tracked precisely"],
+                ar: ["لا أعرف","تخمين تقريبي","متابَعة","متابَعة بدقة"]
+            }},
+
+            // Team & Ops
+            { section: 2, title: {en:"Does your team know exactly what success looks like in their role?",ar:"هل يعرف فريقك بالضبط شكل النجاح في دوره الوظيفي؟"}, options: {
+                en: ["Not at all","Vaguely","Mostly","Completely"],
+                ar: ["أبداً","بشكل غامض","غالباً","تماماً"]
+            }},
+            { section: 2, title: {en:"If you disappeared for a week, would the business run?",ar:"لو غبت أسبوعاً كاملاً، هل سيستمر العمل؟"}, options: {
+                en: ["No, it'd stop","Barely","Mostly","Yes, fine"],
+                ar: ["لا، سيتوقف","بالكاد","غالباً نعم","نعم بلا مشاكل"]
+            }},
+            { section: 2, title: {en:"How long until a new hire is actually productive?",ar:"كم يستغرق الموظف الجديد ليصبح منتجاً فعلياً؟"}, options: {
+                en: ["Months","Weeks","Days","Immediately"],
+                ar: ["أشهر","أسابيع","أيام","فوراً"]
+            }},
+            { section: 2, title: {en:"Do tasks fall through the cracks?",ar:"هل تُفقد المهام أو تُنسى؟"}, options: {
+                en: ["Constantly","Often","Rarely","Never"],
+                ar: ["باستمرار","كثيراً","نادراً","أبداً"]
+            }},
+
+            // Financial Health
+            { section: 3, title: {en:"Do you know your actual monthly profit?",ar:"هل تعرف صافي ربحك الشهري الفعلي؟"}, options: {
+                en: ["No idea","Rough guess","Tracked loosely","Tracked precisely"],
+                ar: ["لا أعرف","تخمين تقريبي","متابعة غير منتظمة","متابعة دقيقة"]
+            }},
+            { section: 3, title: {en:"Do you know what it costs to win one customer?",ar:"هل تعرف تكلفة اكتساب عميل واحد؟"}, options: {
+                en: ["No idea","Guess","Roughly","Exact number"],
+                ar: ["لا أعرف","تخمين","تقريباً","رقم دقيق"]
+            }},
+            { section: 3, title: {en:"Is your income predictable month to month?",ar:"هل دخلك ثابت ومتوقع من شهر لآخر؟"}, options: {
+                en: ["Not at all","Somewhat","Mostly","Yes"],
+                ar: ["أبداً","إلى حد ما","غالباً","نعم"]
+            }},
+            { section: 3, title: {en:"Are your financial records organized right now?",ar:"هل سجلاتك المالية منظمة حالياً؟"}, options: {
+                en: ["A mess","Getting there","Mostly clean","Fully organized"],
+                ar: ["فوضوية","في تحسّن","منظمة غالباً","منظمة بالكامل"]
+            }},
+
+            // Systems & Scale
+            { section: 4, title: {en:"How much time goes to manual tasks that could be automated?",ar:"كم من وقتك يُستهلك في مهام يدوية يمكن ميكنتها؟"}, options: {
+                en: ["A lot","Some","A little","Barely any"],
+                ar: ["وقت كبير","بعض الوقت","وقت قليل","لا يُذكر"]
+            }},
+            { section: 4, title: {en:"Are you using any automation or AI tools today?",ar:"هل تستخدم حالياً أدوات ميكنة (Automation) أو ذكاء اصطناعي؟"}, options: {
+                en: ["None","One or two","Several","Fully integrated"],
+                ar: ["لا يوجد","أداة أو اثنتان","عدة أدوات","مدمجة بالكامل"]
+            }},
+            { section: 4, title: {en:"What's the #1 thing stopping you from scaling?",ar:"ما أكبر عائق أمام توسّع عملك؟"}, options: {
+                en: ["Time","Money","Team","Systems"],
+                ar: ["الوقت","التمويل","الفريق","الأنظمة"]
+            }},
+            { section: 4, title: {en:"Does the business depend entirely on you personally?",ar:"هل يعتمد العمل عليك أنت شخصياً بالكامل؟"}, options: {
+                en: ["Completely","Mostly","Somewhat","Not really"],
+                ar: ["بالكامل","غالباً","إلى حد ما","ليس فعلياً"]
+            }}
+        ];
+
+        const sections = [
+            { name: {en:"Sales Pipeline",ar:"مسار المبيعات"}, color: "#ff6b35", emoji: "🎯" },
+            { name: {en:"Marketing & Content",ar:"التسويق والمحتوى"}, color: "#ffa502", emoji: "📱" },
+            { name: {en:"Team & Operations",ar:"الفريق والعمليات"}, color: "#667eea", emoji: "👥" },
+            { name: {en:"Financial Health",ar:"الوضع المالي"}, color: "#00b894", emoji: "💰" },
+            { name: {en:"Systems & Scale",ar:"الأنظمة والتوسع"}, color: "#764ba2", emoji: "⚙️" }
+        ];
+
+        let currentSection = 0;
+        let answers = {};
+        let introAnswers = {};
+        let LANG = 'en';
+
+        const T = {
+            en: {
+                fillAllFields: "Please fill all fields",
+                sectionOf: (n) => `Section ${n} of 5`,
+                next: "Next →", previous: "← Previous", viewReport: "🚀 View My Report",
+                currentHealthScore: "Your current health score", outOf100: "OUT OF 100",
+                problemsIdentified: "Problems We Identified:", howBricksFixes: "How Bricks Fixes This:",
+                overallScore: "Your Overall Health Score",
+                scoreHigh: "You're on the right track! Small optimizations can unlock massive growth.",
+                scoreMid: "You have solid foundations. Let's fill the critical gaps costing you money.",
+                scoreLow: "You're hemorrhaging money and time. Let's fix this now.",
+                gapsIntro: "The gaps you identified above are EXACTLY what the Bricks Blueprint solves.",
+                blueprintName: "Bricks Blueprint", oneTime: "One-time investment",
+                blueprintItem1: "Sales System (lead & follow-up tracker)",
+                blueprintItem2: "Finance Break-Even toolkit",
+                blueprintItem3: "AI Content Plan Generator",
+                blueprintItem4: "Implementation video training",
+                getBlueprint: "Get Bricks Blueprint Now",
+                recommended: "RECOMMENDED", consultName: "Consultation Package",
+                consultPeriod: "2 sessions + full Blueprint",
+                consultItem0: "Everything in the Blueprint, PLUS:",
+                consultItem1: "Baseline strategy session (45–60 min)",
+                consultItem2: "Progress-check session (45–60 min)",
+                consultItem3: "A custom action plan for your business",
+                bookConsult: "Book Your Consultation Now",
+                headline1: "Stop Losing Money To ", headlineAccent: "Broken Systems",
+                subtitle: "Most entrepreneurs are hemorrhaging cash because they don't have proper systems. In 10 minutes, we'll show you exactly where you're bleeding and how to stop it.",
+                trust: "✓ Free diagnostic • No credit card • Instant results",
+                formTitle: "Your Free Diagnostic",
+                lblName: "Full Name *", lblEmail: "Email *", lblBusiness: "Business Name *", lblPhone: "Mobile Number *",
+                phName: "Your name", phEmail: "Your email", phBusiness: "Your business", phSearch: "Search country...", phPhone: "Phone number",
+                btnDiagnostic: "Get My Free Diagnostic →",
+                quickContext: "Quick Context", quickContextSub: "Just 4 questions so we can tailor your report perfectly",
+                lblBizType: "Business Type? *", lblIndustry: "Industry? *", lblAge: "How long active? *", lblRevenue: "Annual Revenue? *",
+                optBizType: ["B2B","B2C Services","E-Commerce","Personal Brand"],
+                optInd: ["Medical","Beauty","F&B","Education","Real Estate","Tech","Consulting","Other"],
+                optAge: ["<1 year","1-3 years","3+ years"],
+                optRev: ["<$50k","$50-100k","$100-500k","$500k+"],
+                startAssessment: "Start Assessment →",
+                reportTitle: "Your Growth Diagnostic Report", preparedFor: "Prepared for "
+            },
+            ar: {
+                fillAllFields: "يرجى تعبئة جميع الحقول",
+                sectionOf: (n) => `القسم ${n} من 5`,
+                next: "التالي ←", previous: "→ السابق", viewReport: "🚀 عرض التقرير",
+                currentHealthScore: "درجة الصحة الحالية لهذا القسم", outOf100: "من 100",
+                problemsIdentified: "المشكلات التي تم رصدها:", howBricksFixes: "كيف تعالج Bricks هذا الأمر:",
+                overallScore: "درجة الصحة العامة لعملك",
+                scoreHigh: "أنت على المسار الصحيح! تحسينات بسيطة يمكن أن تحقق نمواً كبيراً.",
+                scoreMid: "لديك أسس جيدة. دعنا نسد الفجوات الجوهرية التي تكلفك المال.",
+                scoreLow: "أنت تخسر المال والوقت. دعنا نعالج هذا الأمر الآن.",
+                gapsIntro: "الفجوات الظاهرة أعلاه هي بالضبط ما تعالجه Bricks Blueprint.",
+                blueprintName: "Bricks Blueprint", oneTime: "دفعة واحدة",
+                blueprintItem1: "نظام المبيعات (متابعة العملاء)",
+                blueprintItem2: "أداة نقطة التعادل المالية",
+                blueprintItem3: "مولّد خطة المحتوى بالذكاء الاصطناعي",
+                blueprintItem4: "فيديو تدريبي للتطبيق",
+                getBlueprint: "احصل على Bricks Blueprint الآن",
+                recommended: "الأنسب", consultName: "باقة الاستشارة",
+                consultPeriod: "جلستان + كامل الـ Blueprint",
+                consultItem0: "كل ما يشمله الـ Blueprint، بالإضافة إلى:",
+                consultItem1: "جلسة تقييم أولية (45–60 دقيقة)",
+                consultItem2: "جلسة متابعة التقدم (45–60 دقيقة)",
+                consultItem3: "خطة عمل مخصصة لعملك",
+                bookConsult: "احجز استشارتك الآن",
+                headline1: "توقف عن خسارة أموالك بسبب ", headlineAccent: "الأنظمة المُعطّلة",
+                subtitle: "معظم أصحاب الأعمال يخسرون المال لعدم وجود أنظمة سليمة. خلال 10 دقائق، سنوضح لك بالضبط أين تخسر أموالك وكيف توقف ذلك.",
+                trust: "✓ تشخيص مجاني • بدون بطاقة ائتمان • نتائج فورية",
+                formTitle: "تشخيصك المجاني",
+                lblName: "الاسم الكامل *", lblEmail: "البريد الإلكتروني *", lblBusiness: "اسم النشاط التجاري *", lblPhone: "رقم الجوال *",
+                phName: "اسمك", phEmail: "بريدك الإلكتروني", phBusiness: "اسم نشاطك التجاري", phSearch: "ابحث عن الدولة...", phPhone: "رقم الهاتف",
+                btnDiagnostic: "احصل على تشخيصي المجاني ←",
+                quickContext: "سياق سريع", quickContextSub: "أربعة أسئلة فقط لنُخصص تقريرك بدقة",
+                lblBizType: "نوع النشاط التجاري؟ *", lblIndustry: "المجال؟ *", lblAge: "منذ متى تعمل؟ *", lblRevenue: "الإيراد السنوي؟ *",
+                optBizType: ["أعمال بين الشركات (B2B)","خدمات للمستهلك","تجارة إلكترونية","علامة شخصية"],
+                optInd: ["طبي","تجميل","مطاعم ومقاهي","تعليم","عقارات","تقنية","استشارات","أخرى"],
+                optAge: ["أقل من سنة","1-3 سنوات","أكثر من 3 سنوات"],
+                optRev: ["أقل من 50 ألف دولار","50-100 ألف دولار","100-500 ألف دولار","أكثر من 500 ألف دولار"],
+                startAssessment: "ابدأ التقييم ←",
+                reportTitle: "تقرير تشخيص نمو عملك", preparedFor: "أُعِدّ لـ "
+            }
+        };
+
+        function applyStaticTranslations() {
+            const t = T[LANG];
+            document.getElementById('txtHeadline').childNodes[0].textContent = t.headline1;
+            document.getElementById('txtHeadlineAccent').textContent = t.headlineAccent;
+            document.getElementById('txtSubtitle').textContent = t.subtitle;
+            document.getElementById('txtTrust').innerHTML = t.trust.split(' • ').map(s=>`<strong>${s}</strong>`).join(' • ');
+            document.getElementById('txtFormTitle').textContent = t.formTitle;
+            document.getElementById('lblName').textContent = t.lblName;
+            document.getElementById('lblEmail').textContent = t.lblEmail;
+            document.getElementById('lblBusiness').textContent = t.lblBusiness;
+            document.getElementById('lblPhone').textContent = t.lblPhone;
+            document.getElementById('inputName').placeholder = t.phName;
+            document.getElementById('inputEmail').placeholder = t.phEmail;
+            document.getElementById('inputBusiness').placeholder = t.phBusiness;
+            document.getElementById('countrySearch').placeholder = t.phSearch;
+            document.getElementById('inputPhone').placeholder = t.phPhone;
+            document.getElementById('btnDiagnostic').textContent = t.btnDiagnostic;
+            document.getElementById('txtQuickContext').textContent = t.quickContext;
+            document.getElementById('txtQuickContextSub').textContent = t.quickContextSub;
+            document.getElementById('lblBizType').textContent = t.lblBizType;
+            document.getElementById('lblIndustry').textContent = t.lblIndustry;
+            document.getElementById('lblAge').textContent = t.lblAge;
+            document.getElementById('lblRevenue').textContent = t.lblRevenue;
+            t.optBizType.forEach((v,i)=>document.getElementById('optBizType'+i).textContent = v);
+            t.optInd.forEach((v,i)=>document.getElementById('optInd'+i).textContent = v);
+            t.optAge.forEach((v,i)=>document.getElementById('optAge'+i).textContent = v);
+            t.optRev.forEach((v,i)=>document.getElementById('optRev'+i).textContent = v);
+            document.getElementById('introBtn').textContent = t.startAssessment;
+            document.getElementById('txtReportTitle').textContent = t.reportTitle;
+            document.getElementById('txtPreparedFor').childNodes[0].textContent = t.preparedFor;
+            const toggle = document.getElementById('langToggleBtn');
+            toggle.style.display = 'block';
+            toggle.textContent = LANG === 'en' ? 'العربية' : 'English';
+        }
+
+        function selectLang(l) {
+            LANG = l;
+            document.documentElement.lang = l;
+            document.documentElement.dir = l === 'ar' ? 'rtl' : 'ltr';
+            applyStaticTranslations();
+            document.getElementById('lang-screen').classList.remove('active');
+            document.getElementById('signup-screen').classList.add('active');
+        }
+
+        function switchLang() {
+            selectLang(LANG === 'en' ? 'ar' : 'en');
+        }
+
+        function renderCountries(countries) {
+            const dropdown = document.getElementById('countryDropdown');
+            dropdown.innerHTML = countries.map(c => 
+                `<div class="country-option" onclick="selectCountry('${c.code}', '${c.name}', '${c.flag}'); return false;">${c.flag} ${c.code} ${c.name}</div>`
+            ).join('');
+        }
+
+        function selectCountry(code, name, flag) {
+            selectedCountry = { code, name, flag };
+            document.getElementById('countrySearch').value = `${flag} ${code}`;
+            document.getElementById('countryDropdown').classList.remove('active');
+        }
+
+        function initializeCountryDropdown() {
+            const dropdown = document.getElementById('countryDropdown');
+            const searchInput = document.getElementById('countrySearch');
+
+            if (!dropdown || !searchInput) {
+                setTimeout(initializeCountryDropdown, 100);
+                return;
+            }
+
+            searchInput.addEventListener('focus', () => {
+                dropdown.classList.add('active');
+                renderCountries(countryData);
+            });
+
+            searchInput.addEventListener('input', (e) => {
+                const query = e.target.value.toLowerCase();
+                if (query.length === 0) {
+                    renderCountries(countryData);
+                } else {
+                    const filtered = countryData.filter(c => 
+                        c.name.toLowerCase().includes(query) || c.code.includes(query)
+                    );
+                    renderCountries(filtered);
+                }
+                dropdown.classList.add('active');
+            });
+
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('.country-select-wrapper')) {
+                    dropdown.classList.remove('active');
+                }
+            });
+        }
+
+        function goToIntro() {
+            const name = document.getElementById('inputName').value;
+            const email = document.getElementById('inputEmail').value;
+            const business = document.getElementById('inputBusiness').value;
+            const phone = document.getElementById('inputPhone').value;
+            
+            if (!name || !email || !business || !phone || !selectedCountry) {
+                alert(T[LANG].fillAllFields);
+                return;
+            }
+            
+            sessionStorage.setItem('userName', name);
+            sessionStorage.setItem('userEmail', email);
+            sessionStorage.setItem('businessName', business);
+            sessionStorage.setItem('userPhone', selectedCountry.code + phone);
+            
+            document.getElementById('signup-screen').classList.remove('active');
+            document.getElementById('intro-screen').classList.add('active');
+        }
+
+        function selectIntro(field, value, element) {
+            introAnswers[field] = value;
+            const group = element.parentElement;
+            group.querySelectorAll('.intro-option').forEach(opt => opt.classList.remove('selected'));
+            element.classList.add('selected');
+            
+            if (introAnswers.businessType && introAnswers.industry && introAnswers.businessAge && introAnswers.revenue) {
+                document.getElementById('introBtn').disabled = false;
+            }
+        }
+
+        function goToAssessment() {
+            sessionStorage.setItem('introAnswers', JSON.stringify(introAnswers));
+            document.getElementById('intro-screen').classList.remove('active');
+            document.getElementById('assessment-screen').classList.add('active');
+            renderSection();
+        }
+
+        function renderSection() {
+            const sectionQuestions = questions.filter(q => q.section === currentSection);
+            document.getElementById('sectionTitle').textContent = sections[currentSection].emoji + " " + sections[currentSection].name[LANG];
+            document.getElementById('sectionDesc').textContent = T[LANG].sectionOf(currentSection + 1);
+            
+            let html = '';
+            sectionQuestions.forEach((q, idx) => {
+                const qIdx = questions.indexOf(q);
+                html += `<div class="question-block">
+                    <h3>${q.title[LANG]}</h3>
+                    <div class="options">
+                        ${q.options[LANG].map((opt, i) => `
+                            <label class="option ${answers[qIdx] === i ? 'selected' : ''}">
+                                <input type="radio" name="q${qIdx}" value="${i}" ${answers[qIdx] === i ? 'checked' : ''} onchange="answers[${qIdx}]=${i}; renderSection();" style="cursor: pointer;">
+                                <span>${opt}</span>
+                            </label>
+                        `).join('')}
+                    </div>
+                </div>`;
+            });
+            
+            document.getElementById('questionsContainer').innerHTML = html;
+            
+            const allAnswered = sectionQuestions.every(q => answers[questions.indexOf(q)] !== undefined);
+            document.getElementById('nextBtn').disabled = !allAnswered;
+            document.getElementById('nextBtn').textContent = currentSection === 4 ? T[LANG].viewReport : T[LANG].next;
+            document.getElementById('prevBtn').textContent = T[LANG].previous;
+            document.getElementById('prevBtn').style.display = currentSection > 0 ? 'block' : 'none';
+        }
+
+        function nextSection() {
+            if (currentSection < 4) {
+                currentSection++;
+                renderSection();
+            } else {
+                showDashboard();
+            }
+        }
+
+        function prevSection() {
+            if (currentSection > 0) {
+                currentSection--;
+                renderSection();
+            }
+        }
+
+        function calculateScore(sectionIndex) {
+            const sectionQuestions = questions.filter(q => q.section === sectionIndex);
+            const answered = sectionQuestions.filter(q => answers[questions.indexOf(q)] !== undefined);
+            if (answered.length === 0) return 0;
+            
+            let score = 0;
+            answered.forEach(q => {
+                const qIdx = questions.indexOf(q);
+                const answerIdx = answers[qIdx];
+                // Score: worst answer = 25%, best = 100% (4 options per question now)
+                score += ((answerIdx + 1) / q.options[LANG].length) * 100;
+            });
+            
+            return Math.round(score / answered.length);
+        }
+
+        function showDashboard() {
+            document.getElementById('assessment-screen').classList.remove('active');
+            document.getElementById('dashboard-screen').classList.add('active');
+            
+            document.getElementById('reportName').textContent = sessionStorage.getItem('userName');
+            document.getElementById('reportBusiness').textContent = sessionStorage.getItem('businessName');
+            
+            let html = '';
+            sections.forEach((section, idx) => {
+                const score = calculateScore(idx);
+                const progress = score;
+                
+                const problems = {
+                    en: [
+                        ["Leads getting lost, no tracking","Slow response times","Unknown close rate","Time drained by follow-ups"],
+                        ["No consistent content","Little to no engagement","Generic, not audience-specific","No visibility into marketing cost"],
+                        ["Unclear roles","Business stops without you","Slow, unstructured onboarding","Tasks falling through the cracks"],
+                        ["No visibility into profit","Unknown customer acquisition cost","Unpredictable income","Disorganized financial records"],
+                        ["Hours lost to manual tasks","No automation or AI in use","Unclear growth bottleneck","Business fully dependent on you"]
+                    ],
+                    ar: [
+                        ["فقدان العملاء المحتملين لعدم وجود متابعة","بطء زمن الاستجابة","نسبة الإغلاق غير معروفة","استهلاك الوقت في المتابعة"],
+                        ["غياب انتظام في نشر المحتوى","تفاعل ضعيف أو منعدم","محتوى عام غير موجّه للجمهور","غياب الرؤية حول تكلفة التسويق"],
+                        ["أدوار غير واضحة","توقف العمل في غيابك","تدريب غير منظم للموظفين الجدد","ضياع المهام دون متابعة"],
+                        ["غياب الرؤية حول صافي الربح","تكلفة اكتساب العميل غير معروفة","دخل غير ثابت","سجلات مالية غير منظمة"],
+                        ["ساعات مهدرة في مهام يدوية","غياب الميكنة أو الذكاء الاصطناعي","عدم وضوح عائق النمو الرئيسي","اعتماد العمل عليك بالكامل"]
+                    ]
+                };
+
+                const solutions = {
+                    en: [
+                        ["Set up a live lead tracking system","Build automated follow-up sequences","Track close rate monthly","Delegate follow-ups with a clear system"],
+                        ["Build a 30-day content calendar","Create content tied to real customer pain points","Track cost-per-result on marketing spend","Use AI-assisted content generation"],
+                        ["Document every role clearly","Build a repeatable onboarding process","Create an accountability system","Document your core processes"],
+                        ["Build a monthly profit dashboard","Calculate your real customer acquisition cost","Set up income forecasting","Organize your financial records"],
+                        ["Audit and list all manual tasks","Introduce automation tools","Use AI for repetitive work","Build systems that don't depend on you"]
+                    ],
+                    ar: [
+                        ["نظام متابعة عملاء فعلي","خطوات متابعة تلقائية للعملاء","متابعة نسبة الإغلاق شهرياً","تفويض المتابعة بنظام واضح"],
+                        ["خطة محتوى لمدة 30 يوم","محتوى يعالج مشاكل العميل الحقيقية","متابعة تكلفة كل نتيجة من التسويق","استخدام أدوات ذكاء اصطناعي لتوليد المحتوى"],
+                        ["توثيق كل دور بوضوح","نظام تدريب موظفين قابل للتكرار","نظام مساءلة واضح","توثيق العمليات الأساسية"],
+                        ["لوحة متابعة ربح شهرية","حساب تكلفة اكتساب العميل الحقيقية","نظام توقع للدخل","تنظيم السجلات المالية"],
+                        ["حصر كل المهام اليدوية","إدخال أدوات ميكنة (Automation)","استخدام الذكاء الاصطناعي للمهام المتكررة","بناء أنظمة لا تعتمد عليك وحدك"]
+                    ]
+                };
+
+                html += `
+                    <div class="score-card">
+                        <div class="score-header">
+                            <div class="score-title">
+                                <h2>${section.emoji} ${section.name[LANG]}</h2>
+                                <p>${T[LANG].currentHealthScore}</p>
+                            </div>
+                            <div>
+                                <div class="big-score">${score}</div>
+                                <div class="score-label">${T[LANG].outOf100}</div>
+                            </div>
+                        </div>
+                        
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${progress}%; background: linear-gradient(90deg, ${section.color} 0%, ${section.color}dd 100%);"></div>
+                        </div>
+
+                        <h3 style="color: var(--primary); margin-bottom: 20px; font-weight: 700; font-size: 18px;">🚨 ${T[LANG].problemsIdentified}</h3>
+                        <div class="problem-box">
+                            <ul style="margin-left: 20px;">
+                                ${problems[LANG][idx].map(p => `<li>• ${p}</li>`).join('')}
+                            </ul>
+                        </div>
+
+                        <h3 style="color: var(--primary); margin-bottom: 20px; margin-top: 30px; font-weight: 700; font-size: 18px;">✅ ${T[LANG].howBricksFixes}</h3>
+                        <div class="solution-box">
+                            <ul>
+                                ${solutions[LANG][idx].map(s => `<li>✓ ${s}</li>`).join('')}
+                            </ul>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            const overallScore = Math.round((calculateScore(0) + calculateScore(1) + calculateScore(2) + calculateScore(3) + calculateScore(4)) / 5);
+            
+            const scoreMsg = overallScore >= 70 ? T[LANG].scoreHigh :
+                              overallScore >= 50 ? T[LANG].scoreMid :
+                              T[LANG].scoreLow;
+
+            html += `
+                <div style="background: linear-gradient(135deg, rgba(255,107,53,0.1) 0%, rgba(102,126,234,0.1) 100%); padding: 50px; border-radius: 16px; margin-top: 50px; text-align: center; border: 2px solid rgba(255,107,53,0.2);">
+                    <h2 style="color: var(--primary); margin-bottom: 15px; font-size: 32px;">${T[LANG].overallScore}</h2>
+                    <div style="font-size: 96px; font-weight: 900; color: var(--accent); margin: 20px 0;">${overallScore}</div>
+                    <p style="color: var(--sage); font-size: 16px; margin-bottom: 30px;">${scoreMsg}</p>
+                    <p style="color: var(--primary); font-size: 16px; font-weight: 600;">💡 ${T[LANG].gapsIntro}</p>
+                </div>
+                
+                <div class="upsell">
+                    <div class="package">
+                        <h4>${T[LANG].blueprintName}</h4>
+                        <div class="package-price">$59</div>
+                        <div class="package-period">${T[LANG].oneTime}</div>
+                        <ul>
+                            <li>${T[LANG].blueprintItem1}</li>
+                            <li>${T[LANG].blueprintItem2}</li>
+                            <li>${T[LANG].blueprintItem3}</li>
+                            <li>${T[LANG].blueprintItem4}</li>
+                        </ul>
+                        <button class="btn" id="blueprintBtn" onclick="startPayment('blueprint', this)" style="margin-top: 30px; background: linear-gradient(135deg, #ff6b35 0%, #ff8a50 100%);">${T[LANG].getBlueprint}</button>
+                    </div>
+                    
+                    <div class="package premium">
+                        <div class="premium-badge">${T[LANG].recommended}</div>
+                        <h4>${T[LANG].consultName}</h4>
+                        <div class="package-price">$199</div>
+                        <div class="package-period">${T[LANG].consultPeriod}</div>
+                        <ul>
+                            <li>${T[LANG].consultItem0}</li>
+                            <li>${T[LANG].consultItem1}</li>
+                            <li>${T[LANG].consultItem2}</li>
+                            <li>${T[LANG].consultItem3}</li>
+                        </ul>
+                        <button class="btn" id="consultBtn" onclick="startPayment('consultation', this)" style="margin-top: 30px;">${T[LANG].bookConsult}</button>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('reportContainer').innerHTML = html;
+        }
+
+        async function startPayment(tier, btnEl) {
+            const originalText = btnEl.textContent;
+            btnEl.disabled = true;
+            btnEl.textContent = LANG === 'ar' ? 'جارٍ التحويل...' : 'Redirecting...';
+
+            try {
+                const res = await fetch('/api/create-payment', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        tier: tier,
+                        name: sessionStorage.getItem('userName') || '',
+                        email: sessionStorage.getItem('userEmail') || ''
+                    })
+                });
+
+                if (!res.ok) {
+                    throw new Error('Payment could not be started');
+                }
+
+                const data = await res.json();
+                if (!data.redirect_url) {
+                    throw new Error('No redirect URL returned');
+                }
+
+                window.location.href = data.redirect_url;
+            } catch (err) {
+                console.error(err);
+                alert(LANG === 'ar' ? 'حدث خطأ في بدء عملية الدفع. حاول مرة أخرى.' : 'Something went wrong starting payment. Please try again.');
+                btnEl.disabled = false;
+                btnEl.textContent = originalText;
+            }
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializeCountryDropdown);
+        } else {
+            initializeCountryDropdown();
+        }
+    </script>
+</body>
+</html>
