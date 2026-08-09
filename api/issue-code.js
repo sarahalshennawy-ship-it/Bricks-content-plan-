@@ -39,7 +39,7 @@ export default async function handler(req, res) {
     return res.status(401).json({ error: 'unauthorized' });
   }
 
-  const { code, callsAllowed } = req.body || {};
+  const { code, callsAllowed, validDays } = req.body || {};
   if (!code || typeof code !== 'string') {
     return res.status(400).json({ error: 'missing_code' });
   }
@@ -51,10 +51,15 @@ export default async function handler(req, res) {
     return res.status(409).json({ error: 'code_exists', message: 'This code was already issued.' });
   }
 
+  const days = validDays || 30; // codes are valid for 1 month by default
+  const issuedAt = new Date();
+  const expiresAt = new Date(issuedAt.getTime() + days * 24 * 60 * 60 * 1000);
+
   const record = {
     callsAllowed: callsAllowed || 4,
     callsUsed: 0,
-    issuedAt: new Date().toISOString()
+    issuedAt: issuedAt.toISOString(),
+    expiresAt: expiresAt.toISOString()
   };
   await redis.set(key, JSON.stringify(record));
   return res.status(200).json({ ok: true, code, record });
