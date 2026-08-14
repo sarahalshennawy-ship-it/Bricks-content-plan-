@@ -6,8 +6,8 @@
 <title>Bricks &co — Content Plan Generator</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif}
-body{background:#f4f2fa;min-height:100vh}
-#app{max-width:600px;margin:0 auto;padding:0 0 40px}
+body{background:linear-gradient(135deg, #667eea 0%, #764ba2 100%);min-height:100vh}
+#app{max-width:600px;margin:0 auto;padding:0 0 40px;position:relative}
 .hdr{background:#1a1a1a;padding:14px 18px;display:flex;justify-content:space-between;align-items:center;border-radius:0 0 0 0}
 .hb{font-size:16px;font-weight:600;color:#fff}
 .hs{font-size:10px;color:#764ba2;letter-spacing:1px;margin-top:1px}
@@ -47,12 +47,12 @@ body{background:#f4f2fa;min-height:100vh}
 .gptext{font-size:12px;color:#666;margin-bottom:7px;text-align:center}
 .gpbar{height:5px;background:#ddd;border-radius:5px;overflow:hidden}
 .gpfill{height:100%;background:#764ba2;border-radius:5px;transition:width 0.4s}
-.lp{min-height:60vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px;text-align:center}
+.lp{min-height:60vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:150px 20px 40px;text-align:center}
 .lpc{display:flex;gap:12px;justify-content:center;margin-top:24px}
-.lpcbtn{flex:1;max-width:160px;padding:18px 12px;border-radius:12px;border:1.5px solid #e2e0ea;background:#fff;cursor:pointer;text-align:center;transition:all 0.15s}
-.lpcbtn:hover{border-color:#764ba2;background:#F1ECFA}
-.lpcbtn-m{font-size:19px;font-weight:600;color:#1a1a1a;margin-bottom:3px}
-.lpcbtn-s{font-size:11px;color:#888}
+.lpcbtn{flex:1;max-width:160px;padding:18px 12px;border-radius:12px;border:2px solid rgba(255,255,255,0.35);background:rgba(255,255,255,0.08);cursor:pointer;text-align:center;transition:all 0.15s}
+.lpcbtn:hover{border-color:#fff;background:rgba(255,255,255,0.2)}
+.lpcbtn-m{font-size:19px;font-weight:600;color:#fff;margin-bottom:3px}
+.lpcbtn-s{font-size:11px;color:rgba(255,255,255,0.75)}
 .phdr{background:#1a1a1a;padding:14px 18px;display:flex;justify-content:space-between;align-items:center}
 .pbody{padding:14px}
 .sumcard{background:#1a1a1a;border-radius:10px;padding:16px;margin-bottom:12px}
@@ -90,7 +90,7 @@ function $id(id){return document.getElementById(id);}
 function isAR(){return S.lang==="ar";}
 function isValid(){if(S.step===0)return S.biz!=="";if(S.step===1)return S.goal!=="";if(S.step===2)return S.platforms.length>0;if(S.step===3)return S.audience.length>0;if(S.step===4)return S.cl!=="";if(S.step===5)return true;return false;}
 function render(){var app=$id("app");app.setAttribute("dir",isAR()?"rtl":"ltr");if(!S.lang){renderLP(app);return;}if(S.plan){renderPlan(app);return;}renderQuiz(app);}
-function renderLP(app){app.innerHTML='<div class="lp"><svg width="88" height="110" viewBox="0 0 88 110" style="margin-bottom:14px"><rect x="0" y="0" width="34" height="110" rx="6" fill="#764ba2"/><rect x="42" y="0" width="34" height="66" rx="6" fill="#667eea"/><rect x="42" y="74" width="34" height="36" rx="6" fill="#ffd700"/></svg><div style="font-size:20px;font-weight:600;color:#1a1a1a;margin-bottom:5px">Content Plan Generator</div><div style="font-size:13px;color:#888;margin-bottom:4px">Answer 6 questions — get your full 30-day content plan</div><div style="font-size:13px;color:#888">Choose your language / اختر لغتك</div><div class="lpc"><button class="lpcbtn" id="btnEN"><div class="lpcbtn-m">English</div><div class="lpcbtn-s">Left to right</div></button><button class="lpcbtn" id="btnAR"><div class="lpcbtn-m">العربية</div><div class="lpcbtn-s">من اليمين لليسار</div></button></div></div>';$id("btnEN").addEventListener("click",function(){S.lang="en";render();});$id("btnAR").addEventListener("click",function(){S.lang="ar";render();});}
+function renderLP(app){app.innerHTML='<div style="position:absolute;top:24px;left:24px;text-align:left"><svg width="52" height="66" viewBox="0 0 88 110" style="display:block;margin-bottom:6px"><rect x="0" y="0" width="34" height="110" rx="6" fill="#764ba2"/><rect x="42" y="0" width="34" height="66" rx="6" fill="#667eea"/><rect x="42" y="74" width="34" height="36" rx="6" fill="#ffd700"/></svg><div style="font-family:Georgia,\'Times New Roman\',serif;font-size:17px;font-weight:600;letter-spacing:2px;color:#fff;line-height:1.2">BRICKS</div><div style="font-size:7px;font-weight:600;letter-spacing:0.8px;color:rgba(255,255,255,0.8);margin-top:1px">MARKETING &amp; BUSINESS SOLUTIONS</div></div><div class="lp"><div style="font-size:40px;font-weight:800;color:#fff;margin-bottom:14px;line-height:1.25">Bricks Content Generator</div><div style="font-size:14px;color:rgba(255,255,255,0.85);margin-bottom:6px">Answer 6 questions — get your full 30-day content plan</div><div style="font-size:13px;color:rgba(255,255,255,0.7)">Choose your language / اختر لغتك</div><div class="lpc"><button class="lpcbtn" id="btnEN"><div class="lpcbtn-m">English</div><div class="lpcbtn-s">Left to right</div></button><button class="lpcbtn" id="btnAR"><div class="lpcbtn-m">العربية</div><div class="lpcbtn-s">من اليمين لليسار</div></button></div></div>';$id("btnEN").addEventListener("click",function(){S.lang="en";render();});$id("btnAR").addEventListener("click",function(){S.lang="ar";render();});}
 function renderQuiz(app){var ar=isAR();var q=DATA.questions[S.lang][S.step];var pct=Math.round((S.step/6)*100);var ok=isValid();var isLast=S.step===5;var genTxt=ar?"ولّد خطة المحتوى":"Generate 30-Day Plan";app.innerHTML='<div class="hdr"><div><div class="hb">Bricks &amp;co</div><div class="hs">'+(ar?"مولّد خطة المحتوى":"CONTENT PLAN GENERATOR")+'</div></div><button class="hbtn" id="chgBtn">'+(ar?"تغيير اللغة":"Change language")+'</button></div><div class="body"><div class="pr"><span class="pl">'+(ar?("الخطوة "+(S.step+1)+" من 6"):("Step "+(S.step+1)+" of 6"))+'</span><span class="pp">'+pct+'%</span></div><div class="pbar"><div class="pfill" style="width:'+pct+'%"></div></div><div class="qt">'+esc(q.q)+'</div><div class="qh">'+esc(q.h)+'</div><div id="sc"></div><div class="nav">'+(S.step>0?'<button class="btnb" id="backBtn">'+(ar?"السابق":"Back")+'</button>':'<span></span>')+(!isLast?'<button class="btnn" id="nextBtn" '+(ok?'':'disabled')+'>'+(ar?"التالي ←":"Next →")+'</button>':'<button class="btng" id="genBtn" '+((ok&&!S.loading)?'':'disabled')+'>'+(S.loading?'<span class="spin"></span><span>'+esc(S.genMsg)+'</span>':'<span>'+genTxt+'</span>')+'</button>')+'</div>'+(S.loading?'<div class="gprog"><div class="gptext">'+esc(S.genMsg)+'</div><div class="gpbar"><div class="gpfill" style="width:'+S.genPct+'%"></div></div></div>':'')+(S.error?'<div class="errbox">'+esc(S.error)+'</div>':'')+'</div>';
 var chg=$id("chgBtn");if(chg)chg.addEventListener("click",function(){S.lang=null;render();});
 var back=$id("backBtn");if(back)back.addEventListener("click",function(){S.step--;render();});
