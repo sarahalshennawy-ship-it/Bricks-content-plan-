@@ -29,7 +29,7 @@ async function getRedis() {
   return client;
 }
 
-const DEFAULT_CALLS_PER_CODE = 4;
+const DEFAULT_CALLS_PER_CODE = 34; // 4 for the initial full plan, 30 headroom for regenerating individual days
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
