@@ -77,6 +77,13 @@ export default async function handler(req, res) {
   await redis.set(key, JSON.stringify(record));
 
   try {
+    const controller = new AbortController();
+    // Abort well before Vercel's own 60s hard limit, so this function's own
+    // catch block (and its refund) always gets to run — a platform-level
+    // kill for exceeding maxDuration does NOT run our catch block, which
+    // would otherwise silently burn the customer's call with nothing delivered.
+    const timeout = setTimeout(() => controller.abort(), 50000);
+
     const anthropicRes = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
@@ -88,8 +95,10 @@ export default async function handler(req, res) {
         model: 'claude-sonnet-4-6',
         max_tokens: max_tokens || 900,
         messages: [{ role: 'user', content: prompt }]
-      })
+      }),
+      signal: controller.signal
     });
+    clearTimeout(timeout);
 
     if (!anthropicRes.ok) {
       const errBody = await anthropicRes.json().catch(() => ({}));
@@ -106,8 +115,16 @@ export default async function handler(req, res) {
     const text = (data.content && data.content[0] && data.content[0].text) || '';
     return res.status(200).json({ text, callsRemaining: callsAllowed - record.callsUsed });
   } catch (err) {
+    // Covers both our own abort (timeout) and any other network failure —
+    // either way, the customer got nothing, so the call must be refunded.
     record.callsUsed -= 1;
     await redis.set(key, JSON.stringify(record));
-    return res.status(500).json({ error: 'server_error', message: err.message });
+    const timedOut = err.name === 'AbortError';
+    return res.status(timedOut ? 504 : 500).json({
+      error: timedOut ? 'timeout' : 'server_error',
+      message: timedOut
+        ? 'The request took too long and was cancelled. Your call was not counted — please try again.'
+        : err.message
+    });
   }
 }
