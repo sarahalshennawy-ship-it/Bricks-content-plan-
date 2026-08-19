@@ -293,7 +293,7 @@ app.querySelectorAll(".calcell.filled").forEach(function(cell){
 }
 
 function openDayModal(d,dateObj,ar){
-  var hL=ar?"الهوك":"HOOK";var iL=ar?"الفكرة":"IDEA";var cL=ar?"الـ CTA":"CTA";var sL=ar?"السكريبت":"SCRIPT";var vL=ar?"التصوير":"SHOT LIST";var tagL=ar?"الهاشتاقات":"HASHTAGS";var cpL=ar?"نسخ":"Copy";var closeL=ar?"إغلاق":"Close";
+  var hL=ar?"الهوك":"HOOK";var iL=ar?"الفكرة":"IDEA";var cL=ar?"الـ CTA":"CTA";var sL=ar?"السكريبت":"SCRIPT";var vL=ar?"التصوير":"SHOT LIST";var tagL=ar?"الهاشتاقات":"HASHTAGS";var cpL=ar?"نسخ":"Copy";var closeL=ar?"إغلاق":"Close";var rgL=ar?"🔄 ولّد فكرة أخرى لهذا اليوم":"🔄 Regenerate this day";var rgLoadL=ar?"جاري التوليد...":"Regenerating...";
   var ta=ar?"right":"left";var pi=(d.day-1)%5;var pc=PC[pi];
   var dateStr=dateObj?dateObj.toLocaleDateString(ar?"ar":"en",{weekday:'long',month:'long',day:'numeric'}):"";
   var extra="";
@@ -310,9 +310,31 @@ function openDayModal(d,dateObj,ar){
     extra+
     '<div class="fdiv"></div><div class="flbl" style="color:#667eea">'+cL+'</div><div class="fval" style="text-align:'+ta+'">'+esc(d.cta)+'</div>'+
     '<button class="cpbtn" id="modalCopyBtn" style="margin-top:16px;width:100%;padding:10px">'+cpL+'</button>'+
+    '<button class="btnb" id="modalRegenBtn" style="margin-top:8px;width:100%;padding:10px">'+rgL+'</button>'+
+    '<div id="modalRegenError" style="display:none;margin-top:8px;padding:8px 12px;background:rgba(255,71,87,0.1);border:1px solid #ff4757;border-radius:8px;color:#ff4757;font-size:12px"></div>'+
   '</div></div>';
   $id("modalOverlay").addEventListener("click",function(e){if(e.target.id==="modalOverlay")closeDayModal();});
   $id("modalCloseBtn").addEventListener("click",closeDayModal);
+  $id("modalRegenBtn").addEventListener("click",async function(){
+    var btn=$id("modalRegenBtn");var errBox=$id("modalRegenError");
+    btn.disabled=true;btn.textContent=rgLoadL;errBox.style.display="none";
+    try{
+      var tok=(d.format==="Reel"||d.format==="Carousel")?600:300;
+      var raw=await callAPI(makePrompt(d.day,1),tok);
+      var newDays=parsePlainText(raw,d.day,1);
+      var newD=newDays[0];
+      if(!newD||!newD.hook)throw new Error(ar?"لم يتم توليد محتوى صالح":"No valid content came back");
+      var idx=(S.plan.days||[]).findIndex(function(x){return x.day===d.day;});
+      if(idx>=0)S.plan.days[idx]=newD;
+      var cell=document.querySelector('.calcell[data-day="'+d.day+'"] .calhook');
+      if(cell)cell.textContent=newD.hook||newD.caption||"";
+      openDayModal(newD,dateObj,ar);
+    }catch(err){
+      btn.disabled=false;btn.textContent=rgL;
+      errBox.textContent=(ar?"تعذر التوليد: ":"Couldn't regenerate: ")+err.message;
+      errBox.style.display="block";
+    }
+  });
   $id("modalCopyBtn").addEventListener("click",function(){
     var parts=[d.hook||""];if(d.script)parts.push(d.script);else if(d.caption)parts.push(d.caption);if(d.visual)parts.push((ar?"تصوير: ":"Shot list: ")+d.visual);parts.push(d.cta||"");if(d.hashtags)parts.push(d.hashtags);
     var txt=parts.filter(Boolean).join("\n\n");

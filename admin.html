@@ -78,9 +78,9 @@ function renderDashboard(codes, msg){
     '<h1>Bricks — Access Code Admin</h1><div class="sub">View and issue Content Plan Generator access codes</div>' +
     '<div class="card"><label>Issue a new code</label><div class="row">' +
     '<div class="field codefield"><label>Code name</label><input id="newCode" placeholder="e.g. CUSTOMER-NAME-01" value="'+randomCode()+'"><button type="button" class="diceBtn" id="rerollBtn" title="Generate a new random code">🎲</button></div>' +
-    '<div class="field"><label>Calls allowed</label><input id="newCalls" type="number" value="4"></div>' +
+    '<div class="field"><label>Calls allowed</label><input id="newCalls" type="number" value="34"></div>' +
     '<div class="field"><label>Valid for (days)</label><input id="newDays" type="number" value="30"></div>' +
-    '<button id="issueBtn">Issue Code</button></div><div class="hint">A random code is filled in automatically — click 🎲 for a new one, or type your own name over it. Default: 4 calls (one full 30-day plan), valid 30 days.</div>' +
+    '<button id="issueBtn">Issue Code</button></div><div class="hint">A random code is filled in automatically — click 🎲 for a new one, or type your own name over it. Default: 34 calls (4 for the initial full plan, 30 headroom for regenerating individual days), valid 30 days.</div>' +
     '<div id="issueMsg"></div></div>' +
     '<div class="card"><div class="row" style="justify-content:space-between;margin-bottom:4px">' +
     '<label style="margin:0">All issued codes ('+codes.length+')</label>' +
