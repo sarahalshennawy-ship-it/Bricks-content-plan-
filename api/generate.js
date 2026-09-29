@@ -60,6 +60,11 @@ export default async function handler(req, res) {
     return res.status(403).json({ error: 'invalid_code', message: 'This access code was not recognized.' });
   }
 
+  // Launch Planner codes must never be able to spend AI calls.
+  if (record.product && record.product !== 'content-plan') {
+    return res.status(403).json({ error: 'wrong_product', message: 'This code is for a different Bricks tool.' });
+  }
+
   const callsAllowed = record.callsAllowed || DEFAULT_CALLS_PER_CODE;
 
   if (record.callsUsed >= callsAllowed) {

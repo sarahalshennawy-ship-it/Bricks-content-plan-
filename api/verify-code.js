@@ -41,6 +41,11 @@ export default async function handler(req, res) {
     return res.status(200).json({ valid: false, error: 'invalid_code', message: 'This access code was not recognized.' });
   }
 
+  // Launch Planner codes must not unlock the Content Plan Generator.
+  if (record.product && record.product !== 'content-plan') {
+    return res.status(200).json({ valid: false, error: 'wrong_product', message: 'This code is for a different Bricks tool. Use your Content Plan Generator code.' });
+  }
+
   const callsAllowed = record.callsAllowed || 4;
   if (record.callsUsed >= callsAllowed) {
     return res.status(200).json({ valid: false, error: 'code_exhausted', message: 'This code has already been used to generate a plan.' });

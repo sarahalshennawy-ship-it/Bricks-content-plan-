@@ -39,7 +39,14 @@ export default async function handler(req, res) {
     return res.status(401).json({ error: 'unauthorized' });
   }
 
-  const { code, callsAllowed, validDays } = req.body || {};
+  const { code, callsAllowed, validDays, product, lifetime } = req.body || {};
+  // Two products share this code system:
+  //   "content-plan"   - Content Plan Generator (limited AI calls, expires)
+  //   "launch-planner" - UAE Business Launch Planner at planner.bricksmedia.org
+  //                      (no AI calls, lifetime access)
+  // Old requests without a product field are Content Plan codes, as before.
+  const prod = product === 'launch-planner' ? 'launch-planner' : 'content-plan';
+  const isLifetime = prod === 'launch-planner' || lifetime === true;
   if (!code || typeof code !== 'string') {
     return res.status(400).json({ error: 'missing_code' });
   }
@@ -53,13 +60,16 @@ export default async function handler(req, res) {
 
   const days = validDays || 30; // codes are valid for 1 month by default
   const issuedAt = new Date();
-  const expiresAt = new Date(issuedAt.getTime() + days * 24 * 60 * 60 * 1000);
+  const expiresAt = isLifetime ? null : new Date(issuedAt.getTime() + days * 24 * 60 * 60 * 1000);
 
   const record = {
-    callsAllowed: callsAllowed || 4,
+    product: prod,
+    // The planner makes no AI calls; 1 keeps any "used up" check from
+    // ever marking a fresh planner code as used.
+    callsAllowed: prod === 'content-plan' ? (callsAllowed || 4) : 1,
     callsUsed: 0,
     issuedAt: issuedAt.toISOString(),
-    expiresAt: expiresAt.toISOString()
+    expiresAt: expiresAt ? expiresAt.toISOString() : null
   };
   await redis.set(key, JSON.stringify(record));
   return res.status(200).json({ ok: true, code, record });
