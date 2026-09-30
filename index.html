@@ -163,6 +163,41 @@ body{background:#fff !important}
 .printfield{font-size:11px;color:#363731;margin-bottom:4px;line-height:1.4}
 .printfooter{text-align:center;font-size:10px;color:#888;margin-top:20px}
 }
+
+/* ===== plan / tracker tabs ===== */
+.vtabs{display:flex;gap:6px;background:#fff;border:1.5px solid #EDE2DB;border-radius:999px;padding:4px;margin:0 auto 18px;width:max-content;max-width:100%}
+.vtab{border:0;background:none;padding:9px 18px;border-radius:999px;font-size:14px;font-weight:600;color:#6E6A63;cursor:pointer}
+.vtab[aria-selected="true"]{background:#7A1F5C;color:#fff}
+.robanner{background:#FFF5DE;border:1px solid #F1D48A;color:#6B4E00;border-radius:12px;padding:12px 14px;font-size:13.5px;margin:0 0 16px;text-align:center}
+.trstats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+.trstat{background:#fff;border:1.5px solid #EDE2DB;border-radius:12px;padding:12px;text-align:center}
+.trstat b{display:block;font-size:22px;color:#363731}
+.trstat span{font-size:12px;color:#6E6A63}
+.trcard{background:#fff;border:1.5px solid #EDE2DB;border-radius:14px;padding:16px;margin-bottom:14px}
+.trcard h4{font-size:14px;margin:0 0 10px;color:#363731}
+.trnote{font-size:13px;color:#6E6A63}
+.trbar{display:grid;grid-template-columns:110px 1fr auto;gap:8px;align-items:center;font-size:13px;margin:6px 0}
+.trbar i{display:block;height:10px;border-radius:6px;background:#D14B7F;min-width:4px}
+.trtop{font-size:13px;margin:6px 0;display:flex;gap:8px}
+.trtop b{white-space:nowrap}
+.trtop span{color:#6E6A63;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical}
+.trai{white-space:pre-wrap;font-size:14px;line-height:1.6;color:#363731;background:#FBEFF4;border-radius:10px;padding:12px 14px;margin-top:10px}
+.trsave{font-size:12px;color:#6E6A63;text-align:end;min-height:16px;margin-bottom:6px}
+.trrow{background:#fff;border:1.5px solid #EDE2DB;border-radius:12px;padding:12px 14px;margin-bottom:10px}
+.trrow.done{border-color:#B9D7C6;background:#FBFEFC}
+.trhead{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:13px}
+.trhead b{font-size:14px}
+.trfmt{color:#7A1F5C;font-weight:600;margin-inline-start:8px}
+.trposted{display:flex;align-items:center;gap:6px;font-weight:600;color:#363731;cursor:pointer}
+.trposted input{width:18px;height:18px;accent-color:#2E7D62}
+.trhook{font-size:13.5px;color:#363731;margin:6px 0 10px;cursor:pointer;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.trhook:hover{color:#7A1F5C}
+.trnums{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.trnums label{font-size:11.5px;color:#6E6A63;display:block;margin-bottom:3px}
+.trnums input{width:100%;padding:8px 10px;border:1.5px solid #EDE2DB;border-radius:8px;font-size:15px;direction:ltr;text-align:start}
+.trnums input:focus{outline:none;border-color:#9C2A63}
+@media (max-width:560px){.trstats{grid-template-columns:repeat(2,1fr)}.trnums{grid-template-columns:repeat(2,1fr)}.trbar{grid-template-columns:90px 1fr auto}}
+@media print{.vtabs,.trwrap,.robanner{display:none!important}}
 </style>
 </head>
 <body>
@@ -188,7 +223,7 @@ var TRENDS = "Short-form talking-head Reels with on-screen text captions are out
 var BUY_URL="https://tools.bricksmedia.org/";
 /* Paste your WhatsApp link here (e.g. https://wa.me/9715XXXXXXXX). The media-services box stays hidden while this is empty. */
 var WA_LINK="";
-var S={lang:null,step:0,companyName:"",companyLogo:null,biz:[],goal:[],platforms:[],audience:[],cl:"",desc:"",plan:null,loading:false,genPct:0,genMsg:"",error:"",code:"",codeValid:false,codeChecking:false,codeError:""};
+var S={view:"calendar",readOnly:false,tracker:{entries:{},analysis:null},lang:null,step:0,companyName:"",companyLogo:null,biz:[],goal:[],platforms:[],audience:[],cl:"",desc:"",plan:null,loading:false,genPct:0,genMsg:"",error:"",code:"",codeValid:false,codeChecking:false,codeError:""};
 function esc(s){return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
 function $id(id){return document.getElementById(id);}
 function isAR(){return S.lang==="ar";}
@@ -207,7 +242,7 @@ var submit=$id("codeSubmitBtn");
 function trySubmit(){var val=input.value.trim().toUpperCase();if(!val||S.codeChecking)return;S.code=val;S.codeChecking=true;S.codeError="";render();
 fetch("/api/verify-code",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({code:val})})
 .then(function(r){return r.json();})
-.then(function(d){S.codeChecking=false;if(d.valid){S.codeValid=true;S.codeError="";}else{S.codeError=d.message||(ar?"رمز غير صالح.":"Invalid code.");}render();})
+.then(function(d){if(d.valid){return loadWorkspace(val,true);}if(d.error==="code_expired"||d.error==="code_exhausted"){return loadWorkspace(val,false).then(function(ok){if(!ok){S.codeChecking=false;S.codeError=d.message||"";render();}});}S.codeChecking=false;S.codeError=d.message||(ar?"رمز غير صالح.":"Invalid code.");render();})
 .catch(function(err){S.codeChecking=false;S.codeError=ar?"تعذر الاتصال. حاول مرة أخرى.":"Couldn't connect. Please try again.";render();});
 }
 submit.addEventListener("click",trySubmit);
@@ -249,7 +284,120 @@ if(fullDl.length>0){sections.push("These are Reel/Carousel days — give FULL pr
 if(liteDl.length>0){sections.push("These are Story/Post days — keep these LIGHT (quick, low-production content):\n"+liteDl.join("\n")+"\n\nFor EACH of these days use EXACTLY this format:\nDAY:[number]\nFORMAT:[Story or Post]\nHOOK:[punchy, max 12 words, specific to this business]\nCAPTION:[content idea, max 20 words]\nCTA:[action, max 8 words]\nTIME:[best local posting time]\n---");}
 return ctx+sections.join("\n\n")+"\n\nAll "+numDays+" days total, across both groups above. No JSON. No markdown. Nothing else.";}
 async function callAPI(prompt,tok){var res=await fetch("/api/generate",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({code:S.code,prompt:prompt,max_tokens:tok||900})});var d=await res.json().catch(function(){return{};});if(!res.ok){throw new Error(d.message||d.error||("HTTP "+res.status));}return d.text||"";}
-async function doGenerate(){if(S.loading)return;S.loading=true;S.error="";S.genPct=0;var ar=isAR();var allDays=[];var starts=[1,11,21];try{for(var ci=0;ci<starts.length;ci++){var start=starts[ci];var end=start+9;S.genMsg=ar?("جاري توليد الأيام "+start+"–"+end+"..."):("Generating days "+start+"–"+end+" of 30...");S.genPct=Math.round((ci/4)*85);render();var raw=await callAPI(makePrompt(start,10),1900);allDays=allDays.concat(parsePlainText(raw,start,10));}S.genMsg=ar?"جاري الإنهاء...":"Finishing...";S.genPct=92;render();var sr=await callAPI("For this "+S.biz.join(" / ")+" (goals: "+S.goal.join(" / ")+"): 2-sentence content strategy in "+S.cl+" language.\nCurrent trends to consider: "+TRENDS+"\n3 short themes.\nFormat:\nSUMMARY:[text]\nTHEME1:[text]\nTHEME2:[text]\nTHEME3:[text]",300);var summary=ar?"خطتك جاهزة.":"Your 30-day plan is ready.";var themes=ar?["سلطة","تفاعل","تحويل"]:["Authority","Engagement","Conversion"];sr.split("\n").forEach(function(line){var sep=line.indexOf(":");if(sep<0)return;var k=line.slice(0,sep).trim().toUpperCase();var v=line.slice(sep+1).trim();if(k==="SUMMARY")summary=v;else if(k==="THEME1")themes[0]=v;else if(k==="THEME2")themes[1]=v;else if(k==="THEME3")themes[2]=v;});S.genPct=100;render();await new Promise(function(res){setTimeout(res,200);});allDays.sort(function(a,b){return a.day-b.day;});S.plan={summary:summary,keyThemes:themes,days:allDays,startDate:new Date().toISOString()};S.loading=false;render();}catch(err){S.loading=false;S.error=ar?("خطأ: "+err.message+". حاول مرة أخرى."):("Error: "+err.message+". Please try again.");render();}}
+async function doGenerate(){if(S.loading)return;S.loading=true;S.error="";S.genPct=0;var ar=isAR();var allDays=[];var starts=[1,11,21];try{for(var ci=0;ci<starts.length;ci++){var start=starts[ci];var end=start+9;S.genMsg=ar?("جاري توليد الأيام "+start+"–"+end+"..."):("Generating days "+start+"–"+end+" of 30...");S.genPct=Math.round((ci/4)*85);render();var raw=await callAPI(makePrompt(start,10),1900);allDays=allDays.concat(parsePlainText(raw,start,10));}S.genMsg=ar?"جاري الإنهاء...":"Finishing...";S.genPct=92;render();var sr=await callAPI("For this "+S.biz.join(" / ")+" (goals: "+S.goal.join(" / ")+"): 2-sentence content strategy in "+S.cl+" language.\nCurrent trends to consider: "+TRENDS+"\n3 short themes.\nFormat:\nSUMMARY:[text]\nTHEME1:[text]\nTHEME2:[text]\nTHEME3:[text]",300);var summary=ar?"خطتك جاهزة.":"Your 30-day plan is ready.";var themes=ar?["سلطة","تفاعل","تحويل"]:["Authority","Engagement","Conversion"];sr.split("\n").forEach(function(line){var sep=line.indexOf(":");if(sep<0)return;var k=line.slice(0,sep).trim().toUpperCase();var v=line.slice(sep+1).trim();if(k==="SUMMARY")summary=v;else if(k==="THEME1")themes[0]=v;else if(k==="THEME2")themes[1]=v;else if(k==="THEME3")themes[2]=v;});S.genPct=100;render();await new Promise(function(res){setTimeout(res,200);});allDays.sort(function(a,b){return a.day-b.day;});S.tracker={entries:{},analysis:null};S.view="calendar";S.plan={summary:summary,keyThemes:themes,days:allDays,startDate:new Date().toISOString()};S.loading=false;savePlanRemote();saveTrackerNow();render();}catch(err){S.loading=false;S.error=ar?("خطأ: "+err.message+". حاول مرة أخرى."):("Error: "+err.message+". Please try again.");render();}}
+
+/* ===== saved workspace (plan + tracker, tied to the access code) ===== */
+function wsCall(action,extra){var b={code:S.code,action:action};for(var k in extra)b[k]=extra[k];return fetch("/api/workspace",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(b)}).then(function(r){return r.json().then(function(d){if(!r.ok)throw new Error(d.message||d.error||("HTTP "+r.status));return d;});});}
+function loadWorkspace(code,active){
+  return wsCall("load",{}).then(function(d){
+    if(d.plan){
+      S.plan=d.plan;S.tracker=d.tracker||{entries:{},analysis:null};
+      var m=d.meta||{};if(m.companyName)S.companyName=m.companyName;if(m.cl)S.cl=m.cl;if(m.biz)S.biz=m.biz;if(m.goal)S.goal=m.goal;if(m.platforms)S.platforms=m.platforms;
+      S.readOnly=!d.active;S.codeValid=true;S.codeChecking=false;S.codeError="";render();return true;
+    }
+    if(active){S.codeValid=true;S.codeChecking=false;S.codeError="";render();return true;}
+    return false;
+  }).catch(function(){if(active){S.codeValid=true;S.codeChecking=false;S.codeError="";render();return true;}return false;});
+}
+function savePlanRemote(){if(!S.plan||S.readOnly)return;wsCall("savePlan",{plan:S.plan,meta:{companyName:S.companyName,lang:S.lang,cl:S.cl,biz:S.biz,goal:S.goal,platforms:S.platforms}}).catch(function(e){console.error("Plan not saved:",e);});}
+var trTimer=null;
+function setSaveState(t){var el=$id("trSave");if(el)el.textContent=t;}
+function saveTrackerNow(){return wsCall("saveTracker",{tracker:S.tracker}).then(function(){setSaveState(trT(isAR()).saved);}).catch(function(){setSaveState(trT(isAR()).saveErr);});}
+function saveTrackerSoon(){setSaveState(trT(isAR()).saving);clearTimeout(trTimer);trTimer=setTimeout(saveTrackerNow,800);}
+
+function trT(ar){return ar?{
+  tabCal:"📅 الخطة",tabTrack:"📊 تتبّع النتائج",
+  ro:"انتهت صلاحية رمزك لتوليد محتوى جديد، لكن يمكنك دائماً عرض خطتك ومواصلة تتبّع نتائجك.",
+  logThis:"سجّل نتائج هذا اليوم",
+  posts:"منشورات مسجّلة",views:"المشاهدات",follows:"متابعون جدد",saves:"حفظ ومشاركة",enq:"استفسارات",
+  enqLong:"استفسارات (تعليقات/رسائل)",posted:"تم النشر",day:"اليوم",
+  need3:"سجّل نتائج 3 منشورات على الأقل لترى ما الذي ينجح.",
+  more10:"ستتضح الصورة أكثر بعد تسجيل 10 منشورات.",
+  byFmt:"أفضل صيغة (متوسط المشاهدات)",byHook:"أسلوب الافتتاحية (متوسط المشاهدات)",
+  hq:"أسئلة",hn:"أرقام وقوائم",hs:"عبارات",
+  topViews:"الأعلى مشاهدة",topEnq:"جلبت استفسارات",noEnq:"لم يُسجَّل أي استفسار بعد.",
+  aiTitle:"تحليل ذكي لنتائجك",aiBtn:"✨ حلّل نتائجي",aiNeed:function(n){return"سجّل 5 منشورات لتفعيل التحليل الذكي ("+n+"/5)";},
+  aiBusy:"جارٍ التحليل...",aiRO:"التحليل الذكي متاح طالما رمزك نشط.",aiErr:"تعذّر التحليل: ",aiNote:"يستخدم محاولة واحدة من رصيدك.",
+  aiAt:"آخر تحليل: ",saving:"جارٍ الحفظ...",saved:"✓ تم الحفظ",saveErr:"تعذّر الحفظ، تحقق من الاتصال.",
+  intro:"بعد نشر كل يوم، سجّل أرقامه هنا. بعد 10 إلى 15 منشوراً ستعرف بالضبط أي الافتتاحيات والصيغ تنجح مع جمهورك."
+}:{
+  tabCal:"📅 Plan",tabTrack:"📊 Track results",
+  ro:"Your code can no longer generate new content, but you can always view your plan and keep tracking your results.",
+  logThis:"Log results for this day",
+  posts:"Posts logged",views:"Views",follows:"New follows",saves:"Saves & shares",enq:"Enquiries",
+  enqLong:"Enquiries (comments/DMs)",posted:"Posted",day:"Day",
+  need3:"Log results for at least 3 posts to see what's working.",
+  more10:"The picture gets much clearer after 10 posts.",
+  byFmt:"Best format (average views)",byHook:"Hook style (average views)",
+  hq:"Questions",hn:"Numbers and lists",hs:"Statements",
+  topViews:"Most viewed",topEnq:"Brought enquiries",noEnq:"No enquiries logged yet.",
+  aiTitle:"AI analysis of your results",aiBtn:"✨ Analyze my results",aiNeed:function(n){return"Log 5 posts to unlock the AI analysis ("+n+"/5)";},
+  aiBusy:"Analyzing...",aiRO:"AI analysis is available while your code is active.",aiErr:"Couldn't analyze: ",aiNote:"Uses one of your remaining generations.",
+  aiAt:"Last analyzed: ",saving:"Saving...",saved:"✓ Saved",saveErr:"Couldn't save. Check your connection.",
+  intro:"After you post each day, log its numbers here. After 10 to 15 posts you'll know exactly which hooks and formats work for your audience."
+};}
+function fmtN(n){n=Number(n)||0;return n.toLocaleString("en-US");}
+function hookType(h){h=String(h||"");if(/[?؟]/.test(h))return"q";if(/^\D{0,12}\d/.test(h))return"n";return"s";}
+function trLogged(){var out=[];var ents=S.tracker.entries||{};(S.plan.days||[]).forEach(function(d){var e=ents[d.day];if(e&&(e.posted||e.views!=null))out.push({d:d,e:e});});return out;}
+function trStatsHTML(ar){
+  var t=trT(ar),L=trLogged(),tot={v:0,f:0,s:0,q:0};
+  L.forEach(function(x){tot.v+=x.e.views||0;tot.f+=x.e.follows||0;tot.s+=x.e.saves||0;tot.q+=x.e.enquiries||0;});
+  var h='<div class="trstats"><div class="trstat"><b>'+L.length+'<small style="font-size:13px;color:#6E6A63">/30</small></b><span>'+t.posts+'</span></div><div class="trstat"><b>'+fmtN(tot.v)+'</b><span>'+t.views+'</span></div><div class="trstat"><b>'+fmtN(tot.f)+'</b><span>'+t.follows+'</span></div><div class="trstat"><b>'+fmtN(tot.q)+'</b><span>'+t.enq+'</span></div></div>';
+  var withViews=L.filter(function(x){return x.e.views!=null;});
+  if(withViews.length<3){return h+'<div class="trcard"><div class="trnote">'+t.need3+'</div></div>';}
+  function avgBy(keyFn,labels){var g={};withViews.forEach(function(x){var k=keyFn(x.d);if(!g[k])g[k]={sum:0,n:0};g[k].sum+=x.e.views;g[k].n++;});var rows=Object.keys(g).map(function(k){return{k:k,avg:Math.round(g[k].sum/g[k].n),n:g[k].n};}).sort(function(a,b){return b.avg-a.avg;});var max=rows.length?rows[0].avg||1:1;return rows.map(function(r){return'<div class="trbar"><span>'+esc(labels?labels[r.k]:r.k)+' <small style="color:#6E6A63">('+r.n+')</small></span><i style="width:'+Math.max(3,Math.round(r.avg/max*100))+'%"></i><b>'+fmtN(r.avg)+'</b></div>';}).join("");}
+  h+='<div class="trcard"><h4>'+t.byFmt+'</h4>'+avgBy(function(d){return d.format||"-";})+'<h4 style="margin-top:14px">'+t.byHook+'</h4>'+avgBy(function(d){return hookType(d.hook);},{q:t.hq,n:t.hn,s:t.hs})+'</div>';
+  var top=withViews.slice().sort(function(a,b){return b.e.views-a.e.views;}).slice(0,3);
+  var enq=L.filter(function(x){return(x.e.enquiries||0)>0;}).sort(function(a,b){return b.e.enquiries-a.e.enquiries;}).slice(0,3);
+  function line(x,val){return'<div class="trtop"><b>'+t.day+' '+x.d.day+'</b><span>'+esc(x.d.hook||"")+'</span><b style="margin-inline-start:auto">'+fmtN(val)+'</b></div>';}
+  h+='<div class="trcard"><h4>'+t.topViews+'</h4>'+top.map(function(x){return line(x,x.e.views);}).join("")+'<h4 style="margin-top:14px">'+t.topEnq+'</h4>'+(enq.length?enq.map(function(x){return line(x,x.e.enquiries);}).join(""):'<div class="trnote">'+t.noEnq+'</div>')+(withViews.length<10?'<div class="trnote" style="margin-top:10px">'+t.more10+'</div>':'')+'</div>';
+  return h;
+}
+function trAiHTML(ar){
+  var t=trT(ar),n=trLogged().filter(function(x){return x.e.views!=null;}).length,a=S.tracker.analysis;
+  var body;
+  if(S.readOnly)body='<div class="trnote">'+t.aiRO+'</div>';
+  else if(n<5)body='<button class="btnb" disabled style="width:100%;opacity:.6">'+t.aiNeed(n)+'</button>';
+  else body='<button class="btnn" id="trAiBtn" style="width:100%;padding:11px">'+t.aiBtn+'</button><div class="trnote" style="margin-top:6px;text-align:center">'+t.aiNote+'</div><div id="trAiErr" class="trnote" style="color:#C2413B;margin-top:6px"></div>';
+  return'<div class="trcard"><h4>'+t.aiTitle+'</h4>'+body+(a&&a.text?'<div class="trai">'+esc(a.text)+'</div><div class="trnote" style="margin-top:6px">'+t.aiAt+esc(new Date(a.at).toLocaleDateString(ar?"ar":"en",{day:"numeric",month:"short"}))+'</div>':'')+'</div>';
+}
+function trackerHTML(p,dateForDay,ar){
+  var t=trT(ar),ents=S.tracker.entries||{};
+  var rows=(p.days||[]).slice().sort(function(a,b){return a.day-b.day;}).map(function(d){
+    var e=ents[d.day]||{};var dt=dateForDay[d.day];
+    var ds=dt?dt.toLocaleDateString(ar?"ar":"en",{weekday:"short",day:"numeric",month:"short"}):"";
+    function num(f,lbl){return'<div><label for="tr'+f+d.day+'">'+lbl+'</label><input id="tr'+f+d.day+'" type="number" inputmode="numeric" min="0" data-f="'+f+'" data-d="'+d.day+'" value="'+(e[f]!=null?e[f]:"")+'"></div>';}
+    return'<div class="trrow'+(e.posted?' done':'')+'" id="tr-'+d.day+'"><div class="trhead"><div><b>'+t.day+' '+d.day+'</b> <span style="color:#6E6A63">'+esc(ds)+'</span><span class="trfmt">'+esc(d.format||"")+'</span></div><label class="trposted"><input type="checkbox" data-f="posted" data-d="'+d.day+'"'+(e.posted?' checked':'')+'>'+t.posted+'</label></div><div class="trhook" data-open="'+d.day+'">'+esc(d.hook||d.caption||"")+'</div><div class="trnums">'+num("views",t.views)+num("follows",t.follows)+num("saves",t.saves)+num("enquiries",t.enqLong)+'</div></div>';
+  }).join("");
+  return'<div class="trwrap no-print"><p class="trnote" style="text-align:center;margin:0 0 14px">'+t.intro+'</p><div id="trStats">'+trStatsHTML(ar)+'</div><div id="trAi">'+trAiHTML(ar)+'</div><div class="trsave" id="trSave"></div>'+rows+'</div>';
+}
+function bindTracker(p,dateForDay,dayByNum,ar){
+  var t=trT(ar);
+  function refresh(){var s1=$id("trStats");if(s1)s1.innerHTML=trStatsHTML(ar);var s2=$id("trAi");if(s2){s2.innerHTML=trAiHTML(ar);bindAi();}}
+  function entry(day){if(!S.tracker.entries)S.tracker.entries={};if(!S.tracker.entries[day])S.tracker.entries[day]={posted:false,date:null,views:null,follows:null,saves:null,enquiries:null};return S.tracker.entries[day];}
+  function markPosted(day,on){var e=entry(day);e.posted=on;if(on&&!e.date)e.date=new Date().toISOString().slice(0,10);var row=$id("tr-"+day);if(row){row.classList.toggle("done",on);var cb=row.querySelector('input[data-f=posted]');if(cb)cb.checked=on;}}
+  document.querySelectorAll(".trrow input").forEach(function(inp){
+    var day=+inp.getAttribute("data-d"),f=inp.getAttribute("data-f");
+    if(f==="posted"){inp.addEventListener("change",function(){markPosted(day,inp.checked);refresh();saveTrackerSoon();});return;}
+    inp.addEventListener("input",function(){var v=inp.value.trim();var e=entry(day);e[f]=v===""?null:Math.max(0,Math.round(Number(v))||0);if(v!==""&&!e.posted)markPosted(day,true);refresh();saveTrackerSoon();});
+  });
+  document.querySelectorAll(".trhook[data-open]").forEach(function(h){h.addEventListener("click",function(){var day=+h.getAttribute("data-open");openDayModal(dayByNum[day],dateForDay[day],ar);});});
+  function bindAi(){var b=$id("trAiBtn");if(!b)return;b.addEventListener("click",async function(){
+    b.disabled=true;b.textContent=t.aiBusy;var err=$id("trAiErr");if(err)err.textContent="";
+    try{
+      var L=trLogged().filter(function(x){return x.e.views!=null;});
+      var loggedDays={};L.forEach(function(x){loggedDays[x.d.day]=1;});
+      var remaining=(p.days||[]).filter(function(d){return!loggedDays[d.day];}).map(function(d){return d.day;});
+      var lines=L.map(function(x){return"Day "+x.d.day+" | "+(x.d.format||"-")+" | "+String(x.d.hook||"").replace(/\s+/g," ").slice(0,140)+" | views "+(x.e.views||0)+" | follows "+(x.e.follows||0)+" | saves/shares "+(x.e.saves||0)+" | enquiries "+(x.e.enquiries||0);}).join("\n");
+      var lang=S.cl||(ar?"Arabic":"English");
+      var prompt="You are a social media strategist. Analyse these real results from a 30-day content plan for a "+(S.biz||[]).join(" / ")+" business (goals: "+(S.goal||[]).join(" / ")+"; platforms: "+(S.platforms||[]).join(", ")+").\n\nPosts logged (day | format | hook | results):\n"+lines+"\n\nRemaining days still to post: "+(remaining.length?remaining.join(", "):"none")+".\n\nWrite in "+lang+". Give exactly:\n- 3 short findings about which formats and hook styles perform best, citing the numbers\n- 3 specific recommendations for the remaining days (mention day numbers where useful)\nUse short lines starting with \"- \". No headings, no markdown, under 170 words. Be honest if there is too little data to be sure.";
+      var txt=await callAPI(prompt,700);
+      S.tracker.analysis={text:String(txt||"").trim(),at:new Date().toISOString()};
+      refresh();saveTrackerNow();
+    }catch(e){b.disabled=false;b.textContent=t.aiBtn;var er=$id("trAiErr");if(er)er.textContent=t.aiErr+e.message;}
+  });}
+  bindAi();
+}
 var MONTHS_EN=["January","February","March","April","May","June","July","August","September","October","November","December"];
 var MONTHS_AR=["يناير","فبراير","مارس","أبريل","مايو","يونيو","يوليو","أغسطس","سبتمبر","أكتوبر","نوفمبر","ديسمبر"];
 var WD_EN=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
@@ -294,11 +442,13 @@ monthKeys.forEach(function(mk){
 
 var tc=["#7A1F5C","#A36B00","#D14B7F"];var tpills=(p.keyThemes||[]).map(function(t,i){return'<span class="pill" style="background:'+tc[i%3]+'33;color:'+tc[i%3]+'">'+esc(t)+'</span>';}).join("");
 var logoImg=S.companyLogo?'<img src="'+S.companyLogo+'" style="height:36px;max-width:120px;object-fit:contain;margin-'+(isRTL?"left":"right")+':10px;vertical-align:middle;border-radius:4px">':'';
-app.innerHTML='<div><div class="phdr no-print"><div style="display:flex;align-items:center">'+logoImg+'<div><div class="hb">'+esc(S.companyName||(ar?"خطتك":"Your Plan"))+'</div><div class="hs">'+(ar?"من إنتاج Bricks — استوديو بناء الأعمال":"Powered by Bricks — Business Building Studio")+'</div></div></div><div style="display:flex;gap:8px"><button class="hbtn" id="pdfBtn">📄 '+(ar?"تحميل PDF":"Download PDF")+'</button><button class="hbtn" id="npBtn">'+(ar?"خطة جديدة":"New plan")+'</button></div></div><div class="pbody"><div class="sumcard"><div class="sumt">'+esc(S.companyName?(ar?"خطة "+S.companyName+" لـ 30 يوم":S.companyName+"'s 30-Day Content Plan"):(ar?"خطة المحتوى لـ 30 يوم":"Your 30-Day Content Plan"))+'</div><div class="sums" style="text-align:'+(isRTL?"right":"left")+'">'+esc(p.summary)+'</div><div class="pills">'+tpills+'</div></div><p class="no-print" style="text-align:center;font-size:13px;color:#6E6A63;margin:0 0 16px">'+(ar?"معظم الخطط تُبنى ولا تُنفَّذ أبداً. لا تجعل هذه واحدة منها.":"Most plans get built and never actually get posted. Don't let this be one of them.")+'</p>'+calHTML+'<div class="calhint no-print">'+(ar?"👆 اضغط على أي يوم لرؤية التفاصيل الكاملة":"👆 Tap any day to see the full details")+'</div><div class="ctabox no-print"><div class="ctat">'+(ar?"هل تريد مستشاراً يساعدك على تنفيذ هذه الخطة؟":"Want a strategist to help you put this plan into action?")+'</div><div class="ctas">'+(ar?"تتضمّن باقة رائد الأعمال جلسة استراتيجية فردية وجلسة متابعة، إلى جانب محتوى الدورة التدريبية وجميع أدوات Bricks، مقابل <bdi dir=\"ltr\">$129</bdi>.":"The Entrepreneur Package includes a 1:1 strategy session and a follow-up session, plus the course and every Bricks tool, for $129.")+'</div><a href="'+BUY_URL+'" target="_blank" rel="noopener" class="ctabtn" style="margin-top:14px;background:#FFC857;color:#4A1242">'+(ar?"اطّلع على باقة رائد الأعمال":"See the Entrepreneur Package")+'</a></div>'+(WA_LINK?'<div class="ctabox no-print" style="background:linear-gradient(135deg,#4A1242,#9C2A63);margin-top:12px"><div class="ctat">📍 '+(ar?"في الإمارات أو السعودية؟":"In the UAE or KSA?")+'</div><div class="ctas">'+(ar?"نتولى عنك كل الفوضى — تصوير الفيديو، المونتاج، جدولة النشر، وإدارة الإعلانات المدفوعة. تواصل معنا الآن.":"We handle all the chaos for you — videography, video editing, media posting, and media buying. Contact us now.")+'</div><a href="'+WA_LINK+'" target="_blank" rel="noopener" class="ctabtn" style="margin-top:14px;background:#FFC857;color:#4A1242">💬 '+(ar?"تواصل معنا الآن":"Contact Us Now")+'</a></div>':'')+'<div class="printonly" id="printFullDetail"></div></div></div><div id="dayModalRoot"></div>';
+app.innerHTML='<div><div class="phdr no-print"><div style="display:flex;align-items:center">'+logoImg+'<div><div class="hb">'+esc(S.companyName||(ar?"خطتك":"Your Plan"))+'</div><div class="hs">'+(ar?"من إنتاج Bricks — استوديو بناء الأعمال":"Powered by Bricks — Business Building Studio")+'</div></div></div><div style="display:flex;gap:8px"><button class="hbtn" id="pdfBtn">📄 '+(ar?"تحميل PDF":"Download PDF")+'</button><button class="hbtn" id="npBtn"'+(S.readOnly?' style="display:none"':'')+'>'+(ar?"خطة جديدة":"New plan")+'</button></div></div><div class="pbody"><div class="sumcard"><div class="sumt">'+esc(S.companyName?(ar?"خطة "+S.companyName+" لـ 30 يوم":S.companyName+"'s 30-Day Content Plan"):(ar?"خطة المحتوى لـ 30 يوم":"Your 30-Day Content Plan"))+'</div><div class="sums" style="text-align:'+(isRTL?"right":"left")+'">'+esc(p.summary)+'</div><div class="pills">'+tpills+'</div></div><p class="no-print" style="text-align:center;font-size:13px;color:#6E6A63;margin:0 0 16px">'+(ar?"معظم الخطط تُبنى ولا تُنفَّذ أبداً. لا تجعل هذه واحدة منها.":"Most plans get built and never actually get posted. Don't let this be one of them.")+'</p>'+(S.readOnly?'<div class="robanner no-print">'+trT(ar).ro+'</div>':'')+'<div class="vtabs no-print" role="tablist"><button class="vtab" role="tab" data-v="calendar" aria-selected="'+(S.view!=="tracker")+'">'+trT(ar).tabCal+'</button><button class="vtab" role="tab" data-v="tracker" aria-selected="'+(S.view==="tracker")+'">'+trT(ar).tabTrack+'</button></div>'+(S.view==="tracker"?trackerHTML(p,dateForDay,ar):calHTML+'<div class="calhint no-print">'+(ar?"👆 اضغط على أي يوم لرؤية التفاصيل الكاملة":"👆 Tap any day to see the full details")+'</div>')+'<div class="ctabox no-print"><div class="ctat">'+(ar?"هل تريد مستشاراً يساعدك على تنفيذ هذه الخطة؟":"Want a strategist to help you put this plan into action?")+'</div><div class="ctas">'+(ar?"تتضمّن باقة رائد الأعمال جلسة استراتيجية فردية وجلسة متابعة، إلى جانب محتوى الدورة التدريبية وجميع أدوات Bricks، مقابل <bdi dir=\"ltr\">$129</bdi>.":"The Entrepreneur Package includes a 1:1 strategy session and a follow-up session, plus the course and every Bricks tool, for $129.")+'</div><a href="'+BUY_URL+'" target="_blank" rel="noopener" class="ctabtn" style="margin-top:14px;background:#FFC857;color:#4A1242">'+(ar?"اطّلع على باقة رائد الأعمال":"See the Entrepreneur Package")+'</a></div>'+(WA_LINK?'<div class="ctabox no-print" style="background:linear-gradient(135deg,#4A1242,#9C2A63);margin-top:12px"><div class="ctat">📍 '+(ar?"في الإمارات أو السعودية؟":"In the UAE or KSA?")+'</div><div class="ctas">'+(ar?"نتولى عنك كل الفوضى — تصوير الفيديو، المونتاج، جدولة النشر، وإدارة الإعلانات المدفوعة. تواصل معنا الآن.":"We handle all the chaos for you — videography, video editing, media posting, and media buying. Contact us now.")+'</div><a href="'+WA_LINK+'" target="_blank" rel="noopener" class="ctabtn" style="margin-top:14px;background:#FFC857;color:#4A1242">💬 '+(ar?"تواصل معنا الآن":"Contact Us Now")+'</a></div>':'')+'<div class="printonly" id="printFullDetail"></div></div></div><div id="dayModalRoot"></div>';
 
-var np=$id("npBtn");if(np)np.addEventListener("click",function(){S={lang:S.lang,step:0,companyName:"",companyLogo:null,biz:[],goal:[],platforms:[],audience:[],cl:"",desc:"",plan:null,loading:false,genPct:0,genMsg:"",error:"",code:"",codeValid:false,codeChecking:false,codeError:""};render();});
+var np=$id("npBtn");if(np)np.addEventListener("click",function(){S={view:"calendar",readOnly:false,tracker:{entries:{},analysis:null},lang:S.lang,step:0,companyName:"",companyLogo:null,biz:[],goal:[],platforms:[],audience:[],cl:"",desc:"",plan:null,loading:false,genPct:0,genMsg:"",error:"",code:"",codeValid:false,codeChecking:false,codeError:""};render();});
 var pdfB=$id("pdfBtn");if(pdfB)pdfB.addEventListener("click",function(){buildPrintDetail(p,ar,isRTL);setTimeout(function(){window.print();},50);});
 
+app.querySelectorAll(".vtab").forEach(function(b){b.addEventListener("click",function(){S.view=b.getAttribute("data-v");render();window.scrollTo(0,0);});});
+if(S.view==="tracker")bindTracker(p,dateForDay,dayByNum,ar);
 app.querySelectorAll(".calcell.filled").forEach(function(cell){
   cell.addEventListener("click",function(){
     var day=parseInt(cell.getAttribute("data-day"));
@@ -325,12 +475,13 @@ function openDayModal(d,dateObj,ar){
     extra+
     '<div class="fdiv"></div><div class="flbl" style="color:#D14B7F">'+cL+'</div><div class="fval" style="text-align:'+ta+'">'+esc(d.cta)+'</div>'+
     '<button class="cpbtn" id="modalCopyBtn" style="margin-top:16px;width:100%;padding:10px">'+cpL+'</button>'+
-    '<button class="btnb" id="modalRegenBtn" style="margin-top:8px;width:100%;padding:10px">'+rgL+'</button>'+
+    '<button class="btnb no-print" id="modalTrackBtn" style="margin-top:8px;width:100%;padding:10px">📊 '+trT(ar).logThis+'</button>'+(S.readOnly?'':'<button class="btnb" id="modalRegenBtn" style="margin-top:8px;width:100%;padding:10px">'+rgL+'</button>')+
     '<div id="modalRegenError" style="display:none;margin-top:8px;padding:8px 12px;background:rgba(194,65,59,0.1);border:1px solid #C2413B;border-radius:8px;color:#C2413B;font-size:12px"></div>'+
   '</div></div>';
   $id("modalOverlay").addEventListener("click",function(e){if(e.target.id==="modalOverlay")closeDayModal();});
   $id("modalCloseBtn").addEventListener("click",closeDayModal);
-  $id("modalRegenBtn").addEventListener("click",async function(){
+  $id("modalTrackBtn").addEventListener("click",function(){closeDayModal();S.view="tracker";render();var r=$id("tr-"+d.day);if(r){r.scrollIntoView({block:"center"});var f=r.querySelector("input[data-f=views]");if(f)f.focus();}});
+  if($id("modalRegenBtn"))$id("modalRegenBtn").addEventListener("click",async function(){
     var btn=$id("modalRegenBtn");var errBox=$id("modalRegenError");
     btn.disabled=true;btn.textContent=rgLoadL;errBox.style.display="none";
     try{
@@ -340,7 +491,7 @@ function openDayModal(d,dateObj,ar){
       var newD=newDays[0];
       if(!newD||!newD.hook)throw new Error(ar?"لم يتم توليد محتوى صالح":"No valid content came back");
       var idx=(S.plan.days||[]).findIndex(function(x){return x.day===d.day;});
-      if(idx>=0)S.plan.days[idx]=newD;
+      if(idx>=0)S.plan.days[idx]=newD;savePlanRemote();
       var cell=document.querySelector('.calcell[data-day="'+d.day+'"] .calhook');
       if(cell)cell.textContent=newD.hook||newD.caption||"";
       openDayModal(newD,dateObj,ar);
