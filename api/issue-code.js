@@ -10,6 +10,7 @@
 //     -d '{"code":"SARA-TEST-01"}'
 
 import { createClient } from 'redis';
+import { MONTHLY_CALLS } from './_lib/codes.js';
 
 let client;
 async function getRedis() {
@@ -71,6 +72,17 @@ export default async function handler(req, res) {
     issuedAt: issuedAt.toISOString(),
     expiresAt: expiresAt ? expiresAt.toISOString() : null
   };
+  // Content Plan lifetime codes: a monthly allowance that resets every 30 days.
+  if (prod === 'content-plan') {
+    if (isLifetime) {
+      record.lifetime = true;
+      record.monthlyCalls = callsAllowed || MONTHLY_CALLS;
+      record.callsAllowed = record.monthlyCalls;
+      record.periodStart = issuedAt.toISOString();
+    } else {
+      record.lifetime = false;
+    }
+  }
   await redis.set(key, JSON.stringify(record));
   return res.status(200).json({ ok: true, code, record });
 }

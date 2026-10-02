@@ -10,6 +10,7 @@
 // plan (read-only) and keep logging results. Only generating new content stops.
 
 import { createClient } from 'redis';
+import { refreshContentCode, resetAt } from './_lib/codes.js';
 
 let client;
 async function getRedis() {
@@ -33,6 +34,21 @@ function isActive(record) {
 }
 
 // Keep only the numeric/boolean fields we expect, so nothing odd gets stored.
+// Compact summary of a finished month, kept in the buyer's history.
+function cleanArchive(a) {
+  if (!a || typeof a !== 'object') return null;
+  const num = (v) => { const n = Number(v); return Number.isFinite(n) && n >= 0 ? Math.round(n) : 0; };
+  return {
+    label: String(a.label || '').slice(0, 40),
+    startDate: String(a.startDate || '').slice(0, 40),
+    posts: num(a.posts), views: num(a.views), follows: num(a.follows), saves: num(a.saves), enquiries: num(a.enquiries),
+    bestFormat: String(a.bestFormat || '').slice(0, 20),
+    topHooks: Array.isArray(a.topHooks) ? a.topHooks.slice(0, 3).map((h) => ({
+      hook: String((h && h.hook) || '').slice(0, 140), views: num(h && h.views), format: String((h && h.format) || '').slice(0, 20)
+    })) : []
+  };
+}
+
 function cleanTracker(t) {
   const out = { entries: {}, analysis: null };
   const entries = (t && t.entries) || {};
@@ -79,6 +95,10 @@ export default async function handler(req, res) {
       return res.status(403).json({ error: 'wrong_product', message: 'This code is for a different Bricks tool.' });
     }
 
+    if (refreshContentCode(record)) {
+      await redis.set(`code:${code}`, JSON.stringify(record));
+    }
+
     const key = `ws:${code}`;
     const wsRaw = await redis.get(key);
     const ws = wsRaw ? JSON.parse(wsRaw) : {};
@@ -89,6 +109,9 @@ export default async function handler(req, res) {
         ok: true,
         active,
         callsRemaining: Math.max(0, (record.callsAllowed || 4) - (record.callsUsed || 0)),
+        resetAt: resetAt(record),
+        lifetime: !!record.lifetime,
+        history: ws.history || [],
         plan: ws.plan || null,
         meta: ws.meta || null,
         tracker: ws.tracker || { entries: {}, analysis: null }
@@ -100,6 +123,12 @@ export default async function handler(req, res) {
       const planStr = JSON.stringify(body.plan || null);
       if (!body.plan || planStr.length > MAX_PLAN_BYTES) return res.status(400).json({ error: 'bad_plan' });
       const m = body.meta || {};
+      // Starting a new month: keep a compact summary of the month that just ended.
+      if (body.newMonth && ws.plan) {
+        const arc = cleanArchive(body.archive);
+        if (arc) ws.history = (ws.history || []).concat([arc]).slice(-24);
+        ws.tracker = { entries: {}, analysis: null };
+      }
       ws.plan = body.plan;
       ws.meta = {
         companyName: String(m.companyName || '').slice(0, 120),

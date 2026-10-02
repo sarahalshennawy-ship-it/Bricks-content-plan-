@@ -4,6 +4,7 @@
 // used, instead of after filling out the whole quiz.
 
 import { createClient } from 'redis';
+import { refreshContentCode, resetAt } from './_lib/codes.js';
 
 let client;
 async function getRedis() {
@@ -46,14 +47,18 @@ export default async function handler(req, res) {
     return res.status(200).json({ valid: false, error: 'wrong_product', message: 'This code is for a different Bricks tool. Use your Content Plan Generator code.' });
   }
 
+  if (refreshContentCode(record)) {
+    await redis.set(`code:${code}`, JSON.stringify(record));
+  }
+
   const callsAllowed = record.callsAllowed || 4;
   if (record.callsUsed >= callsAllowed) {
-    return res.status(200).json({ valid: false, error: 'code_exhausted', message: 'This code has already been used to generate a plan.' });
+    return res.status(200).json({ valid: false, error: 'code_exhausted', message: record.monthlyCalls ? 'You have used this month\'s generations. They reset automatically.' : 'This code has already been used to generate a plan.', resetAt: resetAt(record) });
   }
 
   if (record.expiresAt && new Date(record.expiresAt) < new Date()) {
     return res.status(200).json({ valid: false, error: 'code_expired', message: 'This code has expired.' });
   }
 
-  return res.status(200).json({ valid: true });
+  return res.status(200).json({ valid: true, lifetime: !!record.lifetime, resetAt: resetAt(record) });
 }

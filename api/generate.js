@@ -10,6 +10,7 @@
 //   (REDIS_URL is added automatically when you connect the database)
 
 import { createClient } from 'redis';
+import { refreshContentCode, resetAt } from './_lib/codes.js';
 
 // Vercel's default serverless function timeout is only 10 seconds, which is
 // too short for a real Anthropic API call. Extend it to the Hobby plan's max.
@@ -81,10 +82,15 @@ export default async function handler(req, res) {
     return res.status(403).json({ error: 'wrong_product', message: 'This code is for a different Bricks tool.' });
   }
 
+  // Lifetime codes: upgrade old codes, and reset the monthly allowance when due.
+  if (refreshContentCode(record)) {
+    await redis.set(key, JSON.stringify(record));
+  }
+
   const callsAllowed = record.callsAllowed || DEFAULT_CALLS_PER_CODE;
 
   if (record.callsUsed >= callsAllowed) {
-    return res.status(403).json({ error: 'code_exhausted', message: 'This code has already been used to generate a plan.' });
+    return res.status(403).json({ error: 'code_exhausted', message: record.monthlyCalls ? 'You have used this month\'s generations. They reset automatically.' : 'This code has already been used to generate a plan.', resetAt: resetAt(record) });
   }
 
   if (record.expiresAt && new Date(record.expiresAt) < new Date()) {
@@ -134,7 +140,7 @@ export default async function handler(req, res) {
 
     const data = await anthropicRes.json();
     const text = (data.content && data.content[0] && data.content[0].text) || '';
-    return res.status(200).json({ text, callsRemaining: callsAllowed - record.callsUsed });
+    return res.status(200).json({ text, callsRemaining: callsAllowed - record.callsUsed, resetAt: resetAt(record) });
   } catch (err) {
     // Covers both our own abort (timeout) and any other network failure —
     // either way, the customer got nothing, so the call must be refunded.
