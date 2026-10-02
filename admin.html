@@ -15,8 +15,8 @@ h1{font-family:'Fraunces',serif;font-size:24px;color:var(--ink);margin-bottom:6p
 .card{background:#fff;border:1px solid #ece1d7;border-radius:12px;padding:20px;margin-bottom:18px;box-shadow:0 2px 10px rgba(44,31,23,0.05)}
 .row{display:flex;gap:10px;flex-wrap:wrap;align-items:end}
 label{display:block;font-size:11.5px;font-weight:600;color:var(--ink);margin-bottom:5px}
-input{padding:10px 12px;border-radius:8px;border:1.5px solid #e5dad0;font-size:13px;outline:none;width:100%}
-input:focus{border-color:var(--terracotta)}
+input,select{padding:10px 12px;border-radius:8px;border:1.5px solid #e5dad0;font-size:13px;outline:none;width:100%;background:#fff}
+input:focus,select:focus{border-color:var(--terracotta)}
 .field{flex:1;min-width:140px}
 .codefield{position:relative}
 .diceBtn{position:absolute;right:6px;top:29px;background:none;border:none;cursor:pointer;font-size:16px;padding:4px 6px;line-height:1}
@@ -36,22 +36,23 @@ td{padding:10px;font-size:13px;border-bottom:1px solid #f2ebe3;color:var(--ink)}
 .msg.err{background:#fbe4e0;color:#a8402e}
 .hint{font-size:11px;color:#b0a190;margin-top:4px}
 #gate{max-width:380px;margin:80px auto;text-align:center}
+textarea{width:100%;min-height:220px;padding:12px;border-radius:8px;border:1.5px solid #e5dad0;font:inherit;font-size:13px;line-height:1.5;resize:vertical}
+textarea:focus{outline:none;border-color:var(--terracotta)}
 </style>
 </head>
 <body>
 <div id="app"></div>
 <script>
 var KEY = "";
-var API = "";
 
 function esc(s){return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
 function fmtDate(iso){if(!iso)return "—";var d=new Date(iso);return d.toLocaleDateString(undefined,{year:'numeric',month:'short',day:'numeric'});}
 
-function randomCode(){
+function randomCode(prefix){
   var chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; // no O/0/I/1 to avoid confusion
   var s = "";
   for(var i=0;i<6;i++){ s += chars[Math.floor(Math.random()*chars.length)]; }
-  return "BRICKS-" + s;
+  return (prefix || "BRICKS-") + s;
 }
 
 function renderGate(){
@@ -67,35 +68,97 @@ function renderGate(){
 
 function renderDashboard(codes, msg){
   var rows = codes.map(function(c){
-    return '<tr><td><b>'+esc(c.code)+'</b></td><td>'+c.callsUsed+' / '+c.callsAllowed+'</td>' +
-      '<td>'+fmtDate(c.issuedAt)+'</td><td>'+fmtDate(c.expiresAt)+'</td>' +
-      '<td><span class="badge '+c.status+'">'+c.status+'</span></td>' +
-      '<td><button type="button" class="secondary resetBtn" data-code="'+esc(c.code)+'" style="padding:5px 12px;font-size:11px">Reset</button></td></tr>';
+    var product = c.product || 'content-plan';
+    var productLabel = product === 'launch-planner' ? 'Launch Planner' : 'Content Plan';
+    var usedCell = product === 'content-plan' ? (c.callsUsed+' / '+c.callsAllowed) : 'Lifetime access';
+    var expiresCell = c.expiresAt ? fmtDate(c.expiresAt) : 'Never';
+    var resetCell = product === 'content-plan'
+      ? '<button type="button" class="secondary resetBtn" data-code="'+esc(c.code)+'" style="padding:5px 12px;font-size:11px">Reset</button>'
+      : '<span class="hint" style="margin:0">—</span>';
+    return '<tr><td><b>'+esc(c.code)+'</b></td><td>'+esc(productLabel)+'</td><td>'+usedCell+'</td>' +
+      '<td>'+fmtDate(c.issuedAt)+'</td><td>'+expiresCell+'</td>' +
+      '<td><span class="badge '+esc(c.status)+'">'+esc(c.status)+'</span></td>' +
+      '<td>'+resetCell+'</td></tr>';
   }).join('');
-  if(codes.length===0) rows = '<tr><td colspan="6" style="text-align:center;color:#b0a190;padding:20px">No codes issued yet.</td></tr>';
+  if(codes.length===0) rows = '<tr><td colspan="7" style="text-align:center;color:#b0a190;padding:20px">No codes issued yet.</td></tr>';
 
   document.getElementById('app').innerHTML =
-    '<h1>Bricks — Access Code Admin</h1><div class="sub">View and issue Content Plan Generator access codes</div>' +
+    '<h1>Bricks — Access Code Admin</h1><div class="sub">View and issue access codes for Bricks digital products</div>' +
+    '<div class="card"><label style="font-size:14px">Trends this month (used in every new content plan)</label>' +
+    '<div class="hint" style="margin:0 0 10px">Formats, hook styles, audio and editing styles, and upcoming Gulf moments. Update monthly. Click "Draft with AI" to research a starting point, then edit and save.</div>' +
+    '<textarea id="trText" placeholder="FORMATS:\n- ...\nHOOKS:\n- ...\nGULF MOMENTS:\n- ..."></textarea>' +
+    '<div class="row" style="margin-top:10px;justify-content:space-between;align-items:center"><span class="hint" id="trInfo" style="margin:0"></span><div class="row"><button class="secondary" id="trDraft" type="button">Draft with AI (web search)</button><button id="trSave" type="button">Save trends</button></div></div><div id="trMsg"></div></div>' +
     '<div class="card"><label>Issue a new code</label><div class="row">' +
+    '<div class="field"><label>Product</label><select id="newProduct"><option value="content-plan">Content Plan Generator</option><option value="launch-planner">UAE Business Launch Planner</option></select></div>' +
     '<div class="field codefield"><label>Code name</label><input id="newCode" placeholder="e.g. CUSTOMER-NAME-01" value="'+randomCode()+'"><button type="button" class="diceBtn" id="rerollBtn" title="Generate a new random code">🎲</button></div>' +
-    '<div class="field"><label>Calls allowed</label><input id="newCalls" type="number" value="34"></div>' +
-    '<div class="field"><label>Valid for (days)</label><input id="newDays" type="number" value="30"></div>' +
-    '<button id="issueBtn">Issue Code</button></div><div class="hint">A random code is filled in automatically — click 🎲 for a new one, or type your own name over it. Default: 34 calls (4 for the initial full plan, 30 headroom for regenerating individual days), valid 30 days.</div>' +
+    '<div class="field" id="callsField"><label>Calls allowed</label><input id="newCalls" type="number" value="34"></div>' +
+    '<div class="field" id="daysField"><label>Valid for (days)</label><input id="newDays" type="number" value="30"></div>' +
+    '</div><div class="row" style="margin-top:8px"><label style="display:flex;align-items:center;gap:6px;font-weight:400;font-size:12.5px;margin:0"><input type="checkbox" id="newLifetime" style="width:auto"> Lifetime access (never expires)</label></div>' +
+    '<div class="row" style="margin-top:10px"><button id="issueBtn">Issue Code</button></div>' +
+    '<div class="hint" id="productHint"></div>' +
     '<div id="issueMsg"></div></div>' +
     '<div class="card"><div class="row" style="justify-content:space-between;margin-bottom:4px">' +
     '<label style="margin:0">All issued codes ('+codes.length+')</label>' +
     '<button class="secondary" id="refreshBtn">Refresh</button></div>' +
-    '<table><thead><tr><th>Code</th><th>Used</th><th>Issued</th><th>Expires</th><th>Status</th><th>Actions</th></tr></thead><tbody>'+rows+'</tbody></table>' +
-    '<div class="hint">Reset zeroes a code\'s usage back to 0/4 without changing its name or expiry \u2014 useful for testing, or for a customer who lost a generation to a bug.</div>' +
+    '<table><thead><tr><th>Code</th><th>Product</th><th>Used</th><th>Issued</th><th>Expires</th><th>Status</th><th>Actions</th></tr></thead><tbody>'+rows+'</tbody></table>' +
+    '<div class="hint">Reset zeroes a Content Plan code\'s usage back to 0 without changing its name or expiry \u2014 useful for testing, or for a customer who lost a generation to a bug. Launch Planner codes have no usage to reset (lifetime access).</div>' +
     (msg?('<div class="msg '+msg.type+'">'+esc(msg.text)+'</div>'):'') +
     '</div>';
 
   document.getElementById('refreshBtn').onclick = loadCodes;
+  setupTrends();
   document.getElementById('issueBtn').onclick = issueCode;
-  document.getElementById('rerollBtn').onclick = function(){ document.getElementById('newCode').value = randomCode(); };
   document.querySelectorAll('.resetBtn').forEach(function(btn){
     btn.onclick = function(){ resetCode(btn.getAttribute('data-code')); };
   });
+
+  var productSel = document.getElementById('newProduct');
+  var lifetimeChk = document.getElementById('newLifetime');
+  function prefix(){ return productSel.value === 'launch-planner' ? 'PLANNER-' : 'BRICKS-'; }
+  document.getElementById('rerollBtn').onclick = function(){ document.getElementById('newCode').value = randomCode(prefix()); };
+  function syncProductFields(){
+    var isPlanner = productSel.value === 'launch-planner';
+    document.getElementById('callsField').style.display = isPlanner ? 'none' : '';
+    if(isPlanner){ lifetimeChk.checked = true; lifetimeChk.disabled = true; }
+    else { lifetimeChk.disabled = false; }
+    document.getElementById('daysField').style.display = lifetimeChk.checked ? 'none' : '';
+    document.getElementById('productHint').textContent = isPlanner
+      ? 'UAE Business Launch Planner: lifetime access, no call limit (this product makes no AI calls). Opens at planner.bricksmedia.org.'
+      : 'Content Plan Generator: 34 calls (4 for the initial full plan, 30 headroom for regenerating individual days), valid 30 days.';
+  }
+  productSel.onchange = function(){ document.getElementById('newCode').value = randomCode(prefix()); syncProductFields(); };
+  lifetimeChk.onchange = syncProductFields;
+  syncProductFields();
+}
+
+function trendsMsg(type, text){ var m=document.getElementById('trMsg'); if(m) m.innerHTML = text ? '<div class="msg '+type+'">'+esc(text)+'</div>' : ''; }
+var TRENDS_CACHE = null;
+async function setupTrends(){
+  var ta = document.getElementById('trText'), info = document.getElementById('trInfo');
+  if(TRENDS_CACHE === null){
+    try{ TRENDS_CACHE = await (await fetch('/api/trends')).json(); }catch(e){ TRENDS_CACHE = { text:'', updatedAt:null }; }
+  }
+  ta.value = TRENDS_CACHE.text || '';
+  info.textContent = TRENDS_CACHE.updatedAt ? ('Last saved ' + fmtDate(TRENDS_CACHE.updatedAt)) : 'Not set yet';
+  document.getElementById('trSave').onclick = async function(){
+    var b=this; b.disabled=true; trendsMsg('', '');
+    try{
+      var r = await fetch('/api/trends', { method:'POST', headers:{ 'Content-Type':'application/json', 'x-admin-key': KEY }, body: JSON.stringify({ action:'save', text: ta.value }) });
+      var d = await r.json(); if(!r.ok) throw new Error(d.message || d.error || 'Save failed');
+      TRENDS_CACHE = { text:d.text, updatedAt:d.updatedAt }; info.textContent = 'Last saved ' + fmtDate(d.updatedAt); trendsMsg('ok', 'Saved. New plans will use these trends.');
+    }catch(e){ trendsMsg('err', e.message); }
+    b.disabled=false;
+  };
+  document.getElementById('trDraft').onclick = async function(){
+    var b=this; if(ta.value.trim() && !confirm('Replace the text in the box with an AI draft? (Nothing is saved until you click Save.)')) return;
+    b.disabled=true; b.textContent='Researching... (up to a minute)'; trendsMsg('', '');
+    try{
+      var r = await fetch('/api/trends', { method:'POST', headers:{ 'Content-Type':'application/json', 'x-admin-key': KEY }, body: JSON.stringify({ action:'draft' }) });
+      var d = await r.json(); if(!r.ok) throw new Error(d.message || d.error || 'Draft failed');
+      ta.value = d.draft || ''; trendsMsg('ok', 'Draft ready. Check it, edit anything that is not right for the Gulf, then click Save trends.');
+    }catch(e){ trendsMsg('err', 'Could not draft: ' + e.message); }
+    b.disabled=false; b.textContent='Draft with AI (web search)';
+  };
 }
 
 async function resetCode(code){
@@ -107,13 +170,12 @@ async function resetCode(code){
       body: JSON.stringify({ code: code })
     });
     var data = await res.json();
+    var reload = await (await fetch('/api/list-codes', { headers: { 'x-admin-key': KEY } })).json();
     if(!res.ok){
-      var reload = await (await fetch('/api/list-codes', { headers: { 'x-admin-key': KEY } })).json();
       renderDashboard(reload.codes||[], { type: 'err', text: data.message || 'Could not reset that code.' });
       return;
     }
-    var reload2 = await (await fetch('/api/list-codes', { headers: { 'x-admin-key': KEY } })).json();
-    renderDashboard(reload2.codes||[], { type: 'ok', text: '"'+code+'" reset to 0/'+ (data.record.callsAllowed||4) +' calls.' });
+    renderDashboard(reload.codes||[], { type: 'ok', text: '"'+code+'" reset to 0/'+ (data.record.callsAllowed||4) +' calls.' });
   }catch(err){
     alert('Reset failed: '+err.message);
   }
@@ -131,23 +193,28 @@ async function loadCodes(){
 }
 
 async function issueCode(){
-  var code = document.getElementById('newCode').value.trim();
-  var calls = parseInt(document.getElementById('newCalls').value) || 4;
+  var code = document.getElementById('newCode').value.trim().toUpperCase();
+  var product = document.getElementById('newProduct').value;
+  var lifetime = document.getElementById('newLifetime').checked;
+  var calls = parseInt(document.getElementById('newCalls').value) || 34;
   var days = parseInt(document.getElementById('newDays').value) || 30;
   if(!code) return;
   try{
+    var payload = { code: code, product: product, lifetime: lifetime };
+    if(product === 'content-plan') payload.callsAllowed = calls;
+    if(!lifetime) payload.validDays = days;
     var res = await fetch('/api/issue-code', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'x-admin-key': KEY },
-      body: JSON.stringify({ code: code, callsAllowed: calls, validDays: days })
+      body: JSON.stringify(payload)
     });
     var data = await res.json();
+    var reload = await (await fetch('/api/list-codes', { headers: { 'x-admin-key': KEY } })).json();
     if(!res.ok){
-      var reload = await (await fetch('/api/list-codes', { headers: { 'x-admin-key': KEY } })).json();
       renderDashboard(reload.codes||[], { type: 'err', text: data.message || 'That code already exists — pick a different name.' });
       return;
     }
-    loadCodes();
+    renderDashboard(reload.codes||[], { type: 'ok', text: 'Issued "'+code+'".' });
   }catch(err){
     document.getElementById('app').innerHTML += '<div class="card msg err">'+esc(err.message)+'</div>';
   }

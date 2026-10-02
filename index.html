@@ -165,7 +165,7 @@ body{background:#fff !important}
 }
 
 /* ===== plan / tracker tabs ===== */
-.vtabs{display:flex;gap:6px;background:#fff;border:1.5px solid #EDE2DB;border-radius:999px;padding:4px;margin:0 auto 18px;width:max-content;max-width:100%}
+.vtabs{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;background:#fff;border:1.5px solid #EDE2DB;border-radius:999px;padding:4px;margin:0 auto 18px;width:max-content;max-width:100%}
 .vtab{border:0;background:none;padding:9px 18px;border-radius:999px;font-size:14px;font-weight:600;color:#6E6A63;cursor:pointer}
 .vtab[aria-selected="true"]{background:#7A1F5C;color:#fff}
 .robanner{background:#FFF5DE;border:1px solid #F1D48A;color:#6B4E00;border-radius:12px;padding:12px 14px;font-size:13.5px;margin:0 0 16px;text-align:center}
@@ -203,7 +203,7 @@ body{background:#fff !important}
 <body>
 <div id="app"></div>
 <script>
-var DATA={bizTypes:{en:["Medical Aesthetic / Clinic","Salon / Spa / Beauty Center","Gym / Fitness Studio","Restaurant / Café","E-commerce / Products","Abaya / Fashion Brand","Perfume / Luxury Products","Agency / Consulting","Retail Shop","Personal Brand / Creator","Coach / Trainer / Educator","Other Service Business"],ar:["عيادة تجميل طبية","صالون / سبا / مركز تجميل","صالة رياضية / استوديو لياقة","مطعم / كافيه","تجارة إلكترونية / منتجات","براند عبايات / أزياء","عطور / منتجات فاخرة","وكالة / استشارات","متجر بيع بالتجزئة","براند شخصي / كريتور","مدرب / معلم / مستشار","خدمة أخرى"]},goals:{en:["Get more clients / customers","Increase brand awareness","Build authority and trust","Launch a new product or service","Reactivate old customers","Grow social media following"],ar:["جذب عملاء جدد","زيادة الوعي بالبراند","بناء السلطة والمصداقية","إطلاق منتج أو خدمة جديدة","إعادة تنشيط العملاء القدامى","تنمية المتابعين على السوشيال ميديا"]},platforms:{en:["Instagram","TikTok","Snapchat","LinkedIn","X (Twitter)","YouTube Shorts"],ar:["إنستغرام","تيك توك","سناب شات","لينكدإن","تويتر X","يوتيوب شورتس"]},audience:{en:["Women 18–24","Women 25–34","Women 35–44","Women 45–55","Men 18–24","Men 25–34","Men 35–44","Men 45–55","Entrepreneurs","Students / Graduates","Families","High-income professionals","Health-conscious","Fashion & beauty fans","Gulf Arabic audience","Expats in Gulf"],ar:["نساء 18–24","نساء 25–34","نساء 35–44","نساء 45–55","رجال 18–24","رجال 25–34","رجال 35–44","رجال 45–55","رواد أعمال","طلاب وخريجون","أسر ومتزوجون","محترفون ذوو دخل مرتفع","مهتمون بالصحة","عشاق الموضة والجمال","جمهور خليجي عربي","مقيمون في الخليج"]},contentLangs:{en:[{v:"Gulf Arabic",l:"Gulf Arabic",s:"Natural Khaleeji — خليجي طبيعي"},{v:"Neutral Arabic",l:"Arabic — Neutral",s:"Clear Arabic for all Arab countries"},{v:"English",l:"English",s:"International / Gulf English"},{v:"Arabic+English",l:"Arabic + English",s:"Arabic captions with English terms"}],ar:[{v:"Gulf Arabic",l:"عربي خليجي",s:"نبرة خليجية طبيعية"},{v:"Neutral Arabic",l:"عربي بدون لهجة",s:"عربي واضح لجميع الجنسيات"},{v:"English",l:"إنجليزي",s:"مناسب للجمهور الدولي"},{v:"Arabic+English",l:"عربي + إنجليزي",s:"كابشنات عربية مع مصطلحات إنجليزية"}]},questions:{en:[{q:"What's your company name?",h:"This personalizes your plan and calendar"},{q:"What type of business do you run?",h:"Pick up to 2 that match best"},{q:"What is your main goal right now?",h:"Pick up to 2 — the most urgent"},{q:"Where do you post your content?",h:"Select all that apply"},{q:"Who is your target audience?",h:"Select all that apply"},{q:"What language should your content be in?",h:"Hooks and captions will be in this language"},{q:"Describe your business briefly",h:"What do you sell? What makes you different? What city?"}],ar:[{q:"ما اسم شركتك؟",h:"هذا يخصص خطتك وتقويمك باسمك"},{q:"ما نوع بزنسك؟",h:"اختر حتى 2 من الأقرب لطبيعة عملك"},{q:"ما هو هدفك الرئيسي الآن؟",h:"اختر حتى 2 — الأهم والأكثر إلحاحاً"},{q:"وين تنشر محتواك؟",h:"اختر كل ما ينطبق"},{q:"من هو جمهورك المستهدف؟",h:"اختر كل ما ينطبق"},{q:"بأي لغة تريد توليد المحتوى؟",h:"الهوكات والكابشنات ستُكتب بهذه اللغة"},{q:"اوصف بزنسك باختصار",h:"إيش تبيع؟ إيش يميزك؟ في أي مدينة؟"}]},pillars:{en:["Authority","Social Proof","Behind Scenes","Offer","Entertainment"],ar:["سلطة","دليل اجتماعي","كواليس","عرض","ترفيه"]}};
+var DATA={bizTypes:{en:["Medical Aesthetic / Clinic","Salon / Spa / Beauty Center","Gym / Fitness Studio","Restaurant / Café","E-commerce / Products","Abaya / Fashion Brand","Perfume / Luxury Products","Agency / Consulting","Retail Shop","Personal Brand / Creator","Coach / Trainer / Educator","Other Service Business"],ar:["عيادة تجميل طبية","صالون / سبا / مركز تجميل","صالة رياضية / استوديو لياقة","مطعم / كافيه","تجارة إلكترونية / منتجات","براند عبايات / أزياء","عطور / منتجات فاخرة","وكالة / استشارات","متجر بيع بالتجزئة","براند شخصي / كريتور","مدرب / معلم / مستشار","خدمة أخرى"]},goals:{en:["Get more clients / customers","Increase brand awareness","Build authority and trust","Launch a new product or service","Reactivate old customers","Grow social media following"],ar:["جذب عملاء جدد","زيادة الوعي بالبراند","بناء السلطة والمصداقية","إطلاق منتج أو خدمة جديدة","إعادة تنشيط العملاء القدامى","تنمية المتابعين على السوشيال ميديا"]},platforms:{en:["Instagram","TikTok","Snapchat","LinkedIn","X (Twitter)","YouTube Shorts"],ar:["إنستغرام","تيك توك","سناب شات","لينكدإن","تويتر X","يوتيوب شورتس"]},audience:{en:["Women 18–24","Women 25–34","Women 35–44","Women 45–55","Men 18–24","Men 25–34","Men 35–44","Men 45–55","Entrepreneurs","Students / Graduates","Families","High-income professionals","Health-conscious","Fashion & beauty fans","Gulf Arabic audience","Expats in Gulf"],ar:["نساء 18–24","نساء 25–34","نساء 35–44","نساء 45–55","رجال 18–24","رجال 25–34","رجال 35–44","رجال 45–55","رواد أعمال","طلاب وخريجون","أسر ومتزوجون","محترفون ذوو دخل مرتفع","مهتمون بالصحة","عشاق الموضة والجمال","جمهور خليجي عربي","مقيمون في الخليج"]},contentLangs:{en:[{v:"Arabic",l:"Arabic",s:"Natural Arabic your Gulf audience relates to"},{v:"English",l:"English",s:"For international and expat audiences"}],ar:[{v:"Arabic",l:"العربية",s:"عربية طبيعية يتفاعل معها جمهور الخليج"},{v:"English",l:"الإنجليزية",s:"للجمهور الدولي والمقيمين"}]},questions:{en:[{q:"What's your company name?",h:"This personalizes your plan and calendar"},{q:"What type of business do you run?",h:"Pick up to 2 that match best"},{q:"What is your main goal right now?",h:"Pick up to 2 — the most urgent"},{q:"Where do you post your content?",h:"Select all that apply"},{q:"Who is your target audience?",h:"Select all that apply"},{q:"What language should your content be in?",h:"Hooks and captions will be in this language"},{q:"Describe your business briefly",h:"What do you sell? What makes you different? What city?"},{q:"What do you sell, and what stops people buying?",h:"Your real services and prices, and the doubts customers have. This is what makes your plan specific."},{q:"How much can you realistically do?",h:"Your plan is built around this, so it's actually doable."},{q:"Let's look at your account",h:"Optional, but it makes the plan much more specific. Skip it if your account is new."}],ar:[{q:"ما اسم شركتك؟",h:"هذا يخصص خطتك وتقويمك باسمك"},{q:"ما نوع بزنسك؟",h:"اختر حتى 2 من الأقرب لطبيعة عملك"},{q:"ما هو هدفك الرئيسي الآن؟",h:"اختر حتى 2 — الأهم والأكثر إلحاحاً"},{q:"وين تنشر محتواك؟",h:"اختر كل ما ينطبق"},{q:"من هو جمهورك المستهدف؟",h:"اختر كل ما ينطبق"},{q:"بأي لغة تريد توليد المحتوى؟",h:"الهوكات والكابشنات ستُكتب بهذه اللغة"},{q:"اوصف بزنسك باختصار",h:"إيش تبيع؟ إيش يميزك؟ في أي مدينة؟"},{q:"ماذا تبيع، وما الذي يمنع الناس من الشراء؟",h:"خدماتك وأسعارك الفعلية، والتردد الذي يبديه العملاء. هذا ما يجعل خطتك دقيقة."},{q:"ما الذي يمكنك تنفيذه فعلياً؟",h:"تُبنى خطتك على هذا، لتكون قابلة للتنفيذ فعلاً."},{q:"لنلقِ نظرة على حسابك",h:"اختياري، لكنه يجعل الخطة أدق بكثير. تخطَّ هذه الخطوة إذا كان حسابك جديداً."}]},pillars:{en:["Authority","Social Proof","Behind Scenes","Offer","Entertainment"],ar:["سلطة","دليل اجتماعي","كواليس","عرض","ترفيه"]}};
 var PC=["#7A1F5C","#D14B7F","#A36B00","#5B5BD6","#12A383"];
 var FMTS=["Reel","Carousel","Story","Reel","Post"];
 
@@ -223,11 +223,11 @@ var TRENDS = "Short-form talking-head Reels with on-screen text captions are out
 var BUY_URL="https://tools.bricksmedia.org/";
 /* Paste your WhatsApp link here (e.g. https://wa.me/9715XXXXXXXX). The media-services box stays hidden while this is empty. */
 var WA_LINK="";
-var S={view:"calendar",readOnly:false,tracker:{entries:{},analysis:null},lang:null,step:0,companyName:"",companyLogo:null,biz:[],goal:[],platforms:[],audience:[],cl:"",desc:"",plan:null,loading:false,genPct:0,genMsg:"",error:"",code:"",codeValid:false,codeChecking:false,codeError:""};
+var S={trends:"",offers:"",objections:"",voice:"",hours:"",camera:"",editing:"",handle:"",followers:"",shots:[],snapshot:null,callsRemaining:null,view:"calendar",readOnly:false,tracker:{entries:{},analysis:null},lang:null,step:0,companyName:"",companyLogo:null,biz:[],goal:[],platforms:[],audience:[],cl:"",desc:"",plan:null,loading:false,genPct:0,genMsg:"",error:"",code:"",codeValid:false,codeChecking:false,codeError:""};
 function esc(s){return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
 function $id(id){return document.getElementById(id);}
 function isAR(){return S.lang==="ar";}
-function isValid(){if(S.step===0)return S.companyName.trim()!=="";if(S.step===1)return S.biz.length>0;if(S.step===2)return S.goal.length>0;if(S.step===3)return S.platforms.length>0;if(S.step===4)return S.audience.length>0;if(S.step===5)return S.cl!=="";if(S.step===6)return true;return false;}
+function isValid(){if(S.step===0)return S.companyName.trim()!=="";if(S.step===1)return S.biz.length>0;if(S.step===2)return S.goal.length>0;if(S.step===3)return S.platforms.length>0;if(S.step===4)return S.audience.length>0;if(S.step===5)return S.cl!=="";if(S.step===6)return true;if(S.step===7)return String(S.offers).trim().length>=8;if(S.step===8)return !!(S.hours&&S.camera&&S.editing);if(S.step===9)return true;return false;}
 function render(){var app=$id("app");app.setAttribute("dir",isAR()?"rtl":"ltr");if(!S.lang){renderLP(app);return;}if(!S.codeValid){renderCodeGate(app);return;}if(S.plan){renderPlan(app);return;}renderQuiz(app);}
 function renderLP(app){app.innerHTML='<div class="corner-lockup"><div class="corner-logo" role="img" aria-label="Bricks - Business Building Studio"></div></div><div class="lp"><div class="lp-title">Bricks Content Generator</div><div style="font-size:14px;color:#6E6A63;margin-bottom:6px">Answer 6 questions — get your full 30-day content plan</div><div style="font-size:13px;color:#6E6A63">Choose your language / اختر لغتك</div><div class="lpc"><button class="lpcbtn" id="btnEN"><div class="lpcbtn-m">English</div><div class="lpcbtn-s">Left to right</div></button><button class="lpcbtn" id="btnAR"><div class="lpcbtn-m">العربية</div><div class="lpcbtn-s">من اليمين لليسار</div></button></div></div>';$id("btnEN").addEventListener("click",function(){S.lang="en";render();});$id("btnAR").addEventListener("click",function(){S.lang="ar";render();});}
 
@@ -249,7 +249,7 @@ submit.addEventListener("click",trySubmit);
 input.addEventListener("keydown",function(e){if(e.key==="Enter")trySubmit();});
 input.focus();
 }
-function renderQuiz(app){var ar=isAR();var q=DATA.questions[S.lang][S.step];var pct=Math.round((S.step/7)*100);var ok=isValid();var isLast=S.step===6;var genTxt=ar?"ولّد خطة المحتوى":"Generate 30-Day Plan";app.innerHTML='<div class="hdr"><div><div class="hb">'+(ar?"مولّد خطة المحتوى":"Content Plan Generator")+'</div><div class="hs">'+(ar?"من إنتاج Bricks — استوديو بناء الأعمال":"Powered by Bricks — Business Building Studio")+'</div></div><button class="hbtn" id="chgBtn">'+(ar?"تغيير اللغة":"Change language")+'</button></div><div class="body"><div class="pr"><span class="pl">'+(ar?("الخطوة "+(S.step+1)+" من 7"):("Step "+(S.step+1)+" of 7"))+'</span><span class="pp">'+pct+'%</span></div><div class="pbar"><div class="pfill" style="width:'+pct+'%"></div></div><div class="qt">'+esc(q.q)+'</div><div class="qh">'+esc(q.h)+'</div><div id="sc"></div><div class="nav">'+(S.step>0?'<button class="btnb" id="backBtn">'+(ar?"السابق":"Back")+'</button>':'<span></span>')+(!isLast?'<button class="btnn" id="nextBtn" '+(ok?'':'disabled')+'>'+(ar?"التالي ←":"Next →")+'</button>':'<button class="btng" id="genBtn" '+((ok&&!S.loading)?'':'disabled')+'>'+(S.loading?'<span class="spin"></span><span>'+esc(S.genMsg)+'</span>':'<span>'+genTxt+'</span>')+'</button>')+'</div>'+(S.loading?'<div class="gprog"><div class="gptext">'+esc(S.genMsg)+'</div><div class="gpbar"><div class="gpfill" style="width:'+S.genPct+'%"></div></div></div>':'')+(S.error?'<div class="errbox">'+esc(S.error)+'</div>':'')+'</div>';
+function renderQuiz(app){var ar=isAR();var q=DATA.questions[S.lang][S.step];var pct=Math.round((S.step/10)*100);var ok=isValid();var isLast=S.step===9;var genTxt=ar?"ولّد خطة المحتوى":"Generate 30-Day Plan";app.innerHTML='<div class="hdr"><div><div class="hb">'+(ar?"مولّد خطة المحتوى":"Content Plan Generator")+'</div><div class="hs">'+(ar?"من إنتاج Bricks — استوديو بناء الأعمال":"Powered by Bricks — Business Building Studio")+'</div></div><button class="hbtn" id="chgBtn">'+(ar?"تغيير اللغة":"Change language")+'</button></div><div class="body"><div class="pr"><span class="pl">'+(ar?("الخطوة "+(S.step+1)+" من 10"):("Step "+(S.step+1)+" of 10"))+'</span><span class="pp">'+pct+'%</span></div><div class="pbar"><div class="pfill" style="width:'+pct+'%"></div></div><div class="qt">'+esc(q.q)+'</div><div class="qh">'+esc(q.h)+'</div><div id="sc"></div><div class="nav">'+(S.step>0?'<button class="btnb" id="backBtn">'+(ar?"السابق":"Back")+'</button>':'<span></span>')+(!isLast?'<button class="btnn" id="nextBtn" '+(ok?'':'disabled')+'>'+(ar?"التالي ←":"Next →")+'</button>':'<button class="btng" id="genBtn" '+((ok&&!S.loading)?'':'disabled')+'>'+(S.loading?'<span class="spin"></span><span>'+esc(S.genMsg)+'</span>':'<span>'+genTxt+'</span>')+'</button>')+'</div>'+(S.loading?'<div class="gprog"><div class="gptext">'+esc(S.genMsg)+'</div><div class="gpbar"><div class="gpfill" style="width:'+S.genPct+'%"></div></div></div>':'')+(S.loading&&S.snapshot?snapshotHTML(ar,false):'')+(S.error?'<div class="errbox">'+esc(S.error)+'</div>':'')+'</div>';
 var chg=$id("chgBtn");if(chg)chg.addEventListener("click",function(){S.lang=null;render();});
 var back=$id("backBtn");if(back)back.addEventListener("click",function(){S.step--;render();});
 var next=$id("nextBtn");if(next)next.addEventListener("click",function(){if(isValid()){S.step++;render();}});
@@ -269,13 +269,21 @@ else if(s===3){html='<div class="g3">';DATA.platforms[S.lang].forEach(function(p
 else if(s===4){html='<div class="g2">';DATA.audience[S.lang].forEach(function(a,i){var sel=S.audience.indexOf(a)>=0;html+='<button class="ob'+(sel?" sel":"")+'" data-idx="'+i+'" data-type="aud">'+(sel?"✓ ":"")+esc(a)+'</button>';});html+='</div>';if(S.audience.length>0)html+='<div class="selc">'+S.audience.length+' '+(ar?"فئة":"selected")+'</div>';}
 else if(s===5){DATA.contentLangs[S.lang].forEach(function(c,i){html+='<button class="lo'+(S.cl===c.v?" sel":"")+'" data-idx="'+i+'" data-type="cl"><div class="lo-t">'+esc(c.l)+'</div><div class="lo-s">'+esc(c.s)+'</div></button>';});}
 else if(s===6){var ph=ar?"مثال: عيادة تجميل في دبي. نستهدف النساء 25–45.":"Example: Aesthetic clinic in Dubai targeting women 25–45.";html='<textarea class="dta" id="dta" placeholder="'+esc(ph)+'">'+esc(S.desc)+'</textarea><div class="cc" id="cc">'+S.desc.length+' '+(ar?"حرف":"chars")+'</div>';}
+else if(s===7){var t7=v2T(ar);html='<label class="qh" style="display:block;margin:0 0 6px;font-weight:600;color:#363731">'+t7.offersQ+' *</label><textarea class="dta" id="v2offers" style="min-height:90px" placeholder="'+esc(t7.offersPh)+'">'+esc(S.offers)+'</textarea><label class="qh" style="display:block;margin:16px 0 6px;font-weight:600;color:#363731">'+t7.objQ+'</label><textarea class="dta" id="v2obj" style="min-height:80px" placeholder="'+esc(t7.objPh)+'">'+esc(S.objections)+'</textarea><label class="qh" style="display:block;margin:16px 0 6px;font-weight:600;color:#363731">'+t7.voiceQ+'</label><textarea class="dta" id="v2voice" style="min-height:70px" placeholder="'+esc(t7.voicePh)+'">'+esc(S.voice)+'</textarea>';}
+else if(s===8){var t8=v2T(ar);function grpH(key,label){var opts=CAP[key][S.lang];return'<div class="qh" style="margin:14px 0 8px;font-weight:600;color:#363731">'+label+'</div><div class="gcol">'+opts.map(function(o,i){var sel=S[key]===o;return'<button class="ob'+(sel?" sel":"")+'" data-idx="'+i+'" data-type="cap-'+key+'">'+(sel?"✓ ":"")+esc(o)+'</button>';}).join("")+'</div>';}html=grpH("hours",t8.hoursQ)+grpH("camera",t8.camQ)+grpH("editing",t8.editQ);}
+else if(s===9){var t9=v2T(ar);html='<div class="g2"><div><label class="qh" style="display:block;margin:0 0 6px;font-weight:600;color:#363731">'+t9.handleQ+'</label><input type="text" id="v2handle" class="dta" style="min-height:auto;padding:12px;direction:ltr" placeholder="@yourbusiness" value="'+esc(S.handle)+'"></div><div><label class="qh" style="display:block;margin:0 0 6px;font-weight:600;color:#363731">'+t9.follQ+'</label><input type="text" inputmode="numeric" id="v2foll" class="dta" style="min-height:auto;padding:12px;direction:ltr" placeholder="2,500" value="'+esc(S.followers)+'"></div></div><div class="qh" style="margin:18px 0 4px;font-weight:600;color:#363731">'+t9.shotsQ+'</div><div class="qh" style="margin:0 0 10px">'+t9.shotsH+'</div><div style="display:flex;flex-wrap:wrap;gap:10px">'+(S.shots||[]).map(function(u,i){return'<div style="position:relative"><img src="'+u+'" alt="" style="width:86px;height:120px;object-fit:cover;border-radius:10px;border:1.5px solid #EDE2DB"><button type="button" data-type="rmshot" data-idx="'+i+'" aria-label="'+t9.remove+'" style="position:absolute;top:-8px;inset-inline-end:-8px;width:24px;height:24px;border-radius:50%;border:0;background:#363731;color:#fff;cursor:pointer">×</button></div>';}).join("")+((S.shots||[]).length<5?'<label for="v2shots" style="width:86px;height:120px;border:2px dashed #EDE2DB;border-radius:10px;display:flex;align-items:center;justify-content:center;text-align:center;font-size:12px;color:#6E6A63;cursor:pointer;padding:6px">'+t9.addShots+'</label><input type="file" id="v2shots" accept="image/*" multiple style="display:none">':'')+'</div><div class="qh" style="margin-top:12px">'+t9.skipNote+'</div>';}
 sc.innerHTML=html;
-sc.addEventListener("click",function(e){var btn=e.target.closest("button");if(!btn)return;var type=btn.getAttribute("data-type");var idx=parseInt(btn.getAttribute("data-idx"));if(isNaN(idx))return;if(type==="biz"){var b=DATA.bizTypes[S.lang][idx];var bi=S.biz.indexOf(b);if(bi>=0)S.biz.splice(bi,1);else if(S.biz.length<2)S.biz.push(b);render();}else if(type==="goal"){var g=DATA.goals[S.lang][idx];var gi=S.goal.indexOf(g);if(gi>=0)S.goal.splice(gi,1);else if(S.goal.length<2)S.goal.push(g);render();}else if(type==="plt"){var p=DATA.platforms[S.lang][idx];var pi=S.platforms.indexOf(p);if(pi>=0)S.platforms.splice(pi,1);else S.platforms.push(p);render();}else if(type==="aud"){var a=DATA.audience[S.lang][idx];var ai=S.audience.indexOf(a);if(ai>=0)S.audience.splice(ai,1);else S.audience.push(a);render();}else if(type==="cl"){S.cl=DATA.contentLangs[S.lang][idx].v;render();}});
+var v2o=$id("v2offers");if(v2o){[["v2offers","offers"],["v2obj","objections"],["v2voice","voice"]].forEach(function(x){var el=$id(x[0]);if(!el)return;el.style.direction=ar?"rtl":"ltr";el.addEventListener("input",function(){S[x[1]]=this.value;var nb=$id("nextBtn");if(nb)nb.disabled=!isValid();});});}
+var v2h=$id("v2handle");if(v2h)v2h.addEventListener("input",function(){S.handle=this.value.trim();});
+var v2f=$id("v2foll");if(v2f)v2f.addEventListener("input",function(){S.followers=this.value.trim();});
+var v2s=$id("v2shots");if(v2s)v2s.addEventListener("change",async function(){var files=Array.prototype.slice.call(this.files||[]);for(var i=0;i<files.length;i++){if((S.shots||[]).length>=5){alert(v2T(ar).maxShots);break;}try{S.shots.push(await shrinkImage(files[i]));}catch(e){}}render();});
+sc.addEventListener("click",function(e){var btn=e.target.closest("button");if(!btn)return;var type=btn.getAttribute("data-type");var idx=parseInt(btn.getAttribute("data-idx"));if(isNaN(idx))return;if(type==="biz"){var b=DATA.bizTypes[S.lang][idx];var bi=S.biz.indexOf(b);if(bi>=0)S.biz.splice(bi,1);else if(S.biz.length<2)S.biz.push(b);render();}else if(type==="goal"){var g=DATA.goals[S.lang][idx];var gi=S.goal.indexOf(g);if(gi>=0)S.goal.splice(gi,1);else if(S.goal.length<2)S.goal.push(g);render();}else if(type==="plt"){var p=DATA.platforms[S.lang][idx];var pi=S.platforms.indexOf(p);if(pi>=0)S.platforms.splice(pi,1);else S.platforms.push(p);render();}else if(type==="aud"){var a=DATA.audience[S.lang][idx];var ai=S.audience.indexOf(a);if(ai>=0)S.audience.splice(ai,1);else S.audience.push(a);render();}else if(type==="cl"){S.cl=DATA.contentLangs[S.lang][idx].v;render();}else if(type&&type.indexOf("cap-")===0){var key=type.slice(4);S[key]=CAP[key][S.lang][idx];render();}else if(type==="rmshot"){S.shots.splice(idx,1);render();}});
 var ta=$id("dta");if(ta){ta.style.direction=ar?"rtl":"ltr";ta.style.textAlign=ar?"right":"left";ta.addEventListener("input",function(){S.desc=this.value;var cc=$id("cc");if(cc)cc.textContent=this.value.length+(ar?" حرف":" chars");});}
 var cn=$id("companyNameInput");if(cn){cn.addEventListener("input",function(){S.companyName=this.value;var nb=$id("nextBtn");if(nb)nb.disabled=!isValid();});}
 var lu=$id("logoUploadInput");if(lu){lu.addEventListener("change",function(){var f=this.files&&this.files[0];if(!f)return;if(f.size>1500000){alert(ar?"حجم الصورة كبير جداً (الحد الأقصى 1.5MB)":"Image too large (max 1.5MB)");return;}var reader=new FileReader();reader.onload=function(e){S.companyLogo=e.target.result;render();};reader.readAsDataURL(f);});}
 }
-function getLangInstr(){if(S.cl==="Gulf Arabic")return"Gulf Arabic خليجي — casual, warm, exactly how Gulf people talk. Write ALL content fully in Arabic script. Only use an English word if it is a genuinely common Gulf loanword everyone already says out loud (like ريلز، ستوري، فولو، لايك، بوست). Never switch to English for a concept just because it's easier — translate it into natural Arabic instead. Do not mix Latin-script English words into Arabic sentences.";if(S.cl==="Neutral Arabic")return"Neutral Arabic — clear modern Arabic any Arab understands, no dialect. Write fully in Arabic script, only common tech/social-media loanwords allowed in Arabic form (ريلز، ستوري), never raw English words inserted into Arabic sentences.";if(S.cl==="Arabic+English")return"Neutral Arabic with natural English keywords used deliberately (e.g. brand names, specific product terms) — not random English substitution for words that have a normal Arabic equivalent.";return"Natural English for the Gulf/MENA market.";}
+function isArabicContent(){return /arab/i.test(String(S.cl||""));}
+function getLangInstr(){if(isArabicContent())return"ARABIC ONLY. Natural, warm Arabic that Gulf audiences relate to: simple and clear, understandable to every Arab, with light Khaleeji touches where they feel natural. Write every hook, script, caption, slide and frame fully in Arabic script. Only common social-media loanwords are allowed, written in Arabic (ريلز، ستوري، لايك). Never put English words or Latin letters inside Arabic sentences. Brand or product names may stay as they are.";return"ENGLISH ONLY. Natural, clear English for Gulf and MENA audiences. Do not add Arabic words or Arabic script.";}
 function parsePlainText(text,startDay,numDays){var days=[];var blocks=text.split(/---+/);for(var bi=0;bi<blocks.length;bi++){var block=blocks[bi].trim();if(!block)continue;var lines=block.split(/\n/);var obj={day:startDay+days.length,format:"Reel",hook:"",caption:"",cta:"",script:"",visual:"",hashtags:"",time:""};for(var li=0;li<lines.length;li++){var line=lines[li].trim();var sep=line.indexOf(":");if(sep<0)continue;var key=line.slice(0,sep).trim().toUpperCase();var val=line.slice(sep+1).trim();if(key==="DAY"){var n=parseInt(val);if(!isNaN(n))obj.day=n;}else if(key==="FORMAT")obj.format=val;else if(key==="HOOK")obj.hook=val;else if(key==="CAPTION")obj.caption=val;else if(key==="CTA")obj.cta=val;else if(key==="SCRIPT")obj.script=val;else if(key==="VISUAL")obj.visual=val;else if(key==="HASHTAGS")obj.hashtags=val;else if(key==="TIME")obj.time=val;}if(obj.hook||obj.caption)days.push(obj);}if(days.length===0){for(var i=0;i<(numDays||5);i++){var d=startDay+i;days.push({day:d,format:FMTS[(d-1)%5],hook:"Content for day "+d,caption:"Post for your "+S.biz.join(" / "),cta:"Follow for more",script:"",visual:"",hashtags:"",time:""});}}return days;}
 function makePrompt(startDay,numDays){var pm=["Authority/Education","Social Proof","Behind the Scenes","Offer/CTA","Entertainment"];var fullDl=[];var liteDl=[];for(var i=0;i<numDays;i++){var d=startDay+i;var fmt=FMTS[(d-1)%5];var line="Day "+d+" = "+pm[(d-1)%5]+", Format = "+fmt;if(fmt==="Reel"||fmt==="Carousel"){fullDl.push(line);}else{liteDl.push(line);}}
 var ctx="Social media strategist for Gulf/MENA.\nLanguage: "+getLangInstr()+"\nBusiness: "+S.biz.join(" / ")+" | Goals: "+S.goal.join(" / ")+" | Audience: "+S.audience.slice(0,3).join(", ")+"\nInfo: "+S.desc.slice(0,120)+"\nCurrent trends to weave in naturally where relevant: "+TRENDS+"\n\n";
@@ -283,8 +291,334 @@ var sections=[];
 if(fullDl.length>0){sections.push("These are Reel/Carousel days — give FULL production detail, but stay tight:\n"+fullDl.join("\n")+"\n\nFor EACH of these days use EXACTLY this format (all on single lines, no line breaks inside a field). Be extremely concise — short phrases, no filler, no repeated setup between days:\nDAY:[number]\nFORMAT:[Reel or Carousel]\nHOOK:[punchy, max 10 words, specific to this business]\nCAPTION:[content idea, max 12 words]\nSCRIPT:[Word-for-word script: Hook -> Body (2 short beats) -> CTA. Use '->' between beats. Max 30 words total.]\nVISUAL:[camera angle + setting, max 8 words]\nHASHTAGS:[5 tags, space-separated, each starting with #]\nCTA:[action, max 6 words]\nTIME:[best local posting time, e.g. '7-9 PM Gulf time']\n---");}
 if(liteDl.length>0){sections.push("These are Story/Post days — keep these LIGHT (quick, low-production content):\n"+liteDl.join("\n")+"\n\nFor EACH of these days use EXACTLY this format:\nDAY:[number]\nFORMAT:[Story or Post]\nHOOK:[punchy, max 12 words, specific to this business]\nCAPTION:[content idea, max 20 words]\nCTA:[action, max 8 words]\nTIME:[best local posting time]\n---");}
 return ctx+sections.join("\n\n")+"\n\nAll "+numDays+" days total, across both groups above. No JSON. No markdown. Nothing else.";}
-async function callAPI(prompt,tok){var res=await fetch("/api/generate",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({code:S.code,prompt:prompt,max_tokens:tok||900})});var d=await res.json().catch(function(){return{};});if(!res.ok){throw new Error(d.message||d.error||("HTTP "+res.status));}return d.text||"";}
-async function doGenerate(){if(S.loading)return;S.loading=true;S.error="";S.genPct=0;var ar=isAR();var allDays=[];var starts=[1,11,21];try{for(var ci=0;ci<starts.length;ci++){var start=starts[ci];var end=start+9;S.genMsg=ar?("جاري توليد الأيام "+start+"–"+end+"..."):("Generating days "+start+"–"+end+" of 30...");S.genPct=Math.round((ci/4)*85);render();var raw=await callAPI(makePrompt(start,10),1900);allDays=allDays.concat(parsePlainText(raw,start,10));}S.genMsg=ar?"جاري الإنهاء...":"Finishing...";S.genPct=92;render();var sr=await callAPI("For this "+S.biz.join(" / ")+" (goals: "+S.goal.join(" / ")+"): 2-sentence content strategy in "+S.cl+" language.\nCurrent trends to consider: "+TRENDS+"\n3 short themes.\nFormat:\nSUMMARY:[text]\nTHEME1:[text]\nTHEME2:[text]\nTHEME3:[text]",300);var summary=ar?"خطتك جاهزة.":"Your 30-day plan is ready.";var themes=ar?["سلطة","تفاعل","تحويل"]:["Authority","Engagement","Conversion"];sr.split("\n").forEach(function(line){var sep=line.indexOf(":");if(sep<0)return;var k=line.slice(0,sep).trim().toUpperCase();var v=line.slice(sep+1).trim();if(k==="SUMMARY")summary=v;else if(k==="THEME1")themes[0]=v;else if(k==="THEME2")themes[1]=v;else if(k==="THEME3")themes[2]=v;});S.genPct=100;render();await new Promise(function(res){setTimeout(res,200);});allDays.sort(function(a,b){return a.day-b.day;});S.tracker={entries:{},analysis:null};S.view="calendar";S.plan={summary:summary,keyThemes:themes,days:allDays,startDate:new Date().toISOString()};S.loading=false;savePlanRemote();saveTrackerNow();render();}catch(err){S.loading=false;S.error=ar?("خطأ: "+err.message+". حاول مرة أخرى."):("Error: "+err.message+". Please try again.");render();}}
+async function callAPI(prompt,tok,images){var body={code:S.code,prompt:prompt,max_tokens:tok||900};if(images&&images.length)body.images=images;var res=await fetch("/api/generate",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});var d=await res.json().catch(function(){return{};});if(!res.ok){throw new Error(d.message||d.error||("HTTP "+res.status));}if(typeof d.callsRemaining==="number")S.callsRemaining=d.callsRemaining;return d.text||"";}
+
+/* ===================== v2 engine: account analysis + execution-ready plans ===================== */
+var CAP={
+  hours:{en:["1–2 hours a week","3–5 hours a week","6–10 hours a week","More than 10 hours a week"],ar:["1–2 ساعة أسبوعياً","3–5 ساعات أسبوعياً","6–10 ساعات أسبوعياً","أكثر من 10 ساعات أسبوعياً"]},
+  camera:{en:["Me","A team member","Nobody (no faces)"],ar:["أنا","أحد أفراد الفريق","لا أحد (بدون وجوه)"]},
+  editing:{en:["I edit on my phone","I have an editor","No editing, simple content only"],ar:["أعدّل بنفسي على الجوال","لدي محرّر فيديو","بدون مونتاج، محتوى بسيط فقط"]}
+};
+var REEL_CAP=[6,10,14,18];
+var WEEKS=[[1,7],[8,14],[15,21],[22,30]];
+
+function v2T(ar){return ar?{
+  offersQ:"خدماتك أو منتجاتك وأسعارها",offersPh:"مثال: جلسة هيدرافيشل 450 درهم، باقة 3 جلسات 1,200 درهم، استشارة مجانية",
+  objQ:"ما الذي يسأل عنه العملاء دائماً أو يجعلهم يترددون؟",objPh:"مثال: هل النتيجة دائمة؟ السعر مرتفع، أخاف من الألم، ليس لدي وقت",
+  voiceQ:"كيف تتحدث مع عملائك؟ الصق كابشن أو رسالة كتبتها من قبل (اختياري)",voicePh:"الصق هنا مثالاً بأسلوبك",
+  hoursQ:"كم من الوقت يمكنك تخصيصه للمحتوى أسبوعياً؟",camQ:"من سيظهر أمام الكاميرا؟",editQ:"من سيتولى المونتاج؟",
+  handleQ:"اسم حسابك على إنستغرام (اختياري)",follQ:"عدد المتابعين تقريباً (اختياري)",
+  shotsQ:"ارفع حتى 5 لقطات شاشة",shotsH:"صفحة حسابك (شبكة المنشورات)، وإحصائيات أفضل وأضعف منشوراتك الأخيرة. كلما كانت أوضح كانت الخطة أدق.",
+  addShots:"📷 أضف لقطات شاشة",remove:"إزالة",maxShots:"الحد الأقصى 5 لقطات.",
+  skipNote:"حساب جديد أو لا تريد المشاركة؟ يمكنك المتابعة مباشرة.",
+  snapTitle:"تحليل حسابك",working:"ما الذي ينجح",notWorking:"ما الذي لا ينجح",change:"ما الذي ستغيّره هذه الخطة",
+  mixTitle:"توزيع الصيغ خلال 30 يوماً",reels:"ريلز",carousels:"كاروسيل",posts:"منشورات",stories:"ستوري",
+  weeksTitle:"محاور الأسابيع",week:"الأسبوع",
+  analyzing:"جارٍ تحليل حسابك...",building:function(a,b){return"جارٍ كتابة الأيام "+a+"–"+b+" من 30...";},finishing:"جارٍ الإنهاء...",
+  tabWeek:"📋 مهام الأسبوع",film:"🎬 جلسة تصوير",design:"🎨 جلسة تصميم",storiesTask:"📱 ستوري يومية",
+  filmNote:function(d){return"صوّر هذه الريلز معاً قبل اليوم "+d+".";},designNote:function(d){return"جهّز هذه التصاميم معاً قبل اليوم "+d+".";},
+  storyNote:"تُنفَّذ في يومها، نحو 5–10 دقائق لكل واحدة.",minutes:"دقيقة",weekTotal:"الوقت التقديري لهذا الأسبوع",
+  onscreen:"النص على الشاشة",script:"السكريبت",shots:"اللقطات المطلوبة",slides:"الشرائح",designL:"التصميم",image:"الصورة أو التصميم",
+  frames:"إطارات الستوري",sticker:"الملصق التفاعلي",caption:"الكابشن",cta:"الـ CTA",tags:"الهاشتاقات",effort:"الوقت التقديري",
+  hookReel:"الجملة الأولى",hookCar:"عنوان الشريحة 1",hookPost:"العنوان",hookStory:"الإطار الأول",
+  rewriteBtn:"🔁 أعد كتابة الأيام المتبقية بناءً على نتائجي",rewriteNote:function(n){return"يستخدم نحو "+n+" محاولات من رصيدك.";},
+  rewriteNeed:"يتاح بعد تسجيل 5 منشورات.",rewriteNone:"لا توجد أيام متبقية لإعادة كتابتها.",
+  rewriteConfirm:function(d,n){return"سيُعاد كتابة "+d+" يوماً لم تُنشر بعد، باستخدام نحو "+n+" محاولات. هل تريد المتابعة؟";},
+  rewriting:function(a,b){return"جارٍ إعادة كتابة الأيام "+a+"–"+b+"...";},rewriteDone:"✓ تم تحديث الأيام المتبقية.",
+  notEnough:function(n){return"لم يتبقَّ رصيد كافٍ (المتاح "+n+").";},
+  failedDay:"تعذّر إنشاء هذا اليوم. افتحه واضغط على إعادة التوليد."
+}:{
+  offersQ:"Your services or products, with prices",offersPh:"e.g. HydraFacial AED 450, 3-session package AED 1,200, free consultation",
+  objQ:"What do customers always ask, or what makes them hesitate?",objPh:"e.g. Are results permanent? Too expensive, scared of pain, no time",
+  voiceQ:"How do you talk to customers? Paste a caption or message you've written (optional)",voicePh:"Paste an example in your own words",
+  hoursQ:"How much time can you give content each week?",camQ:"Who will appear on camera?",editQ:"Who will edit?",
+  handleQ:"Your Instagram handle (optional)",follQ:"Roughly how many followers (optional)",
+  shotsQ:"Upload up to 5 screenshots",shotsH:"Your profile grid, plus the insights of your best and weakest recent posts. The clearer they are, the more specific your plan.",
+  addShots:"📷 Add screenshots",remove:"Remove",maxShots:"Maximum 5 screenshots.",
+  skipNote:"New account, or prefer not to share? You can continue straight away.",
+  snapTitle:"Your account snapshot",working:"What's working",notWorking:"What's not working",change:"What this plan will change",
+  mixTitle:"Format mix for your 30 days",reels:"Reels",carousels:"Carousels",posts:"Posts",stories:"Stories",
+  weeksTitle:"Weekly themes",week:"Week",
+  analyzing:"Analyzing your account...",building:function(a,b){return"Writing days "+a+"–"+b+" of 30...";},finishing:"Finishing...",
+  tabWeek:"📋 Weekly checklist",film:"🎬 Filming session",design:"🎨 Design session",storiesTask:"📱 Daily stories",
+  filmNote:function(d){return"Film these Reels together before day "+d+".";},designNote:function(d){return"Prepare these designs together before day "+d+".";},
+  storyNote:"Done on the day, about 5–10 minutes each.",minutes:"min",weekTotal:"Estimated time this week",
+  onscreen:"On-screen text",script:"Script",shots:"Shots to film",slides:"Slides",designL:"Design",image:"Photo or graphic",
+  frames:"Story frames",sticker:"Interactive sticker",caption:"Caption",cta:"CTA",tags:"Hashtags",effort:"Estimated time",
+  hookReel:"First line",hookCar:"Slide 1 headline",hookPost:"Headline",hookStory:"Frame 1",
+  rewriteBtn:"🔁 Rewrite my remaining days from my results",rewriteNote:function(n){return"Uses about "+n+" of your remaining generations.";},
+  rewriteNeed:"Available after you log 5 posts.",rewriteNone:"No remaining days to rewrite.",
+  rewriteConfirm:function(d,n){return"This rewrites "+d+" days you haven't posted yet, using about "+n+" generations. Continue?";},
+  rewriting:function(a,b){return"Rewriting days "+a+"–"+b+"...";},rewriteDone:"✓ Your remaining days are updated.",
+  notEnough:function(n){return"Not enough generations left ("+n+" available).";},
+  failedDay:"This day couldn't be created. Open it and tap Regenerate."
+};}
+
+/* ---------- screenshots: shrink in the browser so uploads stay small ---------- */
+function shrinkImage(file){return new Promise(function(res,rej){var r=new FileReader();r.onload=function(){var img=new Image();img.onload=function(){var max=1280,sc=Math.min(1,max/Math.max(img.width,img.height));var c=document.createElement("canvas");c.width=Math.round(img.width*sc);c.height=Math.round(img.height*sc);var g=c.getContext("2d");g.fillStyle="#fff";g.fillRect(0,0,c.width,c.height);g.drawImage(img,0,0,c.width,c.height);res(c.toDataURL("image/jpeg",0.78));};img.onerror=rej;img.src=r.result;};r.onerror=rej;r.readAsDataURL(file);});}
+
+/* ---------- trends brief (curated in admin.html) ---------- */
+async function fetchTrends(){try{var r=await fetch("/api/trends");var d=await r.json();if(d&&d.text)S.trends=d.text;}catch(e){}}
+function trendsText(){return String(S.trends||TRENDS||"").slice(0,2500);}
+function trendsBlock(){return"\n\nCurrent trends and upcoming Gulf moments (curated by Bricks; use them where they genuinely fit this business, never force them):\n"+trendsText();}
+
+/* ---------- context shared by every prompt ---------- */
+function capIndex(key){var i=CAP[key].en.indexOf(S[key]);if(i<0)i=CAP[key].ar.indexOf(S[key]);return i;}
+function capacityText(){
+  var hi=capIndex("hours"),ci=capIndex("camera"),ei=capIndex("editing");
+  var t="Time for content: "+(CAP.hours.en[hi]||"unknown")+". On camera: "+(CAP.camera.en[ci]||"unknown")+". Editing: "+(CAP.editing.en[ei]||"unknown")+".";
+  if(ci===2)t+=" Reels must be faceless: hands, products, place, screen recordings, text on video.";
+  if(ei===2)t+=" Reels must be single-take with no editing beyond on-screen text.";
+  if(hi===0)t+=" Keep every piece quick; favour formats that take under 30 minutes.";
+  return t;
+}
+function profileText(){
+  return "Business name: "+(S.companyName||"-")+
+    "\nBusiness type: "+S.biz.join(" / ")+
+    "\nGoals: "+S.goal.join(" / ")+
+    "\nPlatforms: "+S.platforms.join(", ")+
+    "\nAudience: "+S.audience.join(", ")+
+    "\nAbout the business: "+String(S.desc||"").slice(0,500)+
+    "\nServices/products and prices: "+String(S.offers||"").slice(0,700)+
+    "\nWhat customers ask or hesitate about: "+String(S.objections||"").slice(0,500)+
+    (S.voice?"\nHow they talk to customers (match this voice): "+String(S.voice).slice(0,400):"")+
+    "\nCapacity: "+capacityText()+
+    (S.handle?"\nInstagram: @"+String(S.handle).replace(/^@/,"")+(S.followers?" ("+S.followers+" followers)":""):"");
+}
+function uiLangName(){return isAR()?"Modern Standard Arabic":"English";}
+
+/* ---------- step 1: account snapshot ---------- */
+function snapshotPrompt(hasShots){
+  var hi=capIndex("hours");var maxReels=REEL_CAP[hi<0?1:hi];
+  return "You are a senior social media strategist for businesses in the Gulf.\n\n"+profileText()+"\n\n"+
+    (hasShots?"Screenshots of their account and post insights are attached. Read the actual numbers, post types and topics in them and base your analysis on that evidence.":"No screenshots were provided. Base the snapshot on their answers and say honestly where you are assuming.")+
+    trendsBlock()+
+    "\n\nLanguage advice rules for the Gulf (content is either Arabic or English, never mixed): Gulf nationals and Arab residents respond best to Arabic, which builds trust faster. For a mixed Gulf audience, recommend Arabic, because Arab customers are the core audience for most Gulf businesses; recommend English only when most customers are non-Arab expats or international professionals. Their chosen content language is: "+(isArabicContent()?"Arabic":"English")+". Compare it with their audience and say clearly if they should switch."+
+    "\n\nWrite the user-facing text in "+uiLangName()+". Reply using EXACTLY these lines, each on a single line, nothing else:\n"+
+    "WORKING:[something specific that works or is a strength, max 18 words]\nWORKING:[another]\n"+
+    "NOTWORKING:[something specific holding the account back, max 18 words]\nNOTWORKING:[another]\n"+
+    "CHANGE:[what this plan changes and why, max 20 words]\nCHANGE:[another]\nCHANGE:[another]\n"+
+    "STRATEGY:[2 sentences: the approach for the next 30 days]\n"+
+    "WEEK1:[theme for days 1-7, max 6 words]\nWEEK2:[theme for days 8-14]\nWEEK3:[theme for days 15-21]\nWEEK4:[theme for days 22-30]\n"+
+    "MIX:REELS=[n] CAROUSELS=[n] POSTS=[n] STORIES=[n]\n"+
+    "TIP:LANGUAGE|[language advice for this account, specific, max 30 words]\n"+
+    "TIP:PROFILE|[bio, highlights or link fix, specific, max 30 words]\n"+
+    "TIP:POSTING|[posting routine and best times for their audience, max 30 words]\n"+
+    "TIP:ENGAGEMENT|[how to turn comments and DMs into bookings or sales, max 30 words]\n"+
+    "TIP:GROWTH|[one growth tactic: collaborations, local tags, small paid boosts, etc., max 30 words]\n"+
+    "TIP:GROWTH|[another, max 30 words]\n\n"+
+    "MIX rules: the four numbers add up to 30. Reels build reach, carousels build saves and trust, posts carry offers and proof, stories drive daily conversation and sales. Choose the mix from their goals and what the account needs, with at most "+maxReels+" Reels because of their capacity.";
+}
+function parseSnapshot(txt){
+  var s={working:[],notWorking:[],change:[],strategy:"",weeks:["","","",""],mix:null,tips:[]};
+  String(txt||"").split("\n").forEach(function(line){var i=line.indexOf(":");if(i<0)return;var k=line.slice(0,i).trim().toUpperCase().replace(/[^A-Z0-9]/g,"");var v=line.slice(i+1).trim();if(!v)return;
+    if(k==="WORKING")s.working.push(v);else if(k==="NOTWORKING")s.notWorking.push(v);else if(k==="CHANGE")s.change.push(v);else if(k==="STRATEGY")s.strategy=v;
+    else if(/^WEEK[1-4]$/.test(k))s.weeks[+k.slice(4)-1]=v;
+    else if(k==="TIP"){var bar=v.indexOf("|");if(bar>0)s.tips.push({cat:v.slice(0,bar).trim().toUpperCase(),text:v.slice(bar+1).trim()});else s.tips.push({cat:"GROWTH",text:v});}
+    else if(k==="MIX"){var m={};v.replace(/(REELS|CAROUSELS|POSTS|STORIES)\s*=\s*(\d+)/gi,function(_,a,b){m[a.toUpperCase()]=+b;});s.mix=m;}});
+  return s;
+}
+function normalizeMix(m){
+  var hi=capIndex("hours");var maxReels=REEL_CAP[hi<0?1:hi];
+  var mix={Reel:(m&&m.REELS)||10,Carousel:(m&&m.CAROUSELS)||8,Post:(m&&m.POSTS)||6,Story:(m&&m.STORIES)||6};
+  if(mix.Reel>maxReels){mix.Carousel+=mix.Reel-maxReels;mix.Reel=maxReels;}
+  var keys=["Reel","Carousel","Post","Story"],sum=keys.reduce(function(a,k){return a+Math.max(0,mix[k]);},0)||1;
+  var out={},acc=0;keys.forEach(function(k){out[k]=Math.floor(Math.max(0,mix[k])*30/sum);acc+=out[k];});
+  var i=0;while(acc<30){out[keys[i%4]]++;acc++;i++;}
+  return out;
+}
+/* spread formats evenly across the days instead of clumping them */
+function spreadFormats(mix,n){
+  var keys=Object.keys(mix).filter(function(k){return mix[k]>0;}),tot=keys.reduce(function(a,k){return a+mix[k];},0)||1;
+  var due={},left={},out=[];keys.forEach(function(k){left[k]=Math.round(mix[k]*n/tot);due[k]=n/(2*Math.max(1,left[k]));});
+  for(var i=0;i<n;i++){var best=null;keys.forEach(function(k){if(left[k]>0&&(best===null||due[k]<due[best]))best=k;});if(!best)best="Post";out.push(best);left[best]--;due[best]+=n/Math.max(1,mix[best]*n/tot);}
+  return out;
+}
+function weekOf(day){for(var i=0;i<4;i++){if(day>=WEEKS[i][0]&&day<=WEEKS[i][1])return i;}return 3;}
+
+/* ---------- step 2: execution-ready days, in small batches ---------- */
+var PILLARS=["Authority/Education","Social Proof","Behind the Scenes","Offer","Entertainment/Relatable"];
+function dayPrompt(specs,snap,usedHooks,extra){
+  var list=specs.map(function(sp){return"Day "+sp.day+" | Week theme: "+(snap.weeks[weekOf(sp.day)]||"-")+" | Pillar: "+PILLARS[(sp.day-1)%5]+" | Format: "+sp.format;}).join("\n");
+  return "You are writing an execution-ready content plan for this business.\n\n"+profileText()+
+    "\n\nPlan strategy: "+(snap.strategy||"-")+"\nWhat this plan changes vs. their current content: "+(snap.change||[]).join("; ")+
+    (extra?"\n"+extra:"")+trendsBlock()+
+    "\n\nLanguage for ALL content (hooks, scripts, captions, slides, frames): "+getLangInstr()+
+    "\n\nRules:\n- Be specific to THIS business: use their real services, prices, location and customer questions by name. No generic advice.\n- Every piece must be doable within their capacity: "+capacityText()+
+    "\n- Do not reuse or closely repeat these hooks: "+(usedHooks.length?usedHooks.slice(-24).join(" / "):"none")+
+    "\n- Every field on ONE line. Separate items inside a field with \" | \". No markdown, no emojis in field names.\n\nWrite these days:\n"+list+
+    "\n\nFor each day use EXACTLY the template for its format, then a line containing only ---\n\n"+
+    "Reel:\nDAY:[n]\nFORMAT:Reel\nHOOK:[the first spoken line, max 12 words]\nONSCREEN:[text on screen in the first 2 seconds, max 8 words]\nSCRIPT:[timed beats like 0-3s: ... | 3-12s: ... | 12-25s: ... | 25-30s: ...]\nSHOTS:[4-6 specific shots to film | separated]\nCAPTION:[ready-to-post caption, 2-4 short sentences]\nCTA:[one clear action, e.g. comment a keyword or DM]\nHASHTAGS:[5 hashtags]\nTIME:[best posting time, Gulf time]\nEFFORT:[minutes to film and edit, number only]\n---\n"+
+    "Carousel:\nDAY:[n]\nFORMAT:Carousel\nHOOK:[slide 1 headline, max 10 words]\nSLIDES:[text for slides 2 to 7, each max 18 words | separated]\nDESIGN:[one line: background, font style, visuals]\nCAPTION:[ready-to-post caption, 2-3 sentences]\nCTA:[one clear action]\nHASHTAGS:[5 hashtags]\nTIME:[best posting time]\nEFFORT:[minutes, number only]\n---\n"+
+    "Post:\nDAY:[n]\nFORMAT:Post\nHOOK:[headline or first line, max 12 words]\nIMAGE:[exactly what photo or graphic to use, max 20 words]\nCAPTION:[ready-to-post caption, 2-4 sentences]\nCTA:[one clear action]\nHASHTAGS:[5 hashtags]\nTIME:[best posting time]\nEFFORT:[minutes, number only]\n---\n"+
+    "Story:\nDAY:[n]\nFORMAT:Story\nHOOK:[frame 1 text, max 10 words]\nFRAMES:[3-4 frames, each = what to show + the text on it | separated]\nSTICKER:[poll / question / quiz / link sticker and its exact wording]\nCTA:[one clear action]\nTIME:[best posting time]\nEFFORT:[minutes, number only]\n---";
+}
+function parseDays(text,specs){
+  var map={DAY:"day",FORMAT:"format",HOOK:"hook",ONSCREEN:"onscreen",SCRIPT:"script",SHOTS:"shots",SLIDES:"slides",DESIGN:"design",IMAGE:"image",FRAMES:"frames",STICKER:"sticker",CAPTION:"caption",CTA:"cta",HASHTAGS:"hashtags",TIME:"time",EFFORT:"effort"};
+  var out={};String(text||"").split(/\n\s*---+\s*\n?|^---+$/m).forEach(function(block){
+    var o={};block.split("\n").forEach(function(line){var i=line.indexOf(":");if(i<0)return;var k=line.slice(0,i).trim().toUpperCase().replace(/[^A-Z]/g,"");var f=map[k];if(!f)return;var v=line.slice(i+1).trim();if(f==="day"){var n=parseInt(v,10);if(!isNaN(n))o.day=n;}else if(f==="effort"){var e=parseInt(v,10);if(!isNaN(e))o.effort=e;}else o[f]=v;});
+    if(o.day&&(o.hook||o.caption))out[o.day]=o;});
+  return specs.map(function(sp){var d=out[sp.day];if(!d)return null;d.day=sp.day;d.format=sp.format;if(d.shots)d.visual=d.shots;return d;});
+}
+function placeholderDay(sp,ar){return{day:sp.day,format:sp.format,hook:v2T(ar).failedDay,caption:"",cta:"",failed:true};}
+async function generateDays(specs,snap,usedHooks,extra,onBatch){
+  var ar=isAR(),result=[];
+  for(var i=0;i<specs.length;i+=4){
+    var batch=specs.slice(i,i+4);if(onBatch)onBatch(batch[0].day,batch[batch.length-1].day,i/specs.length);
+    var parsed=[];
+    for(var attempt=0;attempt<2;attempt++){
+      var raw=await callAPI(dayPrompt(batch,snap,usedHooks,extra),2300);
+      parsed=parseDays(raw,batch);if(parsed.filter(Boolean).length>=batch.length-1)break;
+    }
+    batch.forEach(function(sp,j){var d=parsed[j]||placeholderDay(sp,ar);if(d.hook&&!d.failed)usedHooks.push(String(d.hook).slice(0,80));result.push(d);});
+  }
+  return result;
+}
+
+/* ---------- the full generation (replaces the old one) ---------- */
+async function doGenerate(){
+  if(S.loading)return;S.loading=true;S.error="";S.genPct=0;S.snapshot=null;var t=v2T(isAR());
+  try{
+    S.genMsg=t.analyzing;S.genPct=4;render();await fetchTrends();
+    var shots=(S.shots||[]).map(function(u){return{media_type:"image/jpeg",data:u.split(",")[1]};});
+    var snapRaw=await callAPI(snapshotPrompt(shots.length>0),900,shots);
+    var snap=parseSnapshot(snapRaw);snap.mix=normalizeMix(snap.mix);S.snapshot=snap;S.genPct=12;render();
+    var formats=spreadFormats(snap.mix,30);var specs=formats.map(function(f,i){return{day:i+1,format:f};});
+    var used=[];
+    var days=await generateDays(specs,snap,used,"",function(a,b,frac){S.genMsg=t.building(a,b);S.genPct=12+Math.round(frac*82);render();});
+    S.genMsg=t.finishing;S.genPct=98;render();
+    S.tracker={entries:{},analysis:null};S.view="calendar";
+    S.plan={summary:snap.strategy||(isAR()?"خطتك جاهزة.":"Your 30-day plan is ready."),keyThemes:snap.weeks.filter(Boolean),days:days,snapshot:snap,startDate:new Date().toISOString(),v:2};
+    S.loading=false;S.shots=[];savePlanRemote();saveTrackerNow();render();
+  }catch(err){S.loading=false;S.error=(isAR()?"خطأ: ":"Error: ")+err.message+(isAR()?". حاول مرة أخرى.":". Please try again.");render();}
+}
+
+/* ---------- regenerate one day (keeps its format) ---------- */
+async function regenerateDay(d){
+  var snap=(S.plan&&S.plan.snapshot)||{weeks:["","","",""],change:[],strategy:S.plan&&S.plan.summary};
+  var used=(S.plan.days||[]).filter(function(x){return x.day!==d.day&&x.hook;}).map(function(x){return String(x.hook).slice(0,80);});
+  var raw=await callAPI(dayPrompt([{day:d.day,format:d.format||"Reel"}],snap,used,"Write a fresh, different idea for this day."),900);
+  var nd=parseDays(raw,[{day:d.day,format:d.format||"Reel"}])[0];
+  if(!nd||!nd.hook)throw new Error(isAR()?"لم يتم توليد محتوى صالح":"No valid content came back");
+  return nd;
+}
+
+/* ---------- Phase 2: rewrite the remaining days from real results ---------- */
+function remainingDays(){var ents=(S.tracker&&S.tracker.entries)||{};return(S.plan.days||[]).filter(function(d){var e=ents[d.day];return!(e&&e.posted);}).map(function(d){return d.day;}).sort(function(a,b){return a-b;});}
+function rewriteCost(){var n=remainingDays().length;return n?1+Math.ceil(n/4):0;}
+async function rewriteRemaining(onMsg){
+  var t=v2T(isAR()),days=remainingDays();if(!days.length)return;
+  var L=trLogged().filter(function(x){return x.e.views!=null;});
+  var lines=L.map(function(x){return"Day "+x.d.day+" | "+(x.d.format||"-")+" | "+String(x.d.hook||"").replace(/\s+/g," ").slice(0,120)+" | views "+(x.e.views||0)+" | follows "+(x.e.follows||0)+" | saves/shares "+(x.e.saves||0)+" | enquiries "+(x.e.enquiries||0);}).join("\n");
+  var snap=(S.plan.snapshot)||{weeks:["","","",""],change:[],strategy:S.plan.summary};
+  onMsg(t.analyzing);await fetchTrends();
+  var ana=await callAPI("You are a social media strategist. Real results so far from this business's 30-day plan:\n"+profileText()+"\n\nResults (day | format | hook | numbers):\n"+lines+
+    "\n\nWrite in "+uiLangName()+". Reply with EXACTLY these lines:\nFINDING:[finding with numbers, max 20 words]\nFINDING:[another]\nFINDING:[another]\nCHANGE:[what to change in the remaining "+days.length+" days, max 20 words]\nCHANGE:[another]\nMIX:REELS=[n] CAROUSELS=[n] POSTS=[n] STORIES=[n]\n(MIX adds up to "+days.length+" and favours what performed best.)",700);
+  var f=[],c=[],m=null;String(ana).split("\n").forEach(function(line){var i=line.indexOf(":");if(i<0)return;var k=line.slice(0,i).trim().toUpperCase().replace(/[^A-Z]/g,"");var v=line.slice(i+1).trim();if(k==="FINDING"&&v)f.push(v);else if(k==="CHANGE"&&v)c.push(v);else if(k==="MIX"){m={};v.replace(/(REELS|CAROUSELS|POSTS|STORIES)\s*=\s*(\d+)/gi,function(_,a,b){m[a.toUpperCase()]=+b;});}});
+  var mix=normalizeMix(m);var fm=spreadFormats(mix,days.length);
+  var specs=days.map(function(d,i){return{day:d,format:fm[i]||"Post"};});
+  var keep=(S.plan.days||[]).filter(function(d){return days.indexOf(d.day)<0;});
+  var used=keep.map(function(d){return String(d.hook||"").slice(0,80);});
+  var extra="Real results so far:\n"+lines+"\nKey findings: "+f.join("; ")+"\nApply these changes: "+c.join("; ");
+  var fresh=await generateDays(specs,snap,used,extra,function(a,b){onMsg(t.rewriting(a,b));});
+  S.plan.days=keep.concat(fresh).sort(function(a,b){return a.day-b.day;});
+  S.tracker.analysis={text:f.concat(c).map(function(x){return"- "+x;}).join("\n"),at:new Date().toISOString()};
+  savePlanRemote();saveTrackerNow();
+}
+
+/* ---------- snapshot card ---------- */
+function snapshotHTML(ar,collapsible){
+  var sn=collapsible?(S.plan&&S.plan.snapshot):S.snapshot;if(!sn)return"";var t=v2T(ar);
+  function list(a,icon){return(a||[]).map(function(x){return'<div style="display:flex;gap:8px;margin:5px 0;font-size:13.5px"><span>'+icon+'</span><span>'+esc(x)+'</span></div>';}).join("");}
+  var mix=sn.mix||{};var chips=[["Reel",t.reels],["Carousel",t.carousels],["Post",t.posts],["Story",t.stories]].filter(function(x){return mix[x[0]];}).map(function(x){return'<span class="pill" style="background:#FBEFF4;color:#7A1F5C;font-size:12.5px;padding:4px 10px">'+mix[x[0]]+' '+x[1]+'</span>';}).join(" ");
+  var weeks=(sn.weeks||[]).map(function(w,i){return w?'<div style="font-size:13px;margin:3px 0"><b>'+t.week+' '+(i+1)+':</b> '+esc(w)+'</div>':"";}).join("");
+  var inner='<div style="display:grid;gap:12px"><div><div class="flbl" style="color:#2E7D62">'+t.working+'</div>'+list(sn.working,"✓")+'</div><div><div class="flbl" style="color:#C2413B">'+t.notWorking+'</div>'+list(sn.notWorking,"✗")+'</div><div><div class="flbl" style="color:#7A1F5C">'+t.change+'</div>'+list(sn.change,"→")+'</div><div><div class="flbl" style="color:#363731">'+t.mixTitle+'</div><div style="margin-top:6px">'+chips+'</div></div>'+(weeks?'<div><div class="flbl" style="color:#363731">'+t.weeksTitle+'</div>'+weeks+'</div>':'')+'</div>';
+  if(collapsible)return'<details class="no-print" style="background:#fff;border:1.5px solid #EDE2DB;border-radius:14px;padding:14px 16px;margin:0 0 16px"><summary style="cursor:pointer;font-weight:700;font-size:14.5px">🔍 '+t.snapTitle+'</summary><div style="margin-top:12px">'+inner+'</div></details>';
+  return'<div style="background:#fff;border:1.5px solid #EDE2DB;border-radius:14px;padding:16px;margin-top:16px;text-align:start"><div style="font-weight:700;margin-bottom:10px">🔍 '+t.snapTitle+'</div>'+inner+'</div>';
+}
+
+/* ---------- weekly checklist tab ---------- */
+function weekHTML(p,dateForDay,ar){
+  var t=v2T(ar),ents=(S.tracker&&S.tracker.entries)||{},sn=p.snapshot||{weeks:[]};
+  return'<div class="trwrap no-print">'+WEEKS.map(function(r,wi){
+    var days=(p.days||[]).filter(function(d){return d.day>=r[0]&&d.day<=r[1];}).sort(function(a,b){return a.day-b.day;});if(!days.length)return"";
+    function grp(f){return days.filter(function(d){return d.format===f;});}
+    var reels=grp("Reel"),des=grp("Carousel").concat(grp("Post")).sort(function(a,b){return a.day-b.day;}),st=grp("Story");
+    function mins(a,def){return a.reduce(function(s,d){return s+(d.effort||def);},0);}
+    var total=mins(reels,45)+mins(des,25)+mins(st,8);
+    function task(title,arr,note,def){if(!arr.length)return"";return'<div class="trcard" style="margin-bottom:10px"><h4 style="display:flex;justify-content:space-between"><span>'+title+'</span><span style="color:#6E6A63;font-weight:500">~'+mins(arr,def)+' '+t.minutes+'</span></h4><div class="trnote" style="margin-bottom:6px">'+note+'</div>'+arr.map(function(d){return'<div class="trtop"><b>'+(ar?"اليوم":"Day")+' '+d.day+'</b><span>'+esc(d.hook||"")+'</span></div>';}).join("")+'</div>';}
+    var dayList=days.map(function(d){var e=ents[d.day];var dt=dateForDay[d.day];return'<div class="trtop" style="cursor:pointer" data-wopen="'+d.day+'"><b>'+(e&&e.posted?"✅":"⬜")+' '+(ar?"اليوم":"Day")+' '+d.day+'</b><span>'+esc(dt?dt.toLocaleDateString(ar?"ar":"en",{weekday:"short",day:"numeric"}):"")+' · '+esc(d.format||"")+' · '+esc(d.hook||"")+'</span></div>';}).join("");
+    return'<div style="margin-bottom:26px"><div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:10px"><h3 style="font-size:17px;margin:0">'+t.week+' '+(wi+1)+(sn.weeks&&sn.weeks[wi]?': '+esc(sn.weeks[wi]):'')+'</h3><span class="trnote">'+t.weekTotal+': ~'+total+' '+t.minutes+'</span></div>'+
+      task(t.film,reels,t.filmNote(reels.length?reels[0].day:r[0]),45)+task(t.design,des,t.designNote(des.length?des[0].day:r[0]),25)+task(t.storiesTask,st,t.storyNote,8)+
+      '<div class="trcard">'+dayList+'</div></div>';
+  }).join("")+'</div>';
+}
+function bindWeek(p,dateForDay,dayByNum,ar){document.querySelectorAll("[data-wopen]").forEach(function(el){el.addEventListener("click",function(){var day=+el.getAttribute("data-wopen");openDayModal(dayByNum[day],dateForDay[day],ar);});});}
+
+/* ---------- growth guide ---------- */
+function gT(ar){return ar?{
+  tab:"💡 دليل النمو",title:"توصيات مخصّصة لحسابك",lang:"اللغة",profile:"الملف الشخصي",posting:"روتين النشر",engagement:"التفاعل والمبيعات",growth:"النمو",
+  toolTitle:"كيف تحصل على أفضل نتيجة من هذه الأداة",
+  noTips:"ستظهر توصياتك المخصّصة هنا عند إنشاء خطة جديدة.",
+  tool:["صوّر كل ريلز الأسبوع في جلسة واحدة باستخدام «مهام الأسبوع». هذا ما يجعل الخطة قابلة للتنفيذ.",
+        "انشر في الوقت المقترح، ثم ردّ على كل تعليق خلال الساعة الأولى. الخوارزمية تكافئ التفاعل المبكر.",
+        "سجّل نتائج كل منشور بعد 24 إلى 48 ساعة، حين تستقر الأرقام.",
+        "بعد تسجيل 5 منشورات، استخدم «أعد كتابة الأيام المتبقية» لتركّز الخطة على ما نجح فعلاً.",
+        "إذا لم يناسبك يوم ما، افتحه واضغط «ولّد فكرة أخرى». استخدم زر النسخ لنقل الكابشن مباشرة.",
+        "أهم مصدر للعملاء: الـ CTA بكلمة مفتاحية (مثل «اكتب GLOW»). ردّ على الرسائل بسرعة وأرسل السعر والحجز.",
+        "جهّز ملفك قبل البدء: نبذة توضح من تساعد وكيف يحجزون، وهايلايتس للأسعار والنتائج والأسئلة الشائعة."]
+}:{
+  tab:"💡 Growth guide",title:"Recommendations for your account",lang:"Language",profile:"Profile",posting:"Posting routine",engagement:"Engagement and sales",growth:"Growth",
+  toolTitle:"How to get the most out of this tool",
+  noTips:"Your personal recommendations appear here when you create a new plan.",
+  tool:["Film all of the week's Reels in one session using the Weekly checklist. That's what makes the plan doable.",
+        "Post at the suggested time, then reply to every comment in the first hour. Early engagement is rewarded.",
+        "Log each post's results 24 to 48 hours later, once the numbers settle.",
+        "After 5 logged posts, use \"Rewrite my remaining days\" so the plan doubles down on what actually works.",
+        "If a day doesn't fit, open it and tap Regenerate. Use Copy to paste captions straight into Instagram.",
+        "Your biggest source of clients is the keyword call to action (like \"comment GLOW\"). Reply to DMs fast with the price and booking link.",
+        "Get your profile ready first: a bio that says who you help and how to book, plus highlights for prices, results and FAQs."]
+};}
+function langAdviceFallback(ar){
+  var aud=(S.audience||[]).join(" "),gulf=/Gulf Arabic|خليجي/.test(aud),expat=/Expat|مقيمون/.test(aud),arabic=isArabicContent();
+  if(gulf&&!arabic)return ar?"تستهدف جمهوراً خليجياً لكنك تكتب بالإنجليزية. انتقل إلى العربية في الافتتاحيات والنص على الشاشة والكابشن، فهي تبني الثقة أسرع.":"You're targeting a Gulf audience but writing in English. Switch to Arabic for your hooks, on-screen text and captions; it builds trust much faster.";
+  if(expat&&!gulf&&arabic)return ar?"جمهورك غالباً من المقيمين غير العرب. فكّر في الكتابة بالإنجليزية للوصول إليهم بشكل أوضح.":"Your audience is mostly non-Arab expats. Consider writing in English to reach them more clearly.";
+  if(gulf&&expat)return ar?"جمهورك مختلط. العربية هي الخيار الأقوى لأن العملاء العرب هم الجمهور الأساسي لمعظم الأعمال في الخليج.":"Your audience is mixed. Arabic is the stronger choice, because Arab customers are the core audience for most Gulf businesses.";
+  return ar?"اختيارك للغة يناسب جمهورك. حافظ على لغة واحدة في الافتتاحية والنص على الشاشة والكابشن.":"Your language choice fits your audience. Keep one language across the hook, on-screen text and caption.";
+}
+function guideHTML(p,ar){
+  var g=gT(ar),tips=(p.snapshot&&p.snapshot.tips)||[];
+  var cats=[["LANGUAGE",g.lang,"🗣️"],["PROFILE",g.profile,"👤"],["POSTING",g.posting,"🗓️"],["ENGAGEMENT",g.engagement,"💬"],["GROWTH",g.growth,"📈"]];
+  var hasLang=tips.some(function(t){return t.cat==="LANGUAGE";});
+  var personal=cats.map(function(c){var items=tips.filter(function(t){return t.cat===c[0];}).map(function(t){return t.text;});if(c[0]==="LANGUAGE"&&!hasLang)items=[langAdviceFallback(ar)];if(!items.length)return"";
+    return'<div style="padding:12px 0;border-top:1px solid #EDE2DB"><div class="flbl" style="color:#7A1F5C">'+c[2]+' '+c[1]+'</div>'+items.map(function(x){return'<div class="fval" style="margin-top:4px">'+esc(x)+'</div>';}).join("")+'</div>';}).join("");
+  if(!tips.length)personal+='<div class="trnote" style="padding-top:10px">'+g.noTips+'</div>';
+  var tool=g.tool.map(function(x,i){return'<li class="fval" style="margin:8px 0">'+esc(x)+'</li>';}).join("");
+  return'<div class="trwrap no-print"><div class="trcard"><h4 style="font-size:16px">'+g.title+'</h4>'+personal+'</div><div class="trcard"><h4 style="font-size:16px">'+g.toolTitle+'</h4><ol style="margin:0;padding-inline-start:20px">'+tool+'</ol></div></div>';
+}
+
+/* ---------- day details, by format ---------- */
+function splitList(v){return String(v||"").split("|").map(function(x){return x.trim();}).filter(Boolean);}
+function dayCopyText(d,ar){var t=v2T(ar),parts=[];
+  if(d.onscreen)parts.push(t.onscreen+": "+d.onscreen);parts.push(d.hook||"");
+  if(d.script)parts.push(splitList(d.script).join("\n"));if(d.slides)parts.push(splitList(d.slides).map(function(s,i){return(i+2)+". "+s;}).join("\n"));
+  if(d.frames)parts.push(splitList(d.frames).map(function(s,i){return(i+1)+". "+s;}).join("\n"));if(d.sticker)parts.push(t.sticker+": "+d.sticker);
+  if(d.caption)parts.push(d.caption);if(d.cta)parts.push(d.cta);if(d.hashtags)parts.push(d.hashtags);
+  return parts.filter(Boolean).join("\n\n");}
+function dayBodyHTML(d,ar){
+  var t=v2T(ar),ta=ar?"right":"left";
+  function field(label,color,val,big){if(!val)return"";return'<div class="fdiv"></div><div class="flbl" style="color:'+color+'">'+label+'</div><div class="'+(big?"fhook":"fval")+'" style="text-align:'+ta+'">'+esc(val)+'</div>';}
+  function listField(label,color,val,startAt){var a=splitList(val);if(!a.length)return"";return'<div class="fdiv"></div><div class="flbl" style="color:'+color+'">'+label+'</div><ol start="'+(startAt||1)+'" style="margin:4px 0 0;padding-inline-start:20px;text-align:'+ta+'">'+a.map(function(x){return'<li class="fval" style="margin:3px 0">'+esc(x)+'</li>';}).join("")+'</ol>';}
+  var f=d.format||"Reel",hookLbl=f==="Carousel"?t.hookCar:f==="Post"?t.hookPost:f==="Story"?t.hookStory:t.hookReel;
+  var h='<div class="flbl" style="color:#7A1F5C">'+hookLbl+'</div><div class="fhook" style="text-align:'+ta+'">'+esc(d.hook||"")+'</div>';
+  if(f==="Reel"){h+=field(t.onscreen,"#D14B7F",d.onscreen)+listField(t.script,"#A36B00",d.script)+listField(t.shots,"#12A383",d.shots||d.visual);}
+  else if(f==="Carousel"){h+=listField(t.slides,"#A36B00",d.slides,2)+field(t.designL,"#12A383",d.design);}
+  else if(f==="Post"){h+=field(t.image,"#12A383",d.image||d.visual);}
+  else if(f==="Story"){h+=listField(t.frames,"#A36B00",d.frames)+field(t.sticker,"#5B5BD6",d.sticker);}
+  if(!d.slides&&!d.frames&&d.script&&f!=="Reel")h+=field(t.script,"#A36B00",d.script);
+  h+=field(t.caption,"#7A1F5C",d.caption)+field(t.cta,"#D14B7F",d.cta)+field(t.tags,"#5B5BD6",d.hashtags);
+  return h;
+}
 
 /* ===== saved workspace (plan + tracker, tied to the access code) ===== */
 function wsCall(action,extra){var b={code:S.code,action:action};for(var k in extra)b[k]=extra[k];return fetch("/api/workspace",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(b)}).then(function(r){return r.json().then(function(d){if(!r.ok)throw new Error(d.message||d.error||("HTTP "+r.status));return d;});});}
@@ -292,14 +626,14 @@ function loadWorkspace(code,active){
   return wsCall("load",{}).then(function(d){
     if(d.plan){
       S.plan=d.plan;S.tracker=d.tracker||{entries:{},analysis:null};
-      var m=d.meta||{};if(m.companyName)S.companyName=m.companyName;if(m.cl)S.cl=m.cl;if(m.biz)S.biz=m.biz;if(m.goal)S.goal=m.goal;if(m.platforms)S.platforms=m.platforms;
+      var m=d.meta||{};if(m.companyName)S.companyName=m.companyName;if(m.cl)S.cl=m.cl;if(m.biz)S.biz=m.biz;if(m.goal)S.goal=m.goal;if(m.platforms)S.platforms=m.platforms;["audience","desc","offers","objections","voice","hours","camera","editing","handle","followers"].forEach(function(k){if(m[k]!=null)S[k]=m[k];});if(typeof d.callsRemaining==="number")S.callsRemaining=d.callsRemaining;
       S.readOnly=!d.active;S.codeValid=true;S.codeChecking=false;S.codeError="";render();return true;
     }
     if(active){S.codeValid=true;S.codeChecking=false;S.codeError="";render();return true;}
     return false;
   }).catch(function(){if(active){S.codeValid=true;S.codeChecking=false;S.codeError="";render();return true;}return false;});
 }
-function savePlanRemote(){if(!S.plan||S.readOnly)return;wsCall("savePlan",{plan:S.plan,meta:{companyName:S.companyName,lang:S.lang,cl:S.cl,biz:S.biz,goal:S.goal,platforms:S.platforms}}).catch(function(e){console.error("Plan not saved:",e);});}
+function savePlanRemote(){if(!S.plan||S.readOnly)return;wsCall("savePlan",{plan:S.plan,meta:{companyName:S.companyName,lang:S.lang,cl:S.cl,biz:S.biz,goal:S.goal,platforms:S.platforms,audience:S.audience,desc:S.desc,offers:S.offers,objections:S.objections,voice:S.voice,hours:S.hours,camera:S.camera,editing:S.editing,handle:S.handle,followers:S.followers}}).catch(function(e){console.error("Plan not saved:",e);});}
 var trTimer=null;
 function setSaveState(t){var el=$id("trSave");if(el)el.textContent=t;}
 function saveTrackerNow(){return wsCall("saveTracker",{tracker:S.tracker}).then(function(){setSaveState(trT(isAR()).saved);}).catch(function(){setSaveState(trT(isAR()).saveErr);});}
@@ -359,6 +693,8 @@ function trAiHTML(ar){
   if(S.readOnly)body='<div class="trnote">'+t.aiRO+'</div>';
   else if(n<5)body='<button class="btnb" disabled style="width:100%;opacity:.6">'+t.aiNeed(n)+'</button>';
   else body='<button class="btnn" id="trAiBtn" style="width:100%;padding:11px">'+t.aiBtn+'</button><div class="trnote" style="margin-top:6px;text-align:center">'+t.aiNote+'</div><div id="trAiErr" class="trnote" style="color:#C2413B;margin-top:6px"></div>';
+  var v=v2T(ar),rw;var cost=rewriteCost();if(S.readOnly)rw='';else if(n<5)rw='<div class="trnote" style="margin-top:10px">'+v.rewriteNeed+'</div>';else if(!cost)rw='<div class="trnote" style="margin-top:10px">'+v.rewriteNone+'</div>';else rw='<button class="btnb" id="trRwBtn" style="width:100%;padding:11px;margin-top:10px;font-weight:600">'+v.rewriteBtn+'</button><div class="trnote" style="margin-top:6px;text-align:center">'+v.rewriteNote(cost)+'</div><div id="trRwMsg" class="trnote" style="margin-top:6px"></div>';
+  body+=rw;
   return'<div class="trcard"><h4>'+t.aiTitle+'</h4>'+body+(a&&a.text?'<div class="trai">'+esc(a.text)+'</div><div class="trnote" style="margin-top:6px">'+t.aiAt+esc(new Date(a.at).toLocaleDateString(ar?"ar":"en",{day:"numeric",month:"short"}))+'</div>':'')+'</div>';
 }
 function trackerHTML(p,dateForDay,ar){
@@ -373,7 +709,7 @@ function trackerHTML(p,dateForDay,ar){
 }
 function bindTracker(p,dateForDay,dayByNum,ar){
   var t=trT(ar);
-  function refresh(){var s1=$id("trStats");if(s1)s1.innerHTML=trStatsHTML(ar);var s2=$id("trAi");if(s2){s2.innerHTML=trAiHTML(ar);bindAi();}}
+  function refresh(){var s1=$id("trStats");if(s1)s1.innerHTML=trStatsHTML(ar);var s2=$id("trAi");if(s2){s2.innerHTML=trAiHTML(ar);bindAi();bindRewrite(ar);}}
   function entry(day){if(!S.tracker.entries)S.tracker.entries={};if(!S.tracker.entries[day])S.tracker.entries[day]={posted:false,date:null,views:null,follows:null,saves:null,enquiries:null};return S.tracker.entries[day];}
   function markPosted(day,on){var e=entry(day);e.posted=on;if(on&&!e.date)e.date=new Date().toISOString().slice(0,10);var row=$id("tr-"+day);if(row){row.classList.toggle("done",on);var cb=row.querySelector('input[data-f=posted]');if(cb)cb.checked=on;}}
   document.querySelectorAll(".trrow input").forEach(function(inp){
@@ -389,7 +725,7 @@ function bindTracker(p,dateForDay,dayByNum,ar){
       var loggedDays={};L.forEach(function(x){loggedDays[x.d.day]=1;});
       var remaining=(p.days||[]).filter(function(d){return!loggedDays[d.day];}).map(function(d){return d.day;});
       var lines=L.map(function(x){return"Day "+x.d.day+" | "+(x.d.format||"-")+" | "+String(x.d.hook||"").replace(/\s+/g," ").slice(0,140)+" | views "+(x.e.views||0)+" | follows "+(x.e.follows||0)+" | saves/shares "+(x.e.saves||0)+" | enquiries "+(x.e.enquiries||0);}).join("\n");
-      var lang=S.cl||(ar?"Arabic":"English");
+      var lang=isArabicContent()?"Arabic":"English";
       var prompt="You are a social media strategist. Analyse these real results from a 30-day content plan for a "+(S.biz||[]).join(" / ")+" business (goals: "+(S.goal||[]).join(" / ")+"; platforms: "+(S.platforms||[]).join(", ")+").\n\nPosts logged (day | format | hook | results):\n"+lines+"\n\nRemaining days still to post: "+(remaining.length?remaining.join(", "):"none")+".\n\nWrite in "+lang+". Give exactly:\n- 3 short findings about which formats and hook styles perform best, citing the numbers\n- 3 specific recommendations for the remaining days (mention day numbers where useful)\nUse short lines starting with \"- \". No headings, no markdown, under 170 words. Be honest if there is too little data to be sure.";
       var txt=await callAPI(prompt,700);
       S.tracker.analysis={text:String(txt||"").trim(),at:new Date().toISOString()};
@@ -398,6 +734,14 @@ function bindTracker(p,dateForDay,dayByNum,ar){
   });}
   bindAi();
 }
+function bindRewrite(ar){var b=$id("trRwBtn");if(!b)return;var v=v2T(ar);b.addEventListener("click",async function(){
+  var cost=rewriteCost(),days=remainingDays().length;
+  if(typeof S.callsRemaining==="number"&&S.callsRemaining<cost){$id("trRwMsg").textContent=v.notEnough(S.callsRemaining);return;}
+  if(!confirm(v.rewriteConfirm(days,cost)))return;
+  b.disabled=true;var msg=$id("trRwMsg");
+  try{await rewriteRemaining(function(m){b.textContent=m;});render();var m2=$id("trRwMsg");if(m2)m2.textContent=v.rewriteDone;}
+  catch(e){b.disabled=false;b.textContent=v.rewriteBtn;if(msg)msg.textContent=trT(ar).aiErr+e.message;}
+});}
 var MONTHS_EN=["January","February","March","April","May","June","July","August","September","October","November","December"];
 var MONTHS_AR=["يناير","فبراير","مارس","أبريل","مايو","يونيو","يوليو","أغسطس","سبتمبر","أكتوبر","نوفمبر","ديسمبر"];
 var WD_EN=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
@@ -442,13 +786,13 @@ monthKeys.forEach(function(mk){
 
 var tc=["#7A1F5C","#A36B00","#D14B7F"];var tpills=(p.keyThemes||[]).map(function(t,i){return'<span class="pill" style="background:'+tc[i%3]+'33;color:'+tc[i%3]+'">'+esc(t)+'</span>';}).join("");
 var logoImg=S.companyLogo?'<img src="'+S.companyLogo+'" style="height:36px;max-width:120px;object-fit:contain;margin-'+(isRTL?"left":"right")+':10px;vertical-align:middle;border-radius:4px">':'';
-app.innerHTML='<div><div class="phdr no-print"><div style="display:flex;align-items:center">'+logoImg+'<div><div class="hb">'+esc(S.companyName||(ar?"خطتك":"Your Plan"))+'</div><div class="hs">'+(ar?"من إنتاج Bricks — استوديو بناء الأعمال":"Powered by Bricks — Business Building Studio")+'</div></div></div><div style="display:flex;gap:8px"><button class="hbtn" id="pdfBtn">📄 '+(ar?"تحميل PDF":"Download PDF")+'</button><button class="hbtn" id="npBtn"'+(S.readOnly?' style="display:none"':'')+'>'+(ar?"خطة جديدة":"New plan")+'</button></div></div><div class="pbody"><div class="sumcard"><div class="sumt">'+esc(S.companyName?(ar?"خطة "+S.companyName+" لـ 30 يوم":S.companyName+"'s 30-Day Content Plan"):(ar?"خطة المحتوى لـ 30 يوم":"Your 30-Day Content Plan"))+'</div><div class="sums" style="text-align:'+(isRTL?"right":"left")+'">'+esc(p.summary)+'</div><div class="pills">'+tpills+'</div></div><p class="no-print" style="text-align:center;font-size:13px;color:#6E6A63;margin:0 0 16px">'+(ar?"معظم الخطط تُبنى ولا تُنفَّذ أبداً. لا تجعل هذه واحدة منها.":"Most plans get built and never actually get posted. Don't let this be one of them.")+'</p>'+(S.readOnly?'<div class="robanner no-print">'+trT(ar).ro+'</div>':'')+'<div class="vtabs no-print" role="tablist"><button class="vtab" role="tab" data-v="calendar" aria-selected="'+(S.view!=="tracker")+'">'+trT(ar).tabCal+'</button><button class="vtab" role="tab" data-v="tracker" aria-selected="'+(S.view==="tracker")+'">'+trT(ar).tabTrack+'</button></div>'+(S.view==="tracker"?trackerHTML(p,dateForDay,ar):calHTML+'<div class="calhint no-print">'+(ar?"👆 اضغط على أي يوم لرؤية التفاصيل الكاملة":"👆 Tap any day to see the full details")+'</div>')+'<div class="ctabox no-print"><div class="ctat">'+(ar?"هل تريد مستشاراً يساعدك على تنفيذ هذه الخطة؟":"Want a strategist to help you put this plan into action?")+'</div><div class="ctas">'+(ar?"تتضمّن باقة رائد الأعمال جلسة استراتيجية فردية وجلسة متابعة، إلى جانب محتوى الدورة التدريبية وجميع أدوات Bricks، مقابل <bdi dir=\"ltr\">$129</bdi>.":"The Entrepreneur Package includes a 1:1 strategy session and a follow-up session, plus the course and every Bricks tool, for $129.")+'</div><a href="'+BUY_URL+'" target="_blank" rel="noopener" class="ctabtn" style="margin-top:14px;background:#FFC857;color:#4A1242">'+(ar?"اطّلع على باقة رائد الأعمال":"See the Entrepreneur Package")+'</a></div>'+(WA_LINK?'<div class="ctabox no-print" style="background:linear-gradient(135deg,#4A1242,#9C2A63);margin-top:12px"><div class="ctat">📍 '+(ar?"في الإمارات أو السعودية؟":"In the UAE or KSA?")+'</div><div class="ctas">'+(ar?"نتولى عنك كل الفوضى — تصوير الفيديو، المونتاج، جدولة النشر، وإدارة الإعلانات المدفوعة. تواصل معنا الآن.":"We handle all the chaos for you — videography, video editing, media posting, and media buying. Contact us now.")+'</div><a href="'+WA_LINK+'" target="_blank" rel="noopener" class="ctabtn" style="margin-top:14px;background:#FFC857;color:#4A1242">💬 '+(ar?"تواصل معنا الآن":"Contact Us Now")+'</a></div>':'')+'<div class="printonly" id="printFullDetail"></div></div></div><div id="dayModalRoot"></div>';
+app.innerHTML='<div><div class="phdr no-print"><div style="display:flex;align-items:center">'+logoImg+'<div><div class="hb">'+esc(S.companyName||(ar?"خطتك":"Your Plan"))+'</div><div class="hs">'+(ar?"من إنتاج Bricks — استوديو بناء الأعمال":"Powered by Bricks — Business Building Studio")+'</div></div></div><div style="display:flex;gap:8px"><button class="hbtn" id="pdfBtn">📄 '+(ar?"تحميل PDF":"Download PDF")+'</button><button class="hbtn" id="npBtn"'+(S.readOnly?' style="display:none"':'')+'>'+(ar?"خطة جديدة":"New plan")+'</button></div></div><div class="pbody"><div class="sumcard"><div class="sumt">'+esc(S.companyName?(ar?"خطة "+S.companyName+" لـ 30 يوم":S.companyName+"'s 30-Day Content Plan"):(ar?"خطة المحتوى لـ 30 يوم":"Your 30-Day Content Plan"))+'</div><div class="sums" style="text-align:'+(isRTL?"right":"left")+'">'+esc(p.summary)+'</div><div class="pills">'+tpills+'</div></div>'+snapshotHTML(ar,true)+'<p class="no-print" style="text-align:center;font-size:13px;color:#6E6A63;margin:0 0 16px">'+(ar?"معظم الخطط تُبنى ولا تُنفَّذ أبداً. لا تجعل هذه واحدة منها.":"Most plans get built and never actually get posted. Don't let this be one of them.")+'</p>'+(S.readOnly?'<div class="robanner no-print">'+trT(ar).ro+'</div>':'')+'<div class="vtabs no-print" role="tablist"><button class="vtab" role="tab" data-v="calendar" aria-selected="'+(S.view!=="tracker"&&S.view!=="week"&&S.view!=="guide")+'">'+trT(ar).tabCal+'</button><button class="vtab" role="tab" data-v="guide" aria-selected="'+(S.view==="guide")+'">'+gT(ar).tab+'</button><button class="vtab" role="tab" data-v="week" aria-selected="'+(S.view==="week")+'">'+v2T(ar).tabWeek+'</button><button class="vtab" role="tab" data-v="tracker" aria-selected="'+(S.view==="tracker")+'">'+trT(ar).tabTrack+'</button></div>'+(S.view==="tracker"?trackerHTML(p,dateForDay,ar):S.view==="week"?weekHTML(p,dateForDay,ar):S.view==="guide"?guideHTML(p,ar):calHTML+'<div class="calhint no-print">'+(ar?"👆 اضغط على أي يوم لرؤية التفاصيل الكاملة":"👆 Tap any day to see the full details")+'</div>')+'<div class="ctabox no-print"><div class="ctat">'+(ar?"هل تريد مستشاراً يساعدك على تنفيذ هذه الخطة؟":"Want a strategist to help you put this plan into action?")+'</div><div class="ctas">'+(ar?"تتضمّن باقة رائد الأعمال جلسة استراتيجية فردية وجلسة متابعة، إلى جانب محتوى الدورة التدريبية وجميع أدوات Bricks، مقابل <bdi dir=\"ltr\">$129</bdi>.":"The Entrepreneur Package includes a 1:1 strategy session and a follow-up session, plus the course and every Bricks tool, for $129.")+'</div><a href="'+BUY_URL+'" target="_blank" rel="noopener" class="ctabtn" style="margin-top:14px;background:#FFC857;color:#4A1242">'+(ar?"اطّلع على باقة رائد الأعمال":"See the Entrepreneur Package")+'</a></div>'+(WA_LINK?'<div class="ctabox no-print" style="background:linear-gradient(135deg,#4A1242,#9C2A63);margin-top:12px"><div class="ctat">📍 '+(ar?"في الإمارات أو السعودية؟":"In the UAE or KSA?")+'</div><div class="ctas">'+(ar?"نتولى عنك كل الفوضى — تصوير الفيديو، المونتاج، جدولة النشر، وإدارة الإعلانات المدفوعة. تواصل معنا الآن.":"We handle all the chaos for you — videography, video editing, media posting, and media buying. Contact us now.")+'</div><a href="'+WA_LINK+'" target="_blank" rel="noopener" class="ctabtn" style="margin-top:14px;background:#FFC857;color:#4A1242">💬 '+(ar?"تواصل معنا الآن":"Contact Us Now")+'</a></div>':'')+'<div class="printonly" id="printFullDetail"></div></div></div><div id="dayModalRoot"></div>';
 
-var np=$id("npBtn");if(np)np.addEventListener("click",function(){S={view:"calendar",readOnly:false,tracker:{entries:{},analysis:null},lang:S.lang,step:0,companyName:"",companyLogo:null,biz:[],goal:[],platforms:[],audience:[],cl:"",desc:"",plan:null,loading:false,genPct:0,genMsg:"",error:"",code:"",codeValid:false,codeChecking:false,codeError:""};render();});
+var np=$id("npBtn");if(np)np.addEventListener("click",function(){S={offers:"",objections:"",voice:"",hours:"",camera:"",editing:"",handle:"",followers:"",shots:[],snapshot:null,callsRemaining:null,view:"calendar",readOnly:false,tracker:{entries:{},analysis:null},lang:S.lang,step:0,companyName:"",companyLogo:null,biz:[],goal:[],platforms:[],audience:[],cl:"",desc:"",plan:null,loading:false,genPct:0,genMsg:"",error:"",code:"",codeValid:false,codeChecking:false,codeError:""};render();});
 var pdfB=$id("pdfBtn");if(pdfB)pdfB.addEventListener("click",function(){buildPrintDetail(p,ar,isRTL);setTimeout(function(){window.print();},50);});
 
 app.querySelectorAll(".vtab").forEach(function(b){b.addEventListener("click",function(){S.view=b.getAttribute("data-v");render();window.scrollTo(0,0);});});
-if(S.view==="tracker")bindTracker(p,dateForDay,dayByNum,ar);
+if(S.view==="tracker"){bindTracker(p,dateForDay,dayByNum,ar);bindRewrite(ar);}if(S.view==="week")bindWeek(p,dateForDay,dayByNum,ar);
 app.querySelectorAll(".calcell.filled").forEach(function(cell){
   cell.addEventListener("click",function(){
     var day=parseInt(cell.getAttribute("data-day"));
@@ -468,12 +812,9 @@ function openDayModal(d,dateObj,ar){
   var timeTag=d.time?'<span class="dpill" style="background:#FFC85733;color:#8A5A00">⏰ '+esc(d.time)+'</span>':'';
   var root=$id("dayModalRoot");
   root.innerHTML='<div class="modaloverlay" id="modalOverlay"><div class="modalcard">'+
-    '<div class="modaltop"><div><div class="modaldate">'+esc(dateStr)+'</div><div class="modaldaynum" style="color:'+pc+'">Day '+d.day+'</div></div><button class="modalclose" id="modalCloseBtn">✕</button></div>'+
+    '<div class="modaltop"><div><div class="modaldate">'+esc(dateStr)+'</div><div class="modaldaynum" style="color:'+pc+'">'+(ar?"اليوم ":"Day ")+d.day+'</div></div><button class="modalclose" id="modalCloseBtn">✕</button></div>'+
     '<div class="dmeta" style="margin:10px 0"><span class="dpill" style="background:'+pc+'22;color:'+pc+'">'+DATA.pillars[isAR()?"ar":"en"][pi]+'</span>'+(d.format?'<span class="dpill" style="background:#D14B7F22;color:#D14B7F">'+esc(d.format)+'</span>':'')+timeTag+'</div>'+
-    '<div class="flbl" style="color:'+pc+'">'+hL+'</div><div class="fhook" style="text-align:'+ta+'">'+esc(d.hook)+'</div>'+
-    '<div class="fdiv"></div><div class="flbl" style="color:#7A1F5C">'+iL+'</div><div class="fval" style="text-align:'+ta+'">'+esc(d.caption)+'</div>'+
-    extra+
-    '<div class="fdiv"></div><div class="flbl" style="color:#D14B7F">'+cL+'</div><div class="fval" style="text-align:'+ta+'">'+esc(d.cta)+'</div>'+
+    dayBodyHTML(d,ar)+(d.effort?'<div class="fdiv"></div><div class="flbl" style="color:#6E6A63">'+v2T(ar).effort+'</div><div class="fval">~'+d.effort+' '+v2T(ar).minutes+'</div>':'')+
     '<button class="cpbtn" id="modalCopyBtn" style="margin-top:16px;width:100%;padding:10px">'+cpL+'</button>'+
     '<button class="btnb no-print" id="modalTrackBtn" style="margin-top:8px;width:100%;padding:10px">📊 '+trT(ar).logThis+'</button>'+(S.readOnly?'':'<button class="btnb" id="modalRegenBtn" style="margin-top:8px;width:100%;padding:10px">'+rgL+'</button>')+
     '<div id="modalRegenError" style="display:none;margin-top:8px;padding:8px 12px;background:rgba(194,65,59,0.1);border:1px solid #C2413B;border-radius:8px;color:#C2413B;font-size:12px"></div>'+
@@ -485,11 +826,7 @@ function openDayModal(d,dateObj,ar){
     var btn=$id("modalRegenBtn");var errBox=$id("modalRegenError");
     btn.disabled=true;btn.textContent=rgLoadL;errBox.style.display="none";
     try{
-      var tok=(d.format==="Reel"||d.format==="Carousel")?600:300;
-      var raw=await callAPI(makePrompt(d.day,1),tok);
-      var newDays=parsePlainText(raw,d.day,1);
-      var newD=newDays[0];
-      if(!newD||!newD.hook)throw new Error(ar?"لم يتم توليد محتوى صالح":"No valid content came back");
+      var newD=await regenerateDay(d);
       var idx=(S.plan.days||[]).findIndex(function(x){return x.day===d.day;});
       if(idx>=0)S.plan.days[idx]=newD;savePlanRemote();
       var cell=document.querySelector('.calcell[data-day="'+d.day+'"] .calhook');
@@ -502,8 +839,7 @@ function openDayModal(d,dateObj,ar){
     }
   });
   $id("modalCopyBtn").addEventListener("click",function(){
-    var parts=[d.hook||""];if(d.script)parts.push(d.script);else if(d.caption)parts.push(d.caption);if(d.visual)parts.push((ar?"تصوير: ":"Shot list: ")+d.visual);parts.push(d.cta||"");if(d.hashtags)parts.push(d.hashtags);
-    var txt=parts.filter(Boolean).join("\n\n");
+    var txt=dayCopyText(d,ar);
     navigator.clipboard.writeText(txt).then(function(){var b=$id("modalCopyBtn");b.textContent="✓ "+(ar?"تم النسخ":"Copied");setTimeout(function(){b.textContent=cpL;},1500);}).catch(function(){});
   });
 }
@@ -520,18 +856,12 @@ function buildPrintDetail(p,ar,isRTL){
   (p.days||[]).forEach(function(d){
     var dt=new Date(startDate);dt.setDate(startDate.getDate()+(d.day-1));
     var dateStr=dt.toLocaleDateString(ar?"ar":"en",{weekday:'long',month:'long',day:'numeric'});
-    html+='<div class="printday">';
-    html+='<div class="printdaytop">Day '+d.day+' — '+esc(dateStr)+' <span class="printfmt">'+esc(d.format||"")+'</span></div>';
-    html+='<div class="printfield"><b>'+hL+':</b> '+esc(d.hook)+'</div>';
-    html+='<div class="printfield"><b>'+iL+':</b> '+esc(d.caption)+'</div>';
-    if(d.script)html+='<div class="printfield"><b>'+sL+':</b> '+esc(d.script)+'</div>';
-    if(d.visual)html+='<div class="printfield"><b>'+vL+':</b> '+esc(d.visual)+'</div>';
-    if(d.hashtags)html+='<div class="printfield"><b>'+tagL+':</b> '+esc(d.hashtags)+'</div>';
-    html+='<div class="printfield"><b>'+cL+':</b> '+esc(d.cta)+'</div>';
+    html+='<div class="printday"><div class="printdaytop">'+(ar?"اليوم ":"Day ")+d.day+' — '+esc(dateStr)+' <span class="printfmt">'+esc(d.format||"")+'</span></div>';
+    html+='<div class="printfield">'+dayBodyHTML(d,ar)+'</div>';
     if(d.time)html+='<div class="printfield"><b>'+timeL+':</b> '+esc(d.time)+'</div>';
     html+='</div>';
   });
-  html+='<div class="printfooter">'+(ar?"من إنتاج Bricks — تسويق وحلول أعمال — bricksmedia.org":"Powered by Bricks — Marketing & Business Solutions — bricksmedia.org")+'</div>';
+  html+='<div class="printfooter">'+(ar?"من إنتاج Bricks — استوديو بناء الأعمال — bricksmedia.org":"Powered by Bricks — Business Building Studio — bricksmedia.org")+'</div>';
   root.innerHTML=html;
 }
 render();
