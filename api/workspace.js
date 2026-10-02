@@ -107,7 +107,17 @@ export default async function handler(req, res) {
         cl: String(m.cl || '').slice(0, 40),
         biz: Array.isArray(m.biz) ? m.biz.slice(0, 10).map(String) : [],
         goal: Array.isArray(m.goal) ? m.goal.slice(0, 10).map(String) : [],
-        platforms: Array.isArray(m.platforms) ? m.platforms.slice(0, 10).map(String) : []
+        platforms: Array.isArray(m.platforms) ? m.platforms.slice(0, 10).map(String) : [],
+        audience: Array.isArray(m.audience) ? m.audience.slice(0, 20).map(String) : [],
+        desc: String(m.desc || '').slice(0, 1000),
+        offers: String(m.offers || '').slice(0, 1500),
+        objections: String(m.objections || '').slice(0, 1000),
+        voice: String(m.voice || '').slice(0, 800),
+        hours: String(m.hours || '').slice(0, 60),
+        camera: String(m.camera || '').slice(0, 60),
+        editing: String(m.editing || '').slice(0, 80),
+        handle: String(m.handle || '').slice(0, 60),
+        followers: String(m.followers || '').slice(0, 20)
       };
       ws.updatedAt = new Date().toISOString();
       await redis.set(key, JSON.stringify(ws));

@@ -42,13 +42,29 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'method_not_allowed' });
   }
 
-  const { code, prompt, max_tokens } = req.body || {};
+  const { code, prompt, max_tokens, images } = req.body || {};
 
   if (!code || typeof code !== 'string') {
     return res.status(400).json({ error: 'missing_code', message: 'No access code provided.' });
   }
   if (!prompt || typeof prompt !== 'string') {
     return res.status(400).json({ error: 'missing_prompt', message: 'No prompt provided.' });
+  }
+
+  // Optional account screenshots (used for the account snapshot). Max 5,
+  // JPEG/PNG/WebP only, each already shrunk in the browser.
+  const OK_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+  let imageBlocks = [];
+  if (Array.isArray(images) && images.length) {
+    if (images.length > 5) {
+      return res.status(400).json({ error: 'too_many_images', message: 'Please upload up to 5 screenshots.' });
+    }
+    for (const im of images) {
+      if (!im || !OK_TYPES.includes(im.media_type) || typeof im.data !== 'string' || im.data.length > 1500000) {
+        return res.status(400).json({ error: 'bad_image', message: 'One of the screenshots could not be read. Please try a different one.' });
+      }
+      imageBlocks.push({ type: 'image', source: { type: 'base64', media_type: im.media_type, data: im.data } });
+    }
   }
 
   const redis = await getRedis();
@@ -98,8 +114,8 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify({
         model: 'claude-sonnet-4-6',
-        max_tokens: max_tokens || 900,
-        messages: [{ role: 'user', content: prompt }]
+        max_tokens: Math.min(max_tokens || 900, 3000),
+        messages: [{ role: 'user', content: imageBlocks.length ? [...imageBlocks, { type: 'text', text: prompt }] : prompt }]
       }),
       signal: controller.signal
     });
