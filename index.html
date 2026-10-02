@@ -223,7 +223,7 @@ var TRENDS = "Short-form talking-head Reels with on-screen text captions are out
 var BUY_URL="https://tools.bricksmedia.org/";
 /* Paste your WhatsApp link here (e.g. https://wa.me/9715XXXXXXXX). The media-services box stays hidden while this is empty. */
 var WA_LINK="";
-var S={trends:"",offers:"",objections:"",voice:"",hours:"",camera:"",editing:"",handle:"",followers:"",shots:[],snapshot:null,callsRemaining:null,view:"calendar",readOnly:false,tracker:{entries:{},analysis:null},lang:null,step:0,companyName:"",companyLogo:null,biz:[],goal:[],platforms:[],audience:[],cl:"",desc:"",plan:null,loading:false,genPct:0,genMsg:"",error:"",code:"",codeValid:false,codeChecking:false,codeError:""};
+var S={history:[],resetAt:null,lifetime:false,nmOffers:null,nmEvents:"",nmChange:"",trends:"",offers:"",objections:"",voice:"",hours:"",camera:"",editing:"",handle:"",followers:"",shots:[],snapshot:null,callsRemaining:null,view:"calendar",readOnly:false,tracker:{entries:{},analysis:null},lang:null,step:0,companyName:"",companyLogo:null,biz:[],goal:[],platforms:[],audience:[],cl:"",desc:"",plan:null,loading:false,genPct:0,genMsg:"",error:"",code:"",codeValid:false,codeChecking:false,codeError:""};
 function esc(s){return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
 function $id(id){return document.getElementById(id);}
 function isAR(){return S.lang==="ar";}
@@ -291,7 +291,7 @@ var sections=[];
 if(fullDl.length>0){sections.push("These are Reel/Carousel days — give FULL production detail, but stay tight:\n"+fullDl.join("\n")+"\n\nFor EACH of these days use EXACTLY this format (all on single lines, no line breaks inside a field). Be extremely concise — short phrases, no filler, no repeated setup between days:\nDAY:[number]\nFORMAT:[Reel or Carousel]\nHOOK:[punchy, max 10 words, specific to this business]\nCAPTION:[content idea, max 12 words]\nSCRIPT:[Word-for-word script: Hook -> Body (2 short beats) -> CTA. Use '->' between beats. Max 30 words total.]\nVISUAL:[camera angle + setting, max 8 words]\nHASHTAGS:[5 tags, space-separated, each starting with #]\nCTA:[action, max 6 words]\nTIME:[best local posting time, e.g. '7-9 PM Gulf time']\n---");}
 if(liteDl.length>0){sections.push("These are Story/Post days — keep these LIGHT (quick, low-production content):\n"+liteDl.join("\n")+"\n\nFor EACH of these days use EXACTLY this format:\nDAY:[number]\nFORMAT:[Story or Post]\nHOOK:[punchy, max 12 words, specific to this business]\nCAPTION:[content idea, max 20 words]\nCTA:[action, max 8 words]\nTIME:[best local posting time]\n---");}
 return ctx+sections.join("\n\n")+"\n\nAll "+numDays+" days total, across both groups above. No JSON. No markdown. Nothing else.";}
-async function callAPI(prompt,tok,images){var body={code:S.code,prompt:prompt,max_tokens:tok||900};if(images&&images.length)body.images=images;var res=await fetch("/api/generate",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});var d=await res.json().catch(function(){return{};});if(!res.ok){throw new Error(d.message||d.error||("HTTP "+res.status));}if(typeof d.callsRemaining==="number")S.callsRemaining=d.callsRemaining;return d.text||"";}
+async function callAPI(prompt,tok,images){var body={code:S.code,prompt:prompt,max_tokens:tok||900};if(images&&images.length)body.images=images;var res=await fetch("/api/generate",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});var d=await res.json().catch(function(){return{};});if(!res.ok){throw new Error(d.message||d.error||("HTTP "+res.status));}if(typeof d.callsRemaining==="number")S.callsRemaining=d.callsRemaining;if(d.resetAt)S.resetAt=d.resetAt;return d.text||"";}
 
 /* ===================== v2 engine: account analysis + execution-ready plans ===================== */
 var CAP={
@@ -388,9 +388,9 @@ function profileText(){
 function uiLangName(){return isAR()?"Modern Standard Arabic":"English";}
 
 /* ---------- step 1: account snapshot ---------- */
-function snapshotPrompt(hasShots){
+function snapshotPrompt(hasShots,monthCtx){
   var hi=capIndex("hours");var maxReels=REEL_CAP[hi<0?1:hi];
-  return "You are a senior social media strategist for businesses in the Gulf.\n\n"+profileText()+"\n\n"+
+  return "You are a senior social media strategist for businesses in the Gulf.\n\n"+profileText()+"\n\n"+(monthCtx?monthCtx+"\n\n":"")+
     (hasShots?"Screenshots of their account and post insights are attached. Read the actual numbers, post types and topics in them and base your analysis on that evidence.":"No screenshots were provided. Base the snapshot on their answers and say honestly where you are assuming.")+
     trendsBlock()+
     "\n\nLanguage advice rules for the Gulf (content is either Arabic or English, never mixed): Gulf nationals and Arab residents respond best to Arabic, which builds trust faster. For a mixed Gulf audience, recommend Arabic, because Arab customers are the core audience for most Gulf businesses; recommend English only when most customers are non-Arab expats or international professionals. Their chosen content language is: "+(isArabicContent()?"Arabic":"English")+". Compare it with their audience and say clearly if they should switch."+
@@ -401,6 +401,7 @@ function snapshotPrompt(hasShots){
     "STRATEGY:[2 sentences: the approach for the next 30 days]\n"+
     "WEEK1:[theme for days 1-7, max 6 words]\nWEEK2:[theme for days 8-14]\nWEEK3:[theme for days 15-21]\nWEEK4:[theme for days 22-30]\n"+
     "MIX:REELS=[n] CAROUSELS=[n] POSTS=[n] STORIES=[n]\n"+
+    (monthCtx?"REPORT:[last month in one line: what worked best, with numbers, max 25 words]\nREPORT:[another finding]\nREPORT:[what to do differently this month]\n":"")+
     "TIP:LANGUAGE|[language advice for this account, specific, max 30 words]\n"+
     "TIP:PROFILE|[bio, highlights or link fix, specific, max 30 words]\n"+
     "TIP:POSTING|[posting routine and best times for their audience, max 30 words]\n"+
@@ -410,10 +411,11 @@ function snapshotPrompt(hasShots){
     "MIX rules: the four numbers add up to 30. Reels build reach, carousels build saves and trust, posts carry offers and proof, stories drive daily conversation and sales. Choose the mix from their goals and what the account needs, with at most "+maxReels+" Reels because of their capacity.";
 }
 function parseSnapshot(txt){
-  var s={working:[],notWorking:[],change:[],strategy:"",weeks:["","","",""],mix:null,tips:[]};
+  var s={working:[],notWorking:[],change:[],strategy:"",weeks:["","","",""],mix:null,tips:[],report:[]};
   String(txt||"").split("\n").forEach(function(line){var i=line.indexOf(":");if(i<0)return;var k=line.slice(0,i).trim().toUpperCase().replace(/[^A-Z0-9]/g,"");var v=line.slice(i+1).trim();if(!v)return;
     if(k==="WORKING")s.working.push(v);else if(k==="NOTWORKING")s.notWorking.push(v);else if(k==="CHANGE")s.change.push(v);else if(k==="STRATEGY")s.strategy=v;
     else if(/^WEEK[1-4]$/.test(k))s.weeks[+k.slice(4)-1]=v;
+    else if(k==="REPORT")s.report.push(v);
     else if(k==="TIP"){var bar=v.indexOf("|");if(bar>0)s.tips.push({cat:v.slice(0,bar).trim().toUpperCase(),text:v.slice(bar+1).trim()});else s.tips.push({cat:"GROWTH",text:v});}
     else if(k==="MIX"){var m={};v.replace(/(REELS|CAROUSELS|POSTS|STORIES)\s*=\s*(\d+)/gi,function(_,a,b){m[a.toUpperCase()]=+b;});s.mix=m;}});
   return s;
@@ -532,7 +534,8 @@ function snapshotHTML(ar,collapsible){
   function list(a,icon){return(a||[]).map(function(x){return'<div style="display:flex;gap:8px;margin:5px 0;font-size:13.5px"><span>'+icon+'</span><span>'+esc(x)+'</span></div>';}).join("");}
   var mix=sn.mix||{};var chips=[["Reel",t.reels],["Carousel",t.carousels],["Post",t.posts],["Story",t.stories]].filter(function(x){return mix[x[0]];}).map(function(x){return'<span class="pill" style="background:#FBEFF4;color:#7A1F5C;font-size:12.5px;padding:4px 10px">'+mix[x[0]]+' '+x[1]+'</span>';}).join(" ");
   var weeks=(sn.weeks||[]).map(function(w,i){return w?'<div style="font-size:13px;margin:3px 0"><b>'+t.week+' '+(i+1)+':</b> '+esc(w)+'</div>':"";}).join("");
-  var inner='<div style="display:grid;gap:12px"><div><div class="flbl" style="color:#2E7D62">'+t.working+'</div>'+list(sn.working,"✓")+'</div><div><div class="flbl" style="color:#C2413B">'+t.notWorking+'</div>'+list(sn.notWorking,"✗")+'</div><div><div class="flbl" style="color:#7A1F5C">'+t.change+'</div>'+list(sn.change,"→")+'</div><div><div class="flbl" style="color:#363731">'+t.mixTitle+'</div><div style="margin-top:6px">'+chips+'</div></div>'+(weeks?'<div><div class="flbl" style="color:#363731">'+t.weeksTitle+'</div>'+weeks+'</div>':'')+'</div>';
+  var rep=(sn.report||[]).length?'<div><div class="flbl" style="color:#5B5BD6">📊 '+nmT(ar).report+'</div>'+list(sn.report,"•")+'</div>':'';
+  var inner='<div style="display:grid;gap:12px">'+rep+'<div><div class="flbl" style="color:#2E7D62">'+t.working+'</div>'+list(sn.working,"✓")+'</div><div><div class="flbl" style="color:#C2413B">'+t.notWorking+'</div>'+list(sn.notWorking,"✗")+'</div><div><div class="flbl" style="color:#7A1F5C">'+t.change+'</div>'+list(sn.change,"→")+'</div><div><div class="flbl" style="color:#363731">'+t.mixTitle+'</div><div style="margin-top:6px">'+chips+'</div></div>'+(weeks?'<div><div class="flbl" style="color:#363731">'+t.weeksTitle+'</div>'+weeks+'</div>':'')+'</div>';
   if(collapsible)return'<details class="no-print" style="background:#fff;border:1.5px solid #EDE2DB;border-radius:14px;padding:14px 16px;margin:0 0 16px"><summary style="cursor:pointer;font-weight:700;font-size:14.5px">🔍 '+t.snapTitle+'</summary><div style="margin-top:12px">'+inner+'</div></details>';
   return'<div style="background:#fff;border:1.5px solid #EDE2DB;border-radius:14px;padding:16px;margin-top:16px;text-align:start"><div style="font-weight:700;margin-bottom:10px">🔍 '+t.snapTitle+'</div>'+inner+'</div>';
 }
@@ -620,6 +623,116 @@ function dayBodyHTML(d,ar){
   return h;
 }
 
+/* ===================== lifetime: monthly plans that learn from results ===================== */
+function nmT(ar){return ar?{
+  allowance:function(n,d){return"✨ وصول مدى الحياة: متبقٍ "+n+" محاولة هذا الشهر"+(d?"، تتجدد في "+d:"")+".";},
+  ro:function(d){return"استخدمت محاولات هذا الشهر"+(d?"، وتتجدد تلقائياً في "+d:"")+". يمكنك دائماً عرض خطتك ومواصلة تتبّع نتائجك.";},
+  cardTitle:"🗓️ جاهز للشهر القادم؟",cardText:"خطتك القادمة تُبنى على أفضل ما نجح هذا الشهر، مع أهدافك وعروضك الجديدة.",cardBtn:"خطّط للشهر القادم",
+  locked:function(d){return"🗓️ خطة الشهر القادم تُفتح في "+d+". وصولك مدى الحياة، وكل شهر خطة جديدة.";},
+  formTitle:"خطة الشهر القادم",formSub:"أخبرنا بما يهمّك هذا الشهر. سنجمعه مع نتائجك لنبني خطة أذكى.",
+  goal:"الهدف الرئيسي هذا الشهر (حتى 2)",offers:"العروض أو الخدمات التي تريد التركيز عليها هذا الشهر، مع الأسعار",
+  events:"مناسبات أو إطلاقات أو تواريخ مهمة هذا الشهر",eventsPh:"مثال: افتتاح فرع جديد في 15 نوفمبر، اليوم الوطني، عرض نهاية الشهر",
+  change:"ما الذي تريد إيقافه أو تغييره؟",changePh:"مثال: الستوري لا تجلب تفاعلاً، أريد ريلز أقل بوجهي",
+  capacity:"وقتك هذا الشهر",shots:"لقطات شاشة حديثة (اختياري)",
+  gen:"ولّد خطة الشهر القادم",cancel:"رجوع",cost:function(n){return"يستخدم نحو 9 محاولات"+(typeof n==="number"?" (المتاح "+n+")":"")+".";},
+  noCalls:function(d){return"لا يوجد رصيد كافٍ هذا الشهر"+(d?". يتجدد في "+d:"")+".";},
+  report:"تقرير الشهر الماضي",history:"أشهرك",thisMonth:"هذا الشهر",posts:"منشورات",views:"مشاهدات",follows:"متابعون",enq:"استفسارات",
+  monthN:function(n){return"الشهر "+n;},building:"جارٍ تحليل نتائج الشهر الماضي..."
+}:{
+  allowance:function(n,d){return"✨ Lifetime access: "+n+" generations left this month"+(d?", resets "+d:"")+".";},
+  ro:function(d){return"You've used this month's generations"+(d?". They reset automatically on "+d:"")+". You can always view your plan and keep tracking your results.";},
+  cardTitle:"🗓️ Ready for next month?",cardText:"Your next plan builds on what worked best this month, plus your new goals and offers.",cardBtn:"Plan next month",
+  locked:function(d){return"🗓️ Next month's plan unlocks on "+d+". Your access is lifetime, with a new plan every month.";},
+  formTitle:"Next month's plan",formSub:"Tell us what matters this month. We'll combine it with your results to build a smarter plan.",
+  goal:"Main goal this month (up to 2)",offers:"Offers or services to push this month, with prices",
+  events:"Events, launches or important dates this month",eventsPh:"e.g. New branch opening 15 Nov, UAE National Day, end-of-month offer",
+  change:"Anything to stop or change?",changePh:"e.g. Stories don't get engagement, fewer face-to-camera Reels",
+  capacity:"Your time this month",shots:"Fresh screenshots (optional)",
+  gen:"Generate next month's plan",cancel:"Back",cost:function(n){return"Uses about 9 generations"+(typeof n==="number"?" ("+n+" available)":"")+".";},
+  noCalls:function(d){return"Not enough generations left this month"+(d?". They reset on "+d:"")+".";},
+  report:"Last month's report",history:"Your months",thisMonth:"This month",posts:"Posts",views:"Views",follows:"Follows",enq:"Enquiries",
+  monthN:function(n){return"Month "+n;},building:"Analyzing last month's results..."
+};}
+function fmtDay(d,ar){return d?new Date(d).toLocaleDateString(ar?"ar":"en",{day:"numeric",month:"short"}):"";}
+function daysSinceStart(){var s=S.plan&&S.plan.startDate?new Date(S.plan.startDate):new Date();return Math.floor((Date.now()-s.getTime())/864e5);}
+function nextUnlockDate(){var s=new Date(S.plan.startDate||Date.now());s.setDate(s.getDate()+24);return s;}
+function nextMonthOpen(){return daysSinceStart()>=24;}
+function roText(ar){return nmT(ar).ro(fmtDay(S.resetAt,ar));}
+function allowanceHTML(ar){if(typeof S.callsRemaining!=="number"||!S.lifetime)return"";return'<p class="trnote no-print" style="text-align:center;margin:-8px 0 14px">'+nmT(ar).allowance(S.callsRemaining,fmtDay(S.resetAt,ar))+'</p>';}
+function nextCardHTML(ar){
+  if(!S.lifetime||S.view==="next")return"";var t=nmT(ar);
+  if(!nextMonthOpen())return'<p class="trnote no-print" style="text-align:center;margin:0 0 14px">'+t.locked(fmtDay(nextUnlockDate(),ar))+'</p>';
+  return'<div class="trcard no-print" style="border-color:#7A1F5C;background:#FBEFF4"><h4 style="font-size:15px">'+t.cardTitle+'</h4><div class="trnote" style="color:#363731;margin-bottom:10px">'+t.cardText+'</div><button class="btnn" id="nmOpen" style="width:100%;padding:11px">'+t.cardBtn+'</button></div>';
+}
+function monthLabelOf(d,ar){return new Date(d||Date.now()).toLocaleDateString(ar?"ar":"en",{month:"long",year:"numeric"});}
+function monthSummary(){
+  var L=trLogged(),sum={label:monthLabelOf(S.plan.startDate,false),startDate:S.plan.startDate||"",posts:L.length,views:0,follows:0,saves:0,enquiries:0,bestFormat:"",topHooks:[]};
+  var by={};L.forEach(function(x){var e=x.e;sum.views+=e.views||0;sum.follows+=e.follows||0;sum.saves+=e.saves||0;sum.enquiries+=e.enquiries||0;if(e.views!=null){var f=x.d.format||"-";if(!by[f])by[f]={s:0,n:0};by[f].s+=e.views;by[f].n++;}});
+  var best=null;Object.keys(by).forEach(function(f){var a=by[f].s/by[f].n;if(!best||a>best.a)best={f:f,a:a};});sum.bestFormat=best?best.f:"";
+  sum.topHooks=L.filter(function(x){return x.e.views!=null;}).sort(function(a,b){return b.e.views-a.e.views;}).slice(0,3).map(function(x){return{hook:String(x.d.hook||"").slice(0,140),views:x.e.views,format:x.d.format||""};});
+  return sum;
+}
+function perPostLines(){return trLogged().map(function(x){return"Day "+x.d.day+" | "+(x.d.format||"-")+" | posted "+(x.d.time||"-")+" | "+String(x.d.hook||"").replace(/\s+/g," ").slice(0,120)+" | views "+(x.e.views||0)+" | follows "+(x.e.follows||0)+" | saves/shares "+(x.e.saves||0)+" | enquiries "+(x.e.enquiries||0);}).join("\n");}
+function historyHTML(ar){
+  var t=nmT(ar),h=S.history||[];if(!h.length)return"";var cur=monthSummary();
+  var th='style="text-align:end;padding:6px 8px;font-size:12px;color:#6E6A63;font-weight:600"',td='style="text-align:end;padding:7px 8px;font-size:13.5px"';
+  function row(label,x,bold){return'<tr style="border-top:1px solid #EDE2DB;'+(bold?"font-weight:700":"")+'"><td style="padding:7px 8px;font-size:13.5px">'+esc(label)+'</td><td '+td+'>'+fmtN(x.posts)+'</td><td '+td+'>'+fmtN(x.views)+'</td><td '+td+'>'+fmtN(x.follows)+'</td><td '+td+'>'+fmtN(x.enquiries)+'</td></tr>';}
+  return'<div class="trcard"><h4>📈 '+t.history+'</h4><div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse"><thead><tr><th style="text-align:start;padding:6px 8px"></th><th '+th+'>'+t.posts+'</th><th '+th+'>'+t.views+'</th><th '+th+'>'+t.follows+'</th><th '+th+'>'+t.enq+'</th></tr></thead><tbody>'+h.map(function(x){return row(monthLabelOf(x.startDate||Date.now(),ar),x);}).join("")+row(t.thisMonth,cur,true)+'</tbody></table></div></div>';
+}
+function nextHTML(p,ar){
+  var t=nmT(ar),v=v2T(ar);
+  function chips(){return DATA.goals[S.lang].map(function(g,i){var sel=S.goal.indexOf(g)>=0;return'<button class="ob'+(sel?" sel":"")+'" data-nm="goal" data-idx="'+i+'">'+(sel?"✓ ":"")+esc(g)+'</button>';}).join("");}
+  function cap(key,label){return'<div class="qh" style="margin:12px 0 6px;font-weight:600;color:#363731">'+label+'</div><div class="g2">'+CAP[key][S.lang].map(function(o,i){var sel=S[key]===o;return'<button class="ob'+(sel?" sel":"")+'" data-nm="cap-'+key+'" data-idx="'+i+'">'+(sel?"✓ ":"")+esc(o)+'</button>';}).join("")+'</div>';}
+  var shots='<div style="display:flex;flex-wrap:wrap;gap:10px">'+(S.shots||[]).map(function(u,i){return'<div style="position:relative"><img src="'+u+'" alt="" style="width:70px;height:96px;object-fit:cover;border-radius:10px;border:1.5px solid #EDE2DB"><button type="button" data-nm="rmshot" data-idx="'+i+'" style="position:absolute;top:-8px;inset-inline-end:-8px;width:22px;height:22px;border-radius:50%;border:0;background:#363731;color:#fff;cursor:pointer">×</button></div>';}).join("")+((S.shots||[]).length<5?'<label for="nmShots" style="width:70px;height:96px;border:2px dashed #EDE2DB;border-radius:10px;display:flex;align-items:center;justify-content:center;text-align:center;font-size:11px;color:#6E6A63;cursor:pointer;padding:4px">'+v.addShots+'</label><input type="file" id="nmShots" accept="image/*" multiple style="display:none">':'')+'</div>';
+  var enough=typeof S.callsRemaining!=="number"||S.callsRemaining>=9;
+  var lbl=function(x){return'<label class="qh" style="display:block;margin:14px 0 6px;font-weight:600;color:#363731">'+x+'</label>';};
+  return'<div class="trwrap no-print"><div class="trcard"><h4 style="font-size:17px">'+t.formTitle+'</h4><div class="trnote" style="margin-bottom:6px">'+t.formSub+'</div>'+
+    lbl(t.goal)+'<div class="gcol">'+chips()+'</div>'+
+    lbl(t.offers)+'<textarea class="dta" id="nmOffers" style="min-height:80px">'+esc(S.nmOffers!=null?S.nmOffers:S.offers)+'</textarea>'+
+    lbl(t.events)+'<textarea class="dta" id="nmEvents" style="min-height:70px" placeholder="'+esc(t.eventsPh)+'">'+esc(S.nmEvents||"")+'</textarea>'+
+    lbl(t.change)+'<textarea class="dta" id="nmChange" style="min-height:70px" placeholder="'+esc(t.changePh)+'">'+esc(S.nmChange||"")+'</textarea>'+
+    '<div class="qh" style="margin:16px 0 0;font-weight:700;color:#363731">'+t.capacity+'</div>'+cap("hours",v.hoursQ)+cap("camera",v.camQ)+cap("editing",v.editQ)+
+    lbl(t.shots)+shots+
+    (S.loading?'<div class="gprog" style="margin-top:16px"><div class="gptext">'+esc(S.genMsg)+'</div><div class="gpbar"><div class="gpfill" style="width:'+S.genPct+'%"></div></div></div>'+snapshotHTML(ar,false):
+      '<div style="display:flex;gap:10px;margin-top:18px"><button class="btnb" id="nmCancel">'+t.cancel+'</button><button class="btnn" id="nmGen" style="flex:1;padding:11px"'+(enough&&S.goal.length?'':' disabled')+'>'+t.gen+'</button></div><div class="trnote" style="margin-top:8px;text-align:center">'+(enough?t.cost(S.callsRemaining):t.noCalls(fmtDay(S.resetAt,ar)))+'</div>')+
+    (S.error?'<div class="errbox" style="margin-top:10px">'+esc(S.error)+'</div>':'')+'</div></div>';
+}
+function bindNext(ar){
+  var b=$id("nmOpen");if(b)b.addEventListener("click",function(){S.view="next";S.error="";S.nmOffers=S.offers;render();window.scrollTo(0,0);});
+  if(S.view!=="next")return;
+  [["nmOffers","nmOffers"],["nmEvents","nmEvents"],["nmChange","nmChange"]].forEach(function(x){var el=$id(x[0]);if(el){el.style.direction=ar?"rtl":"ltr";el.addEventListener("input",function(){S[x[1]]=this.value;});}});
+  document.querySelectorAll("[data-nm]").forEach(function(el){el.addEventListener("click",function(){var type=el.getAttribute("data-nm"),idx=+el.getAttribute("data-idx");
+    if(type==="goal"){var g=DATA.goals[S.lang][idx],gi=S.goal.indexOf(g);if(gi>=0)S.goal.splice(gi,1);else if(S.goal.length<2)S.goal.push(g);}
+    else if(type.indexOf("cap-")===0){var k=type.slice(4);S[k]=CAP[k][S.lang][idx];}
+    else if(type==="rmshot"){S.shots.splice(idx,1);}
+    render();});});
+  var f=$id("nmShots");if(f)f.addEventListener("change",async function(){var files=Array.prototype.slice.call(this.files||[]);for(var i=0;i<files.length&&(S.shots||[]).length<5;i++){try{S.shots.push(await shrinkImage(files[i]));}catch(e){}}render();});
+  var c=$id("nmCancel");if(c)c.addEventListener("click",function(){S.view="calendar";render();});
+  var g=$id("nmGen");if(g)g.addEventListener("click",function(){nextMonthGenerate();});
+}
+async function nextMonthGenerate(){
+  if(S.loading)return;var ar=isAR(),t=v2T(ar);S.loading=true;S.error="";S.snapshot=null;S.genPct=3;S.genMsg=nmT(ar).building;render();
+  try{
+    await fetchTrends();
+    var sum=monthSummary(),lines=perPostLines();
+    var lastMonth="LAST MONTH'S RESULTS ("+sum.posts+" posts logged, "+sum.views+" views, "+sum.follows+" follows, "+sum.enquiries+" enquiries):\n"+(lines||"(No results were logged last month. Rely on the brief and screenshots.)");
+    var brief="THIS MONTH'S BRIEF FROM THE OWNER:\nGoals: "+S.goal.join(" / ")+"\nOffers or services to push this month: "+String(S.nmOffers!=null?S.nmOffers:S.offers).slice(0,700)+"\nEvents, launches or dates: "+String(S.nmEvents||"-").slice(0,500)+"\nStop or change: "+String(S.nmChange||"-").slice(0,500);
+    var shots=(S.shots||[]).map(function(u){return{media_type:"image/jpeg",data:u.split(",")[1]};});
+    var snap=parseSnapshot(await callAPI(snapshotPrompt(shots.length>0,lastMonth+"\n\n"+brief),1100,shots));
+    snap.mix=normalizeMix(snap.mix);S.snapshot=snap;S.genPct=12;render();
+    var specs=spreadFormats(snap.mix,30).map(function(f,i){return{day:i+1,format:f};});
+    var used=(S.plan.days||[]).map(function(d){return String(d.hook||"").slice(0,80);});
+    var extra=lastMonth+"\n\n"+brief+"\nBuild on what performed best last month: reuse the STYLE of the top hooks and formats, never repeat them word for word. Weave this month's offers, events and dates into specific days.";
+    var days=await generateDays(specs,snap,used,extra,function(a,b,frac){S.genMsg=t.building(a,b);S.genPct=12+Math.round(frac*84);render();});
+    var month=(S.plan.month||1)+1;
+    S.history=(S.history||[]).concat([sum]);
+    S.plan={summary:snap.strategy||"",keyThemes:snap.weeks.filter(Boolean),days:days,snapshot:snap,startDate:new Date().toISOString(),v:2,month:month};
+    S.tracker={entries:{},analysis:null};S.loading=false;S.shots=[];S.view="calendar";
+    if(S.nmOffers!=null)S.offers=S.nmOffers;S.nmEvents="";S.nmChange="";
+    savePlanRemote({newMonth:true,archive:sum});render();window.scrollTo(0,0);
+  }catch(err){S.loading=false;S.error=(ar?"خطأ: ":"Error: ")+err.message;render();}
+}
+
 /* ===== saved workspace (plan + tracker, tied to the access code) ===== */
 function wsCall(action,extra){var b={code:S.code,action:action};for(var k in extra)b[k]=extra[k];return fetch("/api/workspace",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(b)}).then(function(r){return r.json().then(function(d){if(!r.ok)throw new Error(d.message||d.error||("HTTP "+r.status));return d;});});}
 function loadWorkspace(code,active){
@@ -627,13 +740,14 @@ function loadWorkspace(code,active){
     if(d.plan){
       S.plan=d.plan;S.tracker=d.tracker||{entries:{},analysis:null};
       var m=d.meta||{};if(m.companyName)S.companyName=m.companyName;if(m.cl)S.cl=m.cl;if(m.biz)S.biz=m.biz;if(m.goal)S.goal=m.goal;if(m.platforms)S.platforms=m.platforms;["audience","desc","offers","objections","voice","hours","camera","editing","handle","followers"].forEach(function(k){if(m[k]!=null)S[k]=m[k];});if(typeof d.callsRemaining==="number")S.callsRemaining=d.callsRemaining;
-      S.readOnly=!d.active;S.codeValid=true;S.codeChecking=false;S.codeError="";render();return true;
+      S.readOnly=!d.active;S.history=d.history||[];S.resetAt=d.resetAt||null;S.lifetime=!!d.lifetime;S.codeValid=true;S.codeChecking=false;S.codeError="";render();return true;
     }
+    S.history=d.history||[];S.resetAt=d.resetAt||null;S.lifetime=!!d.lifetime;if(typeof d.callsRemaining==="number")S.callsRemaining=d.callsRemaining;
     if(active){S.codeValid=true;S.codeChecking=false;S.codeError="";render();return true;}
     return false;
   }).catch(function(){if(active){S.codeValid=true;S.codeChecking=false;S.codeError="";render();return true;}return false;});
 }
-function savePlanRemote(){if(!S.plan||S.readOnly)return;wsCall("savePlan",{plan:S.plan,meta:{companyName:S.companyName,lang:S.lang,cl:S.cl,biz:S.biz,goal:S.goal,platforms:S.platforms,audience:S.audience,desc:S.desc,offers:S.offers,objections:S.objections,voice:S.voice,hours:S.hours,camera:S.camera,editing:S.editing,handle:S.handle,followers:S.followers}}).catch(function(e){console.error("Plan not saved:",e);});}
+function savePlanRemote(opts){if(!S.plan||S.readOnly)return;opts=opts||{};wsCall("savePlan",{newMonth:!!opts.newMonth,archive:opts.archive||null,plan:S.plan,meta:{companyName:S.companyName,lang:S.lang,cl:S.cl,biz:S.biz,goal:S.goal,platforms:S.platforms,audience:S.audience,desc:S.desc,offers:S.offers,objections:S.objections,voice:S.voice,hours:S.hours,camera:S.camera,editing:S.editing,handle:S.handle,followers:S.followers}}).catch(function(e){console.error("Plan not saved:",e);});}
 var trTimer=null;
 function setSaveState(t){var el=$id("trSave");if(el)el.textContent=t;}
 function saveTrackerNow(){return wsCall("saveTracker",{tracker:S.tracker}).then(function(){setSaveState(trT(isAR()).saved);}).catch(function(){setSaveState(trT(isAR()).saveErr);});}
@@ -786,13 +900,13 @@ monthKeys.forEach(function(mk){
 
 var tc=["#7A1F5C","#A36B00","#D14B7F"];var tpills=(p.keyThemes||[]).map(function(t,i){return'<span class="pill" style="background:'+tc[i%3]+'33;color:'+tc[i%3]+'">'+esc(t)+'</span>';}).join("");
 var logoImg=S.companyLogo?'<img src="'+S.companyLogo+'" style="height:36px;max-width:120px;object-fit:contain;margin-'+(isRTL?"left":"right")+':10px;vertical-align:middle;border-radius:4px">':'';
-app.innerHTML='<div><div class="phdr no-print"><div style="display:flex;align-items:center">'+logoImg+'<div><div class="hb">'+esc(S.companyName||(ar?"خطتك":"Your Plan"))+'</div><div class="hs">'+(ar?"من إنتاج Bricks — استوديو بناء الأعمال":"Powered by Bricks — Business Building Studio")+'</div></div></div><div style="display:flex;gap:8px"><button class="hbtn" id="pdfBtn">📄 '+(ar?"تحميل PDF":"Download PDF")+'</button><button class="hbtn" id="npBtn"'+(S.readOnly?' style="display:none"':'')+'>'+(ar?"خطة جديدة":"New plan")+'</button></div></div><div class="pbody"><div class="sumcard"><div class="sumt">'+esc(S.companyName?(ar?"خطة "+S.companyName+" لـ 30 يوم":S.companyName+"'s 30-Day Content Plan"):(ar?"خطة المحتوى لـ 30 يوم":"Your 30-Day Content Plan"))+'</div><div class="sums" style="text-align:'+(isRTL?"right":"left")+'">'+esc(p.summary)+'</div><div class="pills">'+tpills+'</div></div>'+snapshotHTML(ar,true)+'<p class="no-print" style="text-align:center;font-size:13px;color:#6E6A63;margin:0 0 16px">'+(ar?"معظم الخطط تُبنى ولا تُنفَّذ أبداً. لا تجعل هذه واحدة منها.":"Most plans get built and never actually get posted. Don't let this be one of them.")+'</p>'+(S.readOnly?'<div class="robanner no-print">'+trT(ar).ro+'</div>':'')+'<div class="vtabs no-print" role="tablist"><button class="vtab" role="tab" data-v="calendar" aria-selected="'+(S.view!=="tracker"&&S.view!=="week"&&S.view!=="guide")+'">'+trT(ar).tabCal+'</button><button class="vtab" role="tab" data-v="guide" aria-selected="'+(S.view==="guide")+'">'+gT(ar).tab+'</button><button class="vtab" role="tab" data-v="week" aria-selected="'+(S.view==="week")+'">'+v2T(ar).tabWeek+'</button><button class="vtab" role="tab" data-v="tracker" aria-selected="'+(S.view==="tracker")+'">'+trT(ar).tabTrack+'</button></div>'+(S.view==="tracker"?trackerHTML(p,dateForDay,ar):S.view==="week"?weekHTML(p,dateForDay,ar):S.view==="guide"?guideHTML(p,ar):calHTML+'<div class="calhint no-print">'+(ar?"👆 اضغط على أي يوم لرؤية التفاصيل الكاملة":"👆 Tap any day to see the full details")+'</div>')+'<div class="ctabox no-print"><div class="ctat">'+(ar?"هل تريد مستشاراً يساعدك على تنفيذ هذه الخطة؟":"Want a strategist to help you put this plan into action?")+'</div><div class="ctas">'+(ar?"تتضمّن باقة رائد الأعمال جلسة استراتيجية فردية وجلسة متابعة، إلى جانب محتوى الدورة التدريبية وجميع أدوات Bricks، مقابل <bdi dir=\"ltr\">$129</bdi>.":"The Entrepreneur Package includes a 1:1 strategy session and a follow-up session, plus the course and every Bricks tool, for $129.")+'</div><a href="'+BUY_URL+'" target="_blank" rel="noopener" class="ctabtn" style="margin-top:14px;background:#FFC857;color:#4A1242">'+(ar?"اطّلع على باقة رائد الأعمال":"See the Entrepreneur Package")+'</a></div>'+(WA_LINK?'<div class="ctabox no-print" style="background:linear-gradient(135deg,#4A1242,#9C2A63);margin-top:12px"><div class="ctat">📍 '+(ar?"في الإمارات أو السعودية؟":"In the UAE or KSA?")+'</div><div class="ctas">'+(ar?"نتولى عنك كل الفوضى — تصوير الفيديو، المونتاج، جدولة النشر، وإدارة الإعلانات المدفوعة. تواصل معنا الآن.":"We handle all the chaos for you — videography, video editing, media posting, and media buying. Contact us now.")+'</div><a href="'+WA_LINK+'" target="_blank" rel="noopener" class="ctabtn" style="margin-top:14px;background:#FFC857;color:#4A1242">💬 '+(ar?"تواصل معنا الآن":"Contact Us Now")+'</a></div>':'')+'<div class="printonly" id="printFullDetail"></div></div></div><div id="dayModalRoot"></div>';
+app.innerHTML='<div><div class="phdr no-print"><div style="display:flex;align-items:center">'+logoImg+'<div><div class="hb">'+esc(S.companyName||(ar?"خطتك":"Your Plan"))+'</div><div class="hs">'+(ar?"من إنتاج Bricks — استوديو بناء الأعمال":"Powered by Bricks — Business Building Studio")+'</div></div></div><div style="display:flex;gap:8px"><button class="hbtn" id="pdfBtn">📄 '+(ar?"تحميل PDF":"Download PDF")+'</button><button class="hbtn" id="npBtn"'+(S.readOnly?' style="display:none"':'')+'>'+(ar?"خطة جديدة":"New plan")+'</button></div></div><div class="pbody"><div class="sumcard"><div class="sumt">'+esc(S.companyName?(ar?"خطة "+S.companyName+" لـ 30 يوم":S.companyName+"'s 30-Day Content Plan")+(p.month>1?" · "+nmT(ar).monthN(p.month):""):(ar?"خطة المحتوى لـ 30 يوم":"Your 30-Day Content Plan"))+'</div><div class="sums" style="text-align:'+(isRTL?"right":"left")+'">'+esc(p.summary)+'</div><div class="pills">'+tpills+'</div></div>'+snapshotHTML(ar,true)+'<p class="no-print" style="text-align:center;font-size:13px;color:#6E6A63;margin:0 0 16px">'+(ar?"معظم الخطط تُبنى ولا تُنفَّذ أبداً. لا تجعل هذه واحدة منها.":"Most plans get built and never actually get posted. Don't let this be one of them.")+'</p>'+(S.readOnly?'<div class="robanner no-print">'+(S.lifetime?roText(ar):trT(ar).ro)+'</div>':'')+'<div class="vtabs no-print" role="tablist"><button class="vtab" role="tab" data-v="calendar" aria-selected="'+(S.view!=="tracker"&&S.view!=="week"&&S.view!=="guide")+'">'+trT(ar).tabCal+'</button><button class="vtab" role="tab" data-v="guide" aria-selected="'+(S.view==="guide")+'">'+gT(ar).tab+'</button><button class="vtab" role="tab" data-v="week" aria-selected="'+(S.view==="week")+'">'+v2T(ar).tabWeek+'</button><button class="vtab" role="tab" data-v="tracker" aria-selected="'+(S.view==="tracker")+'">'+trT(ar).tabTrack+'</button></div>'+allowanceHTML(ar)+nextCardHTML(ar)+(S.view==="next"?nextHTML(p,ar):S.view==="tracker"?historyHTML(ar)+trackerHTML(p,dateForDay,ar):S.view==="week"?weekHTML(p,dateForDay,ar):S.view==="guide"?guideHTML(p,ar):calHTML+'<div class="calhint no-print">'+(ar?"👆 اضغط على أي يوم لرؤية التفاصيل الكاملة":"👆 Tap any day to see the full details")+'</div>')+'<div class="ctabox no-print"><div class="ctat">'+(ar?"هل تريد مستشاراً يساعدك على تنفيذ هذه الخطة؟":"Want a strategist to help you put this plan into action?")+'</div><div class="ctas">'+(ar?"تتضمّن باقة رائد الأعمال جلسة استراتيجية فردية وجلسة متابعة، إلى جانب محتوى الدورة التدريبية وجميع أدوات Bricks، مقابل <bdi dir=\"ltr\">$129</bdi>.":"The Entrepreneur Package includes a 1:1 strategy session and a follow-up session, plus the course and every Bricks tool, for $129.")+'</div><a href="'+BUY_URL+'" target="_blank" rel="noopener" class="ctabtn" style="margin-top:14px;background:#FFC857;color:#4A1242">'+(ar?"اطّلع على باقة رائد الأعمال":"See the Entrepreneur Package")+'</a></div>'+(WA_LINK?'<div class="ctabox no-print" style="background:linear-gradient(135deg,#4A1242,#9C2A63);margin-top:12px"><div class="ctat">📍 '+(ar?"في الإمارات أو السعودية؟":"In the UAE or KSA?")+'</div><div class="ctas">'+(ar?"نتولى عنك كل الفوضى — تصوير الفيديو، المونتاج، جدولة النشر، وإدارة الإعلانات المدفوعة. تواصل معنا الآن.":"We handle all the chaos for you — videography, video editing, media posting, and media buying. Contact us now.")+'</div><a href="'+WA_LINK+'" target="_blank" rel="noopener" class="ctabtn" style="margin-top:14px;background:#FFC857;color:#4A1242">💬 '+(ar?"تواصل معنا الآن":"Contact Us Now")+'</a></div>':'')+'<div class="printonly" id="printFullDetail"></div></div></div><div id="dayModalRoot"></div>';
 
-var np=$id("npBtn");if(np)np.addEventListener("click",function(){S={offers:"",objections:"",voice:"",hours:"",camera:"",editing:"",handle:"",followers:"",shots:[],snapshot:null,callsRemaining:null,view:"calendar",readOnly:false,tracker:{entries:{},analysis:null},lang:S.lang,step:0,companyName:"",companyLogo:null,biz:[],goal:[],platforms:[],audience:[],cl:"",desc:"",plan:null,loading:false,genPct:0,genMsg:"",error:"",code:"",codeValid:false,codeChecking:false,codeError:""};render();});
+var np=$id("npBtn");if(np)np.addEventListener("click",function(){S={history:S.history,resetAt:S.resetAt,lifetime:S.lifetime,nmOffers:null,nmEvents:"",nmChange:"",offers:"",objections:"",voice:"",hours:"",camera:"",editing:"",handle:"",followers:"",shots:[],snapshot:null,callsRemaining:null,view:"calendar",readOnly:false,tracker:{entries:{},analysis:null},lang:S.lang,step:0,companyName:"",companyLogo:null,biz:[],goal:[],platforms:[],audience:[],cl:"",desc:"",plan:null,loading:false,genPct:0,genMsg:"",error:"",code:"",codeValid:false,codeChecking:false,codeError:""};render();});
 var pdfB=$id("pdfBtn");if(pdfB)pdfB.addEventListener("click",function(){buildPrintDetail(p,ar,isRTL);setTimeout(function(){window.print();},50);});
 
 app.querySelectorAll(".vtab").forEach(function(b){b.addEventListener("click",function(){S.view=b.getAttribute("data-v");render();window.scrollTo(0,0);});});
-if(S.view==="tracker"){bindTracker(p,dateForDay,dayByNum,ar);bindRewrite(ar);}if(S.view==="week")bindWeek(p,dateForDay,dayByNum,ar);
+if(S.view==="tracker"){bindTracker(p,dateForDay,dayByNum,ar);bindRewrite(ar);}bindNext(ar);if(S.view==="week")bindWeek(p,dateForDay,dayByNum,ar);
 app.querySelectorAll(".calcell.filled").forEach(function(cell){
   cell.addEventListener("click",function(){
     var day=parseInt(cell.getAttribute("data-day"));

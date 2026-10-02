@@ -70,7 +70,7 @@ function renderDashboard(codes, msg){
   var rows = codes.map(function(c){
     var product = c.product || 'content-plan';
     var productLabel = product === 'launch-planner' ? 'Launch Planner' : 'Content Plan';
-    var usedCell = product === 'content-plan' ? (c.callsUsed+' / '+c.callsAllowed) : 'Lifetime access';
+    var usedCell = product === 'content-plan' ? (c.callsUsed+' / '+c.callsAllowed+(c.monthlyCalls?' this month':'')) : 'Lifetime access';
     var expiresCell = c.expiresAt ? fmtDate(c.expiresAt) : 'Never';
     var resetCell = product === 'content-plan'
       ? '<button type="button" class="secondary resetBtn" data-code="'+esc(c.code)+'" style="padding:5px 12px;font-size:11px">Reset</button>'
@@ -91,9 +91,9 @@ function renderDashboard(codes, msg){
     '<div class="card"><label>Issue a new code</label><div class="row">' +
     '<div class="field"><label>Product</label><select id="newProduct"><option value="content-plan">Content Plan Generator</option><option value="launch-planner">UAE Business Launch Planner</option></select></div>' +
     '<div class="field codefield"><label>Code name</label><input id="newCode" placeholder="e.g. CUSTOMER-NAME-01" value="'+randomCode()+'"><button type="button" class="diceBtn" id="rerollBtn" title="Generate a new random code">🎲</button></div>' +
-    '<div class="field" id="callsField"><label>Calls allowed</label><input id="newCalls" type="number" value="34"></div>' +
+    '<div class="field" id="callsField"><label id="callsLabel">Generations per month</label><input id="newCalls" type="number" value="40"></div>' +
     '<div class="field" id="daysField"><label>Valid for (days)</label><input id="newDays" type="number" value="30"></div>' +
-    '</div><div class="row" style="margin-top:8px"><label style="display:flex;align-items:center;gap:6px;font-weight:400;font-size:12.5px;margin:0"><input type="checkbox" id="newLifetime" style="width:auto"> Lifetime access (never expires)</label></div>' +
+    '</div><div class="row" style="margin-top:8px"><label style="display:flex;align-items:center;gap:6px;font-weight:400;font-size:12.5px;margin:0"><input type="checkbox" id="newLifetime" style="width:auto" checked> Lifetime access (never expires)</label></div>' +
     '<div class="row" style="margin-top:10px"><button id="issueBtn">Issue Code</button></div>' +
     '<div class="hint" id="productHint"></div>' +
     '<div id="issueMsg"></div></div>' +
@@ -122,9 +122,12 @@ function renderDashboard(codes, msg){
     if(isPlanner){ lifetimeChk.checked = true; lifetimeChk.disabled = true; }
     else { lifetimeChk.disabled = false; }
     document.getElementById('daysField').style.display = lifetimeChk.checked ? 'none' : '';
+    document.getElementById('callsLabel').textContent = lifetimeChk.checked ? 'Generations per month' : 'Calls allowed';
     document.getElementById('productHint').textContent = isPlanner
       ? 'UAE Business Launch Planner: lifetime access, no call limit (this product makes no AI calls). Opens at planner.bricksmedia.org.'
-      : 'Content Plan Generator: 34 calls (4 for the initial full plan, 30 headroom for regenerating individual days), valid 30 days.';
+      : (lifetimeChk.checked
+          ? 'Content Plan Generator, lifetime: 40 generations every month, resetting every 30 days. A full plan uses about 9. Older codes are upgraded to this automatically the first time they are used.'
+          : 'Content Plan Generator, limited: a fixed number of calls that expires after the number of days set.');
   }
   productSel.onchange = function(){ document.getElementById('newCode').value = randomCode(prefix()); syncProductFields(); };
   lifetimeChk.onchange = syncProductFields;
@@ -196,7 +199,7 @@ async function issueCode(){
   var code = document.getElementById('newCode').value.trim().toUpperCase();
   var product = document.getElementById('newProduct').value;
   var lifetime = document.getElementById('newLifetime').checked;
-  var calls = parseInt(document.getElementById('newCalls').value) || 34;
+  var calls = parseInt(document.getElementById('newCalls').value) || 40;
   var days = parseInt(document.getElementById('newDays').value) || 30;
   if(!code) return;
   try{
