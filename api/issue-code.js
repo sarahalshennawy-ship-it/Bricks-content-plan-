@@ -46,8 +46,8 @@ export default async function handler(req, res) {
   //   "launch-planner" - UAE Business Launch Planner at planner.bricksmedia.org
   //                      (no AI calls, lifetime access)
   // Old requests without a product field are Content Plan codes, as before.
-  const prod = product === 'launch-planner' ? 'launch-planner' : 'content-plan';
-  const isLifetime = prod === 'launch-planner' || lifetime === true;
+  const prod = (product === 'launch-planner' || product === 'founder-kit') ? product : 'content-plan';
+  const isLifetime = prod !== 'content-plan' || lifetime === true;
   if (!code || typeof code !== 'string') {
     return res.status(400).json({ error: 'missing_code' });
   }
