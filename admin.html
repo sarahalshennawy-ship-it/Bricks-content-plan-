@@ -69,7 +69,7 @@ function renderGate(){
 function renderDashboard(codes, msg){
   var rows = codes.map(function(c){
     var product = c.product || 'content-plan';
-    var productLabel = product === 'launch-planner' ? 'Launch Planner' : 'Content Plan';
+    var productLabel = product === 'launch-planner' ? 'Launch Planner' : product === 'founder-kit' ? 'Founder Kit' : 'Content Plan';
     var usedCell = product === 'content-plan' ? (c.callsUsed+' / '+c.callsAllowed+(c.monthlyCalls?' this month':'')) : 'Lifetime access';
     var expiresCell = c.expiresAt ? fmtDate(c.expiresAt) : 'Never';
     var resetCell = product === 'content-plan'
@@ -89,7 +89,7 @@ function renderDashboard(codes, msg){
     '<textarea id="trText" placeholder="FORMATS:\n- ...\nHOOKS:\n- ...\nGULF MOMENTS:\n- ..."></textarea>' +
     '<div class="row" style="margin-top:10px;justify-content:space-between;align-items:center"><span class="hint" id="trInfo" style="margin:0"></span><div class="row"><button class="secondary" id="trDraft" type="button">Draft with AI (web search)</button><button id="trSave" type="button">Save trends</button></div></div><div id="trMsg"></div></div>' +
     '<div class="card"><label>Issue a new code</label><div class="row">' +
-    '<div class="field"><label>Product</label><select id="newProduct"><option value="content-plan">Content Plan Generator</option><option value="launch-planner">UAE Business Launch Planner</option></select></div>' +
+    '<div class="field"><label>Product</label><select id="newProduct"><option value="content-plan">Content Plan Generator</option><option value="launch-planner">UAE Business Launch Planner</option><option value="founder-kit">Gulf Founder Kit</option></select></div>' +
     '<div class="field codefield"><label>Code name</label><input id="newCode" placeholder="e.g. CUSTOMER-NAME-01" value="'+randomCode()+'"><button type="button" class="diceBtn" id="rerollBtn" title="Generate a new random code">🎲</button></div>' +
     '<div class="field" id="callsField"><label id="callsLabel">Generations per month</label><input id="newCalls" type="number" value="40"></div>' +
     '<div class="field" id="daysField"><label>Valid for (days)</label><input id="newDays" type="number" value="30"></div>' +
@@ -103,8 +103,9 @@ function renderDashboard(codes, msg){
     '<table><thead><tr><th>Code</th><th>Product</th><th>Used</th><th>Issued</th><th>Expires</th><th>Status</th><th>Actions</th></tr></thead><tbody>'+rows+'</tbody></table>' +
     '<div class="hint">Reset zeroes a Content Plan code\'s usage back to 0 without changing its name or expiry \u2014 useful for testing, or for a customer who lost a generation to a bug. Launch Planner codes have no usage to reset (lifetime access).</div>' +
     (msg?('<div class="msg '+msg.type+'">'+esc(msg.text)+'</div>'):'') +
-    '</div>';
+    '</div><div class="card" id="cvCard"></div>';
 
+  renderCV();
   document.getElementById('refreshBtn').onclick = loadCodes;
   setupTrends();
   document.getElementById('issueBtn').onclick = issueCode;
@@ -114,16 +115,16 @@ function renderDashboard(codes, msg){
 
   var productSel = document.getElementById('newProduct');
   var lifetimeChk = document.getElementById('newLifetime');
-  function prefix(){ return productSel.value === 'launch-planner' ? 'PLANNER-' : 'BRICKS-'; }
+  function prefix(){ return productSel.value === 'launch-planner' ? 'PLANNER-' : productSel.value === 'founder-kit' ? 'KIT-' : 'BRICKS-'; }
   document.getElementById('rerollBtn').onclick = function(){ document.getElementById('newCode').value = randomCode(prefix()); };
   function syncProductFields(){
-    var isPlanner = productSel.value === 'launch-planner';
+    var isPlanner = productSel.value !== 'content-plan';
     document.getElementById('callsField').style.display = isPlanner ? 'none' : '';
     if(isPlanner){ lifetimeChk.checked = true; lifetimeChk.disabled = true; }
     else { lifetimeChk.disabled = false; }
     document.getElementById('daysField').style.display = lifetimeChk.checked ? 'none' : '';
     document.getElementById('callsLabel').textContent = lifetimeChk.checked ? 'Generations per month' : 'Calls allowed';
-    document.getElementById('productHint').textContent = isPlanner
+    document.getElementById('productHint').textContent = productSel.value === 'founder-kit' ? 'Gulf Founder Kit: lifetime access, no call limit. Opens at kit.bricksmedia.org.' : isPlanner
       ? 'UAE Business Launch Planner: lifetime access, no call limit (this product makes no AI calls). Opens at planner.bricksmedia.org.'
       : (lifetimeChk.checked
           ? 'Content Plan Generator, lifetime: 40 generations every month, resetting every 30 days. A full plan uses about 9. Older codes are upgraded to this automatically the first time they are used.'
@@ -162,6 +163,87 @@ async function setupTrends(){
     }catch(e){ trendsMsg('err', 'Could not draft: ' + e.message); }
     b.disabled=false; b.textContent='Draft with AI (web search)';
   };
+}
+
+
+/* ---------- CV Screener codes (managed on the CV Screener's own site) ---------- */
+var CV = { url: '', secret: '', codes: null, plans: {}, msg: null, fresh: null };
+try { CV.url = localStorage.getItem('cvScreenerUrl') || ''; } catch(e){}
+
+function cvApi(method, body){
+  var base = CV.url.replace(/\/+$/,'');
+  return fetch(base + '/api/admin/codes', {
+    method: method,
+    headers: { 'Content-Type': 'application/json', 'x-admin-secret': CV.secret },
+    body: body ? JSON.stringify(body) : undefined
+  }).then(function(r){ return r.json().then(function(d){ return { ok: r.ok, d: d }; }); });
+}
+function cvLoad(){
+  return cvApi('GET').then(function(r){
+    if(!r.ok) throw new Error((r.d && r.d.error) || 'Could not load CV Screener codes.');
+    CV.codes = Array.isArray(r.d.codes) ? r.d.codes : Object.values(r.d.codes || {});
+    CV.plans = r.d.plans || {};
+  });
+}
+function cvStatus(c){
+  if(c.active === false) return ['expired','Off'];
+  if(c.paidUntil && new Date(c.paidUntil + 'T23:59:59Z') < new Date()) return ['expired','Expired'];
+  return ['active','Active'];
+}
+function renderCV(){
+  var el = document.getElementById('cvCard'); if(!el) return;
+  var h = '<label>CV Screener codes</label><div class="hint" style="margin:0 0 10px">These codes are created and checked by the CV Screener site itself, so plans, monthly limits and renewals are kept there.</div>';
+  if(!CV.codes){
+    h += '<div class="row"><div class="field"><label>CV Screener site address</label><input id="cvUrl" placeholder="https://your-cv-screener-domain.com" value="'+esc(CV.url)+'"></div>' +
+         '<div class="field"><label>CV Screener admin password</label><input id="cvSecret" type="password" placeholder="Its ADMIN_SECRET"></div></div>' +
+         '<div class="row" style="margin-top:10px"><button id="cvConnect">Connect</button></div>';
+  } else {
+    var planKeys = Object.keys(CV.plans);
+    var opts = planKeys.map(function(k){ var p = CV.plans[k] || {}; return '<option value="'+esc(k)+'">'+esc((p.label||k)+(p.monthlyLimit?' ('+p.monthlyLimit+' CVs/month)':''))+'</option>'; }).join('');
+    h += '<div class="row"><div class="field"><label>Customer name</label><input id="cvName"></div><div class="field"><label>Customer email</label><input id="cvEmail" type="email"></div></div>' +
+         '<div class="row" style="margin-top:8px"><div class="field"><label>Plan</label><select id="cvPlan">'+opts+'</select></div>' +
+         '<div class="field"><label>Months paid</label><input id="cvMonths" type="number" value="1" min="1"></div>' +
+         '<div class="field"><label>CVs per month (optional)</label><input id="cvLimit" type="number" placeholder="Plan default"></div></div>' +
+         '<div class="row" style="margin-top:10px"><button id="cvIssue">Issue CV Screener code</button><button class="secondary" id="cvRefresh">Refresh</button></div>';
+    if(CV.fresh) h += '<div class="msg ok">New code: <b style="font-size:15px;user-select:all">'+esc(CV.fresh)+'</b></div>';
+    var rows = CV.codes.slice().sort(function(a,b){ return String(b.created||'').localeCompare(String(a.created||'')); }).map(function(c){
+      var st = cvStatus(c);
+      return '<tr><td><b>'+esc(c.code)+'</b></td><td>'+esc(c.name||'')+'<div class="hint" style="margin:0">'+esc(c.email||'')+'</div></td><td>'+esc(c.plan||'')+'</td><td>'+esc(c.monthlyLimit||'')+'</td><td>'+esc(c.paidUntil||'')+'</td>' +
+        '<td><span class="badge '+st[0]+'">'+st[1]+'</span></td><td>' +
+        '<button type="button" class="secondary cvExt" data-code="'+esc(c.code)+'" style="padding:5px 10px;font-size:11px">+1 month</button> ' +
+        '<button type="button" class="secondary cvTog" data-code="'+esc(c.code)+'" data-on="'+(c.active===false?'1':'0')+'" style="padding:5px 10px;font-size:11px">'+(c.active===false?'Turn on':'Turn off')+'</button></td></tr>';
+    }).join('');
+    if(!rows) rows = '<tr><td colspan="7" style="text-align:center;color:#b0a190;padding:16px">No CV Screener codes yet.</td></tr>';
+    h += '<table><thead><tr><th>Code</th><th>Customer</th><th>Plan</th><th>CVs/mo</th><th>Paid until</th><th>Status</th><th>Actions</th></tr></thead><tbody>'+rows+'</tbody></table>';
+  }
+  if(CV.msg) h += '<div class="msg '+CV.msg.type+'">'+esc(CV.msg.text)+'</div>';
+  el.innerHTML = h;
+
+  function fail(e){ CV.msg = { type:'err', text: (e && e.message) || 'Request failed.' }; renderCV(); }
+  var c = document.getElementById('cvConnect');
+  if(c) c.onclick = function(){
+    CV.url = document.getElementById('cvUrl').value.trim(); CV.secret = document.getElementById('cvSecret').value;
+    if(!/^https:\/\//.test(CV.url) || !CV.secret){ CV.msg = { type:'err', text:'Enter the https address and the admin password.' }; renderCV(); return; }
+    try { localStorage.setItem('cvScreenerUrl', CV.url); } catch(e){}
+    CV.msg = null; cvLoad().then(renderCV).catch(function(e){ CV.codes = null; fail(e); });
+  };
+  var rf = document.getElementById('cvRefresh'); if(rf) rf.onclick = function(){ CV.msg = null; cvLoad().then(renderCV).catch(fail); };
+  var is = document.getElementById('cvIssue');
+  if(is) is.onclick = function(){
+    var body = { name: document.getElementById('cvName').value.trim(), email: document.getElementById('cvEmail').value.trim(), plan: document.getElementById('cvPlan').value, months: parseInt(document.getElementById('cvMonths').value) || 1 };
+    var lim = parseInt(document.getElementById('cvLimit').value); if(lim) body.monthlyLimit = lim;
+    cvApi('POST', body).then(function(r){
+      if(!r.ok) throw new Error((r.d && r.d.error) || 'Could not issue the code.');
+      CV.fresh = r.d.code && r.d.code.code; CV.msg = { type:'ok', text:'Code issued. Send it to the customer.' };
+      return cvLoad();
+    }).then(renderCV).catch(fail);
+  };
+  [].forEach.call(el.querySelectorAll('.cvExt'), function(b){ b.onclick = function(){
+    cvApi('PATCH', { code: b.getAttribute('data-code'), extendMonths: 1 }).then(function(r){ if(!r.ok) throw new Error((r.d && r.d.error) || 'Failed.'); CV.fresh = null; CV.msg = { type:'ok', text:'Extended by one month.' }; return cvLoad(); }).then(renderCV).catch(fail);
+  }; });
+  [].forEach.call(el.querySelectorAll('.cvTog'), function(b){ b.onclick = function(){
+    cvApi('PATCH', { code: b.getAttribute('data-code'), active: b.getAttribute('data-on') === '1' }).then(function(r){ if(!r.ok) throw new Error((r.d && r.d.error) || 'Failed.'); CV.fresh = null; CV.msg = null; return cvLoad(); }).then(renderCV).catch(fail);
+  }; });
 }
 
 async function resetCode(code){
